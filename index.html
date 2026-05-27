@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aether OS // Core Kernel [Part 1]</title>
-    <!-- Tailwind via CDN -->
+    <title>Aether OS // Limitless Paradigm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
-        /* 
-         * ============================================================================
+        /* * ============================================================================
          * AETHER OS // GLOBAL STYLESHEET & CSS VARIABLES
          * ============================================================================
          */
@@ -229,24 +227,19 @@
 </head>
 <body class="os-booting">
 
-    <!-- WebGL Background Mount -->
     <div id="os-matrix-bg"></div>
     <div class="os-scanline"></div>
 
-    <!-- Window Manager Mount Point -->
     <div id="os-desktop" class="absolute inset-0 bottom-[48px] overflow-hidden">
-        <!-- Windows are dynamically injected here by the JS Kernel -->
-    </div>
+        </div>
 
-    <!-- Taskbar -->
     <div class="os-taskbar">
         <div class="taskbar-start" id="start-menu-btn">
             <span class="text-white font-bold text-xs">A</span>
         </div>
         
         <div class="taskbar-items" id="taskbar-item-container">
-            <!-- App icons injected here -->
-        </div>
+            </div>
 
         <div class="taskbar-tray">
             <span id="tray-network" class="text-green-400">NET: OK</span>
@@ -255,11 +248,6 @@
         </div>
     </div>
 
-    <!-- 
-      =========================================================================
-      AETHER KERNEL (JAVASCRIPT)
-      =========================================================================
-    -->
     <script>
         /**
          * AETHER OS // KERNEL & THREAD MANAGER
@@ -354,8 +342,7 @@
                             <div class="control-dot dot-max" onclick="AetherOS.maximizeWindow('${id}')"></div>
                         </div>
                         <div class="os-window-title">${title}</div>
-                        <div class="w-4"></div> <!-- Balancer -->
-                    </div>
+                        <div class="w-4"></div> </div>
                     <div class="os-window-content">
                         ${htmlContent}
                     </div>
@@ -520,7 +507,7 @@
                         <div class="border-b border-white/10 pb-2 mb-4 text-cyan-400 font-bold">AETHER KERNEL V3 DIAGNOSTICS</div>
                         <div class="flex justify-between"><span class="text-white/50">User Agent:</span> <span class="truncate ml-4 text-green-300">${navigator.userAgent.substring(0, 30)}...</span></div>
                         <div class="flex justify-between"><span class="text-white/50">Logical Cores:</span> <span class="text-green-300">${navigator.hardwareConcurrency || 'Unknown'}</span></div>
-                        <div class="flex justify-between"><span class="text-white/50">Memory Bound:</span> <span class="text-green-300">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Reserved'}</span></div>
+                        <div class="flex justify-between"><span class="text-white/50">Memory Bound:</span> <span class="text-green-300">${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Restricted'}</span></div>
                         <div class="flex justify-between"><span class="text-white/50">Web Worker:</span> <span class="text-green-300 animate-pulse">Online & Attached</span></div>
                         <div class="flex justify-between"><span class="text-white/50">Service Worker:</span> <span class="text-green-300">Blob Generated</span></div>
                         
@@ -531,9 +518,6 @@
                 `
             }
         };
-
-        // Initialize OS on load
-        window.onload = () => AetherOS.boot();
     </script>
 
     <script>
@@ -752,7 +736,6 @@
 
         // Initialize Start Menu on load
         setTimeout(() => AetherOS.initStartMenu(), 500);
-        console.log('[AETHER KERNEL] Part 2 Initialized successfully.');
     </script>
 
     <script>
@@ -1078,10 +1061,9 @@
                 menu.innerHTML += newBtns;
             }
         }, 1000);
-
-        console.log('[AETHER KERNEL] Part 3 Initialized successfully.');
     </script>
-        <script>
+
+    <script>
         console.log('[AETHER KERNEL] Loading Part 4: Chroma Node & Dream Weaver...');
 
         // ==========================================
@@ -1290,8 +1272,11 @@
         console.log('[AETHER KERNEL] Part 4 Initialized successfully. OS BOOT COMPLETE.');
         
         // Remove initial boot sequence class once everything is loaded
-        setTimeout(() => document.body.classList.remove('os-booting'), 2000);
+        // Final command to boot OS system
+        window.onload = () => {
+            AetherOS.boot();
+            setTimeout(() => document.body.classList.remove('os-booting'), 2000);
+        };
     </script>
-
 </body>
 </html>
