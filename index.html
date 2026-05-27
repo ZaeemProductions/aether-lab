@@ -13,8 +13,6 @@
       background: radial-gradient(circle at center, #0f172a, #000000); 
       color: #fff; 
       font-family: system-ui, -apple-system, sans-serif; 
-      touch-action: none; 
-      user-select: none;
     }
     #canvas-container { 
       position: absolute; 
@@ -47,29 +45,26 @@
     </div>
   </header>
 
-  <main class="flex-1 flex flex-col items-center p-4 z-10 w-full max-w-6xl mx-auto overflow-hidden">
+  <main class="flex-1 flex flex-col items-center p-4 z-10 w-full max-w-5xl mx-auto overflow-hidden">
     
-    <div class="glass w-full p-3 mb-4 flex flex-wrap justify-center gap-2 shadow-lg">
-      <button onclick="openTool('chat')" class="px-3 py-1.5 rounded-full border border-white/20 text-xs font-medium hover:bg-white/10 transition">🤖 AI</button>
-      <button onclick="openTool('image')" class="px-3 py-1.5 rounded-full border border-white/20 text-xs font-medium hover:bg-white/10 transition">🖼️ Dream</button>
-      <button onclick="openTool('glitch')" class="px-3 py-1.5 rounded-full border border-pink-500/50 text-pink-300 text-xs font-bold hover:bg-pink-500/20 transition">🔮 Glitch</button>
-      <button onclick="openTool('audio')" class="px-3 py-1.5 rounded-full border border-cyan-500/50 text-cyan-300 text-xs font-bold hover:bg-cyan-500/20 transition">🎙️ Resonance</button>
-      <button onclick="openTool('particle')" class="px-3 py-1.5 rounded-full border border-yellow-500/50 text-yellow-300 text-xs font-bold hover:bg-yellow-500/20 transition">✨ Particles</button>
-      <button onclick="openTool('camera')" class="px-3 py-1.5 rounded-full border border-green-500/50 text-green-300 text-xs font-bold hover:bg-green-500/20 transition">👁️ Optics</button>
-      <button onclick="openTool('mandala')" class="px-3 py-1.5 rounded-full border border-purple-500/50 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition">💠 Glyphs</button>
-      <button onclick="openTool('singularity')" class="px-3 py-1.5 rounded-full border border-indigo-500/50 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition">🕳️ Singularity</button>
-      <button onclick="openTool('automata')" class="px-3 py-1.5 rounded-full border border-emerald-500/50 text-emerald-300 text-xs font-bold hover:bg-emerald-500/20 transition">🧬 Automata</button>
-      <button onclick="openTool('fractal')" class="px-3 py-1.5 rounded-full border border-lime-500/50 text-lime-300 text-xs font-bold hover:bg-lime-500/20 transition">🌿 Fractal</button>
-      <button onclick="openTool('warp')" class="px-3 py-1.5 rounded-full border border-blue-500/50 text-blue-300 text-xs font-bold hover:bg-blue-500/20 transition">🚀 Warp</button>
-      <button onclick="openTool('matrix')" class="px-3 py-1.5 rounded-full border border-green-400/50 text-green-300 text-xs font-bold hover:bg-green-400/20 transition">💻 Core</button>
+    <div class="glass w-full p-4 mb-6 flex flex-wrap justify-center gap-3 shadow-lg">
+      <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🤖 AI</button>
+      <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🖼️ Dream</button>
+      <button onclick="openTool('glitch')" class="px-4 py-2 rounded-full border border-pink-500/50 text-pink-300 text-sm font-bold hover:bg-pink-500/20 transition">🔮 Glitch</button>
+      <button onclick="openTool('audio')" class="px-4 py-2 rounded-full border border-cyan-500/50 text-cyan-300 text-sm font-bold hover:bg-cyan-500/20 transition">🎙️ Resonance</button>
+      <div class="w-px h-8 bg-white/20 mx-2 hidden md:block"></div>
+      <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-yellow-500/50 text-yellow-300 text-sm font-bold hover:bg-yellow-500/20 transition">🔐 Cipher Core</button>
+      <button onclick="openTool('sysscan')" class="px-4 py-2 rounded-full border border-green-500/50 text-green-300 text-sm font-bold hover:bg-green-500/20 transition">📟 Sys-Scan</button>
+      <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/50 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20 transition">💾 Data Vault</button>
+      <button onclick="openTool('qrcode')" class="px-4 py-2 rounded-full border border-emerald-500/50 text-emerald-300 text-sm font-bold hover:bg-emerald-500/20 transition">🛠️ QR Forge</button>
     </div>
 
     <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
       
       <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
-        <div class="text-5xl mb-4 opacity-80 animate-bounce">🌌</div>
-        <h2 class="text-2xl font-bold text-white/90 mb-2">The Creative Suite is Online</h2>
-        <p class="text-white/50 text-lg">Select a core function to begin, twin.</p>
+        <div class="text-5xl mb-4 opacity-80 animate-pulse">🌌</div>
+        <h2 class="text-2xl font-bold text-white/90 mb-2">Systems Purged & Optimized</h2>
+        <p class="text-white/50 text-lg">Select a core function to begin.</p>
       </div>
 
       <div id="tool-chat" class="hidden flex-1 flex flex-col h-full">
@@ -116,101 +111,43 @@
         </div>
       </div>
 
-      <div id="tool-particle" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-yellow-400">Particle Forge</h2>
-          <button onclick="clearParticles()" class="text-xs border border-yellow-500/50 px-3 py-1 rounded text-yellow-300 hover:bg-yellow-500/20">Clear Canvas</button>
+      <div id="tool-cipher" class="hidden flex-1 flex flex-col h-full">
+        <h2 class="text-xl font-bold mb-4 text-yellow-400 border-b border-white/10 pb-2">Cipher Core</h2>
+        <textarea id="cipher-input" class="w-full h-1/3 bg-black/40 border border-white/20 rounded-lg p-4 text-white focus:outline-none focus:border-yellow-400 transition font-mono mb-4" placeholder="Enter payload to encrypt or decrypt..."></textarea>
+        <div class="flex gap-2 justify-center mb-4 flex-wrap">
+          <button onclick="runCipher('encode')" class="bg-yellow-600/80 hover:bg-yellow-500 px-6 py-2 rounded-lg font-bold transition">B64 Encode</button>
+          <button onclick="runCipher('decode')" class="bg-yellow-800/80 hover:bg-yellow-700 px-6 py-2 rounded-lg font-bold transition">B64 Decode</button>
+          <button onclick="runCipher('hash')" class="bg-red-600/80 hover:bg-red-500 px-6 py-2 rounded-lg font-bold transition">SHA-256 Hash</button>
         </div>
-        <div class="w-full flex-1 relative glass bg-black/80 rounded-xl overflow-hidden cursor-crosshair border border-yellow-500/30">
-          <canvas id="particle-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-yellow-500/30 font-mono text-lg" id="particle-hint">Drag your finger here</span>
-          </div>
+        <textarea id="cipher-output" class="w-full flex-1 bg-black/60 border border-white/10 rounded-lg p-4 text-yellow-300 font-mono text-sm break-all" placeholder="Output will render here..." readonly></textarea>
+      </div>
+
+      <div id="tool-sysscan" class="hidden flex-1 flex flex-col h-full">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+          <h2 class="text-xl font-bold text-green-400">Sys-Scan Telemetry</h2>
+          <button onclick="runSysScan()" class="text-xs border border-green-500/50 px-3 py-1 rounded text-green-300 hover:bg-green-500/20">Refresh Data</button>
+        </div>
+        <div class="w-full flex-1 bg-black/80 rounded-lg border border-green-500/30 p-6 overflow-y-auto font-mono text-green-400 shadow-[inset_0_0_20px_rgba(34,197,94,0.1)]" id="sys-scan-output">
+          <p class="animate-pulse">Initializing diagnostics...</p>
         </div>
       </div>
 
-      <div id="tool-camera" class="hidden flex-1 flex flex-col h-full items-center">
-        <h2 class="text-xl font-bold mb-4 text-green-400 w-full border-b border-white/10 pb-2">Neural Optics</h2>
-        <button id="start-cam-btn" onclick="initCamera()" class="bg-green-600/80 hover:bg-green-500 px-8 py-4 rounded-full font-bold text-lg transition shadow-[0_0_15px_rgba(34,197,94,0.5)] mb-4">Initialize Sensors</button>
-        <div class="w-full flex-1 relative glass bg-black/80 rounded-xl overflow-hidden flex items-center justify-center border border-green-500/30">
-          <video id="hidden-video" class="hidden" autoplay playsinline></video>
-          <canvas id="cam-canvas" class="absolute top-0 left-0 w-full h-full object-cover"></canvas>
-          <span id="cam-status" class="text-green-500/50 font-mono z-10 pointer-events-none">Awaiting optical feed...</span>
+      <div id="tool-vault" class="hidden flex-1 flex flex-col h-full">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+          <h2 class="text-xl font-bold text-indigo-400">Data Vault</h2>
+          <span class="text-xs text-indigo-400/50 font-mono" id="vault-status">Auto-saved locally</span>
         </div>
+        <textarea id="vault-input" oninput="saveVault()" class="w-full flex-1 bg-black/40 border border-indigo-500/30 rounded-lg p-6 text-indigo-100 focus:outline-none focus:border-indigo-400 transition font-mono leading-relaxed" spellcheck="false" placeholder="Drop code snippets, notes, or secrets here. They stay saved on this device even if you close the tab."></textarea>
       </div>
 
-      <div id="tool-mandala" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-purple-400">Chrono-Glyph</h2>
-          <button onclick="clearMandala()" class="text-xs border border-purple-500/50 px-3 py-1 rounded text-purple-300 hover:bg-purple-500/20">Erase Geometry</button>
+      <div id="tool-qrcode" class="hidden flex-1 flex flex-col h-full items-center">
+        <h2 class="text-xl font-bold mb-4 text-emerald-400 w-full border-b border-white/10 pb-2">QR Forge</h2>
+        <div class="w-full max-w-xl flex gap-2 mb-8 mt-4">
+          <input type="text" id="qr-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-400 transition" placeholder="Enter a URL, text, or payload...">
+          <button onclick="generateQR()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-lg font-bold transition">Forge</button>
         </div>
-        <div class="w-full flex-1 relative glass bg-black/90 rounded-xl overflow-hidden cursor-crosshair border border-purple-500/30">
-          <canvas id="mandala-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-purple-500/30 font-mono text-lg" id="mandala-hint">Draw to forge symmetry</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="tool-singularity" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-indigo-400">Singularity Engine</h2>
-          <span class="text-xs text-indigo-400/50 font-mono">Gravity Simulator</span>
-        </div>
-        <div class="w-full flex-1 relative glass bg-black/95 rounded-xl overflow-hidden cursor-crosshair border border-indigo-500/30">
-          <canvas id="singularity-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-indigo-500/30 font-mono text-lg" id="singularity-hint">Hold screen to collapse spacetime</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="tool-automata" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-emerald-400">Neon Automata</h2>
-          <button onclick="clearAutomata()" class="text-xs border border-emerald-500/50 px-3 py-1 rounded text-emerald-300 hover:bg-emerald-500/20">Purge Life</button>
-        </div>
-        <div class="w-full flex-1 relative glass bg-black/90 rounded-xl overflow-hidden cursor-crosshair border border-emerald-500/30">
-          <canvas id="automata-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-emerald-500/30 font-mono text-lg" id="automata-hint">Draw to spawn cellular life</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="tool-fractal" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-lime-400">Fractal Grove</h2>
-          <button onclick="clearFractal()" class="text-xs border border-lime-500/50 px-3 py-1 rounded text-lime-300 hover:bg-lime-500/20">Burn Forest</button>
-        </div>
-        <div class="w-full flex-1 relative glass bg-black/90 rounded-xl overflow-hidden cursor-crosshair border border-lime-500/30">
-          <canvas id="fractal-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-lime-500/30 font-mono text-lg" id="fractal-hint">Tap anywhere to plant a seed</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="tool-warp" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-blue-400">Hyperspace Drive</h2>
-          <span class="text-xs text-blue-400/50 font-mono">FTL Engine</span>
-        </div>
-        <div class="w-full flex-1 relative glass bg-black/95 rounded-xl overflow-hidden cursor-crosshair border border-blue-500/30">
-          <canvas id="warp-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-blue-500/30 font-mono text-lg" id="warp-hint">Hold to engage warp</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="tool-matrix" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-green-500">Matrix Core</h2>
-          <span class="text-xs text-green-500/50 font-mono">Raw Data Stream</span>
-        </div>
-        <div class="w-full flex-1 relative glass bg-black rounded-xl overflow-hidden border border-green-500/30">
-          <canvas id="matrix-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+        <div class="glass p-8 bg-white/5 rounded-2xl shadow-2xl flex items-center justify-center border border-white/10">
+          <img id="qr-output" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=AetherLab&color=ffffff&bgcolor=0f172a" alt="QR Code" class="w-56 h-56 rounded-lg mix-blend-screen">
         </div>
       </div>
 
@@ -220,7 +157,7 @@
   <footer class="glass m-4 p-3 z-10 h-24 overflow-hidden flex flex-col shadow-lg">
     <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Network Feed</h3>
     <ul id="activity-feed" class="text-xs text-white/70 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
-      <li>> OS Expanded to 12 Core Systems. Awaiting user input.</li>
+      <li>> UI optimized. Utilities loaded.</li>
     </ul>
   </footer>
 
@@ -258,7 +195,7 @@
       if (user) {
         loginBtn.classList.add('hidden'); userInfo.classList.remove('hidden');
         userName.textContent = user.displayName; userAvatar.src = user.photoURL;
-        window.globalLogActivity(`${user.displayName} connected to the Aether OS.`);
+        window.globalLogActivity(`${user.displayName} authenticated.`);
       } else {
         loginBtn.classList.remove('hidden'); userInfo.classList.add('hidden');
       }
@@ -277,7 +214,7 @@
   <script>
     function tryLog(msg) { if(window.globalLogActivity) { window.globalLogActivity(msg); } }
 
-    const allTools = ['chat', 'image', 'glitch', 'audio', 'particle', 'camera', 'mandala', 'singularity', 'automata', 'fractal', 'warp', 'matrix'];
+    const allTools = ['chat', 'image', 'glitch', 'audio', 'cipher', 'sysscan', 'vault', 'qrcode'];
     
     function openTool(toolName) {
       document.getElementById('default-view').classList.add('hidden');
@@ -288,17 +225,12 @@
       document.getElementById('tool-' + toolName).classList.remove('hidden');
       document.getElementById('tool-' + toolName).classList.add('flex');
 
-      if(toolName === 'particle' && !window.particleSetup) setupParticles();
-      if(toolName === 'mandala' && !window.mandalaSetup) setupMandala();
       if(toolName === 'audio' && window.audioCanvasSetup) window.resizeAudioCanvas();
-      if(toolName === 'singularity' && !window.singularitySetup) setupSingularity();
-      if(toolName === 'automata' && !window.automataSetup) setupAutomata();
-      if(toolName === 'fractal' && !window.fractalSetup) setupFractal();
-      if(toolName === 'warp' && !window.warpSetup) setupWarp();
-      if(toolName === 'matrix' && !window.matrixSetup) setupMatrix();
+      if(toolName === 'sysscan') runSysScan();
+      if(toolName === 'vault') loadVault();
     }
 
-    // --- 1. AI Chat ---
+    // --- AI Chat ---
     async function sendChatMessage() {
       const input = document.getElementById('chat-input'), output = document.getElementById('chat-output');
       if (!input.value.trim()) return;
@@ -316,7 +248,7 @@
     }
     document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // --- 2. Dream Weaver ---
+    // --- Dream Weaver ---
     function generateImage() {
       const input = document.getElementById('image-input').value.trim();
       if (!input) return;
@@ -327,7 +259,7 @@
       temp.src = url;
     }
 
-    // --- 3. Glitch Caster ---
+    // --- Glitch Caster ---
     function runGlitch() {
       const text = document.getElementById('glitch-input').value, level = document.getElementById('glitch-level').value;
       document.getElementById('glitch-level-display').innerText = level;
@@ -340,7 +272,7 @@
       document.getElementById('glitch-output').innerText = res || 'T̷h̸e̵ ̵v̶o̵i̴d̵ ̶a̸w̵a̶i̸t̵s̴.̵.̷.̶';
     }
 
-    // --- 4. Void Resonance ---
+    // --- Void Resonance ---
     let actx, analyser, dataArr;
     async function initAudio() {
       try {
@@ -367,204 +299,88 @@
       }
     }
 
-    // --- 5. Particle Forge ---
-    let particles = [], pCtx, pCanvas;
-    function setupParticles() {
-      window.particleSetup = true; pCanvas = document.getElementById('particle-canvas'); pCtx = pCanvas.getContext('2d');
-      const r = () => { pCanvas.width = pCanvas.parentElement.clientWidth; pCanvas.height = pCanvas.parentElement.clientHeight; };
-      r(); window.addEventListener('resize', r);
-      const move = (e) => {
-        document.getElementById('particle-hint').classList.add('hidden');
-        const rect = e.rect || pCanvas.getBoundingClientRect(), x = e.clientX-rect.left, y = e.clientY-rect.top;
-        for(let i=0; i<3; i++) particles.push({x, y, vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4, size:Math.random()*5+2, life:1, c:`hsl(${Math.random()*60+40},100%,50%)`});
-      };
-      pCanvas.addEventListener('mousemove', move); pCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); move({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY, rect:pCanvas.getBoundingClientRect()}); });
-      drawParticles();
-    }
-    function clearParticles() { particles = []; }
-    function drawParticles() {
-      if(!window.particleSetup) return; requestAnimationFrame(drawParticles); pCtx.fillStyle = 'rgba(0,0,0,0.1)'; pCtx.fillRect(0,0,pCanvas.width,pCanvas.height);
-      for(let i=particles.length-1; i>=0; i--) {
-        let p = particles[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life-=0.02;
-        if(p.life<=0){particles.splice(i,1);continue;}
-        pCtx.beginPath(); pCtx.arc(p.x,p.y,p.size,0,Math.PI*2); pCtx.fillStyle=p.c; pCtx.globalAlpha=p.life;
-        pCtx.shadowBlur=15; pCtx.shadowColor=p.c; pCtx.fill(); pCtx.globalAlpha=1.0; pCtx.shadowBlur=0;
-      }
-    }
-
-    // --- 6. Neural Optics ---
-    async function initCamera() {
-      const v = document.getElementById('hidden-video'), c = document.getElementById('cam-canvas'), ctx = c.getContext('2d');
+    // --- NEW: Cipher Core ---
+    async function runCipher(action) {
+      const input = document.getElementById('cipher-input').value;
+      const output = document.getElementById('cipher-output');
+      if (!input) return;
+      
       try {
-        v.srcObject = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-        document.getElementById('start-cam-btn').classList.add('hidden'); document.getElementById('cam-status').classList.add('hidden');
-        v.onloadedmetadata = () => { c.width = c.parentElement.clientWidth; c.height = c.parentElement.clientHeight; drawCam(v,c,ctx); };
-      } catch(e) {}
-    }
-    function drawCam(v,c,ctx) {
-      if(v.paused || v.ended) return;
-      const s = Math.max(c.width/v.videoWidth, c.height/v.videoHeight);
-      ctx.drawImage(v, (c.width/2)-(v.videoWidth/2)*s, (c.height/2)-(v.videoHeight/2)*s, v.videoWidth*s, v.videoHeight*s);
-      let img = ctx.getImageData(0,0,c.width,c.height), d = img.data;
-      for(let i=0; i<d.length; i+=4) { let b=(d[i]+d[i+1]+d[i+2])/3; d[i]=0; d[i+1]=b+40; d[i+2]=0; }
-      ctx.putImageData(img,0,0); ctx.fillStyle = 'rgba(0,0,0,0.4)'; for(let i=0; i<c.height; i+=4) ctx.fillRect(0,i,c.width,1);
-      requestAnimationFrame(() => drawCam(v,c,ctx));
-    }
-
-    // --- 7. Chrono-Glyph ---
-    let mC, mCtx, isD = false, lx = 0, ly = 0, hue = 0;
-    function setupMandala() {
-      window.mandalaSetup = true; mC = document.getElementById('mandala-canvas'); mCtx = mC.getContext('2d');
-      const r = () => { mC.width = mC.parentElement.clientWidth; mC.height = mC.parentElement.clientHeight; }; r(); window.addEventListener('resize', r);
-      const st = (e) => { isD = true; document.getElementById('mandala-hint').classList.add('hidden'); let rect = mC.getBoundingClientRect(); lx = e.clientX-rect.left; ly = e.clientY-rect.top; };
-      const mv = (e) => {
-        if(!isD) return; let rect = mC.getBoundingClientRect(), x = e.clientX-rect.left, y = e.clientY-rect.top, cx = mC.width/2, cy = mC.height/2;
-        mCtx.lineCap = 'round'; mCtx.lineWidth = 3; mCtx.strokeStyle = `hsl(${hue},100%,60%)`; mCtx.shadowBlur = 10; mCtx.shadowColor = `hsl(${hue},100%,60%)`; hue = (hue+1)%360;
-        for(let i=0; i<8; i++) {
-          mCtx.save(); mCtx.translate(cx,cy); mCtx.rotate(i*((Math.PI*2)/8)); mCtx.beginPath(); mCtx.moveTo(lx-cx,ly-cy); mCtx.lineTo(x-cx,y-cy); mCtx.stroke();
-          mCtx.scale(1,-1); mCtx.beginPath(); mCtx.moveTo(lx-cx,ly-cy); mCtx.lineTo(x-cx,y-cy); mCtx.stroke(); mCtx.restore();
+        if (action === 'encode') {
+          output.value = btoa(unescape(encodeURIComponent(input)));
+          tryLog(`Executed Base64 Encryption.`);
+        } else if (action === 'decode') {
+          output.value = decodeURIComponent(escape(atob(input)));
+          tryLog(`Executed Base64 Decryption.`);
+        } else if (action === 'hash') {
+          // SHA-256 Web Crypto API
+          const msgBuffer = new TextEncoder().encode(input);
+          const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          output.value = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+          tryLog(`Forged SHA-256 Hash.`);
         }
-        lx = x; ly = y;
-      };
-      mC.addEventListener('mousedown', st); mC.addEventListener('mousemove', mv); mC.addEventListener('mouseup', ()=>isD=false); mC.addEventListener('mouseout', ()=>isD=false);
-      mC.addEventListener('touchstart', (e)=>{e.preventDefault(); st(e.touches[0]);}); mC.addEventListener('touchmove', (e)=>{e.preventDefault(); mv(e.touches[0]);}); mC.addEventListener('touchend', ()=>isD=false);
-    }
-    function clearMandala() { if(mCtx) mCtx.clearRect(0,0,mC.width,mC.height); }
-
-    // --- 8. Singularity Engine (Gravity Sim) ---
-    let sCanvas, sCtx, stars = [], gravityX = -1, gravityY = -1, isPulling = false;
-    function setupSingularity() {
-      window.singularitySetup = true; sCanvas = document.getElementById('singularity-canvas'); sCtx = sCanvas.getContext('2d');
-      const r = () => { sCanvas.width = sCanvas.parentElement.clientWidth; sCanvas.height = sCanvas.parentElement.clientHeight; initStars(); }; r(); window.addEventListener('resize', r);
-      const setG = (e) => {
-        isPulling = true; document.getElementById('singularity-hint').classList.add('hidden');
-        const rect = sCanvas.getBoundingClientRect(); gravityX = (e.clientX || e.touches[0].clientX) - rect.left; gravityY = (e.clientY || e.touches[0].clientY) - rect.top;
-      };
-      const clearG = () => { isPulling = false; gravityX = -1; gravityY = -1; };
-      sCanvas.addEventListener('mousedown', setG); sCanvas.addEventListener('mousemove', (e) => { if(isPulling) setG(e); });
-      sCanvas.addEventListener('mouseup', clearG); sCanvas.addEventListener('mouseout', clearG);
-      sCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); setG(e);}); sCanvas.addEventListener('touchmove', (e)=>{e.preventDefault(); setG(e);}); sCanvas.addEventListener('touchend', clearG);
-      drawSingularity();
-    }
-    function initStars() { stars = []; for(let i=0; i<400; i++) stars.push({ ox: Math.random()*sCanvas.width, oy: Math.random()*sCanvas.height, x: 0, y: 0, size: Math.random()*2+1 }); stars.forEach(s => { s.x = s.ox; s.y = s.oy; }); }
-    function drawSingularity() {
-      if(!window.singularitySetup) return; requestAnimationFrame(drawSingularity);
-      sCtx.fillStyle = 'rgba(0, 0, 0, 0.3)'; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
-      if(isPulling) { sCtx.beginPath(); sCtx.arc(gravityX, gravityY, 20, 0, Math.PI*2); sCtx.fillStyle = '#000'; sCtx.shadowBlur = 30; sCtx.shadowColor = '#6366f1'; sCtx.fill(); sCtx.shadowBlur = 0; }
-      sCtx.fillStyle = '#c7d2fe';
-      stars.forEach(s => {
-        if(isPulling) {
-          const dx = gravityX - s.x, dy = gravityY - s.y, dist = Math.sqrt(dx*dx + dy*dy);
-          if(dist < 5) { s.x = s.ox; s.y = s.oy; } else { const force = 500 / (dist * dist); s.x += dx * force * 0.1; s.y += dy * force * 0.1; }
-        } else { s.x += (s.ox - s.x) * 0.05; s.y += (s.oy - s.y) * 0.05; }
-        sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI*2); sCtx.fill();
-      });
-    }
-
-    // --- 9. Neon Automata (Game of Life) ---
-    let aCanvas, aCtx, grid = [], cols, rows, res = 15;
-    function setupAutomata() {
-      window.automataSetup = true; aCanvas = document.getElementById('automata-canvas'); aCtx = aCanvas.getContext('2d');
-      const r = () => { aCanvas.width = aCanvas.parentElement.clientWidth; aCanvas.height = aCanvas.parentElement.clientHeight; cols = Math.floor(aCanvas.width/res); rows = Math.floor(aCanvas.height/res); clearAutomata(); }; r(); window.addEventListener('resize', r);
-      const drawCell = (e) => {
-        document.getElementById('automata-hint').classList.add('hidden');
-        const rect = aCanvas.getBoundingClientRect(), x = (e.clientX || e.touches[0].clientX) - rect.left, y = (e.clientY || e.touches[0].clientY) - rect.top, col = Math.floor(x/res), row = Math.floor(y/res);
-        if(col>=0 && col<cols && row>=0 && row<rows) { grid[col][row] = 1; if(col+1<cols) grid[col+1][row]=1; if(row+1<rows) grid[col][row+1]=1; if(col>0 && row>0) grid[col-1][row-1]=1; }
-      };
-      let isD = false;
-      aCanvas.addEventListener('mousedown', (e)=>{isD=true; drawCell(e);}); aCanvas.addEventListener('mousemove', (e)=>{if(isD)drawCell(e);}); aCanvas.addEventListener('mouseup', ()=>isD=false);
-      aCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); isD=true; drawCell(e);}); aCanvas.addEventListener('touchmove', (e)=>{e.preventDefault(); if(isD)drawCell(e);}); aCanvas.addEventListener('touchend', ()=>isD=false);
-      setInterval(updateAutomata, 100);
-    }
-    function clearAutomata() { grid = new Array(cols).fill(null).map(() => new Array(rows).fill(0)); }
-    function updateAutomata() {
-      if(!window.automataSetup) return; let next = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
-      aCtx.fillStyle = 'rgba(0,0,0,0.5)'; aCtx.fillRect(0,0,aCanvas.width,aCanvas.height);
-      for(let i=0; i<cols; i++) {
-        for(let j=0; j<rows; j++) {
-          let state = grid[i][j], neighbors = countNeighbors(grid, i, j);
-          if(state === 0 && neighbors === 3) next[i][j] = 1; else if(state === 1 && (neighbors < 2 || neighbors > 3)) next[i][j] = 0; else next[i][j] = state;
-          if(next[i][j] === 1) { aCtx.fillStyle = '#10b981'; aCtx.shadowBlur = 10; aCtx.shadowColor = '#10b981'; aCtx.fillRect(i*res, j*res, res-1, res-1); }
-        }
-      }
-      grid = next; aCtx.shadowBlur = 0;
-    }
-    function countNeighbors(g, x, y) { let sum = 0; for(let i=-1; i<2; i++) { for(let j=-1; j<2; j++) { let col = (x + i + cols) % cols; let row = (y + j + rows) % rows; sum += g[col][row]; } } sum -= g[x][y]; return sum; }
-
-    // --- 10. Fractal Grove ---
-    let fCanvas, fCtx;
-    function setupFractal() {
-      window.fractalSetup = true; fCanvas = document.getElementById('fractal-canvas'); fCtx = fCanvas.getContext('2d');
-      const r = () => { fCanvas.width = fCanvas.parentElement.clientWidth; fCanvas.height = fCanvas.parentElement.clientHeight; }; r(); window.addEventListener('resize', r);
-      const tap = (e) => {
-        document.getElementById('fractal-hint').classList.add('hidden');
-        const rect = fCanvas.getBoundingClientRect(), x = (e.clientX || e.touches[0].clientX) - rect.left, y = (e.clientY || e.touches[0].clientY) - rect.top;
-        drawTree(x, y, Math.random()*40 + 40, 0, 8, `hsl(${Math.random()*60+80},100%,70%)`, `hsl(${Math.random()*60+120},100%,50%)`);
-      };
-      fCanvas.addEventListener('mousedown', tap); fCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); tap(e);});
-    }
-    function clearFractal() { if(fCtx) fCtx.clearRect(0,0,fCanvas.width,fCanvas.height); }
-    function drawTree(x, y, len, angle, branchWidth, c1, c2) {
-      fCtx.beginPath(); fCtx.save(); fCtx.strokeStyle = c1; fCtx.fillStyle = c2; fCtx.shadowBlur = 15; fCtx.shadowColor = c1; fCtx.lineWidth = branchWidth;
-      fCtx.translate(x, y); fCtx.rotate(angle * Math.PI/180); fCtx.moveTo(0, 0); fCtx.lineTo(0, -len); fCtx.stroke();
-      if(len < 10) { fCtx.restore(); return; }
-      setTimeout(() => { // Animated growth
-        drawTree(0, -len, len*0.75, angle + (Math.random()*20+10), branchWidth*0.7, c1, c2);
-        drawTree(0, -len, len*0.75, angle - (Math.random()*20+10), branchWidth*0.7, c1, c2);
-      }, 50);
-      fCtx.restore();
-    }
-
-    // --- 11. Hyperspace Drive ---
-    let wCanvas, wCtx, warpStars = [], speed = 0.5, isWarping = false;
-    function setupWarp() {
-      window.warpSetup = true; wCanvas = document.getElementById('warp-canvas'); wCtx = wCanvas.getContext('2d');
-      const r = () => { wCanvas.width = wCanvas.parentElement.clientWidth; wCanvas.height = wCanvas.parentElement.clientHeight; initWarpStars(); }; r(); window.addEventListener('resize', r);
-      const press = () => { isWarping = true; document.getElementById('warp-hint').classList.add('hidden'); }; const release = () => { isWarping = false; };
-      wCanvas.addEventListener('mousedown', press); wCanvas.addEventListener('mouseup', release); wCanvas.addEventListener('mouseout', release);
-      wCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); press();}); wCanvas.addEventListener('touchend', release);
-      drawWarp();
-    }
-    function initWarpStars() { warpStars = []; for(let i=0; i<600; i++) warpStars.push({x: Math.random()*2000-1000, y: Math.random()*2000-1000, z: Math.random()*2000}); }
-    function drawWarp() {
-      if(!window.warpSetup) return; requestAnimationFrame(drawWarp);
-      wCtx.fillStyle = 'rgba(0,0,0,0.3)'; wCtx.fillRect(0,0,wCanvas.width,wCanvas.height);
-      const cx = wCanvas.width/2, cy = wCanvas.height/2;
-      speed = isWarping ? speed + (30 - speed)*0.1 : speed + (0.5 - speed)*0.1;
-      warpStars.forEach(s => {
-        s.pz = s.z; s.z -= speed;
-        if(s.z < 1) { s.z = 2000; s.pz = 2000; s.x = Math.random()*2000-1000; s.y = Math.random()*2000-1000; }
-        const px = cx + (s.x / s.z) * 500, py = cy + (s.y / s.z) * 500;
-        const lx = cx + (s.x / s.pz) * 500, ly = cy + (s.y / s.pz) * 500;
-        wCtx.beginPath(); wCtx.moveTo(lx, ly); wCtx.lineTo(px, py);
-        wCtx.lineWidth = isWarping ? 3 : Math.max(0.1, 2-(s.z/1000));
-        wCtx.strokeStyle = isWarping ? '#60a5fa' : '#ffffff';
-        wCtx.stroke();
-      });
-    }
-
-    // --- 12. Matrix Core ---
-    let matCanvas, matCtx, drops = [], matChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~".split("");
-    let fontSize = 16, columns;
-    function setupMatrix() {
-      window.matrixSetup = true; matCanvas = document.getElementById('matrix-canvas'); matCtx = matCanvas.getContext('2d');
-      const r = () => { 
-        matCanvas.width = matCanvas.parentElement.clientWidth; matCanvas.height = matCanvas.parentElement.clientHeight; 
-        columns = Math.floor(matCanvas.width/fontSize); drops = []; for(let x=0; x<columns; x++) drops[x] = Math.random()* -100;
-      }; r(); window.addEventListener('resize', r);
-      setInterval(drawMatrix, 50);
-    }
-    function drawMatrix() {
-      if(!window.matrixSetup) return;
-      matCtx.fillStyle = "rgba(0, 0, 0, 0.05)"; matCtx.fillRect(0, 0, matCanvas.width, matCanvas.height);
-      matCtx.fillStyle = "#4ade80"; matCtx.font = fontSize + "px monospace";
-      for(let i=0; i<drops.length; i++) {
-        let text = matChars[Math.floor(Math.random()*matChars.length)];
-        matCtx.fillText(text, i*fontSize, drops[i]*fontSize);
-        if(drops[i]*fontSize > matCanvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
+      } catch (e) {
+        output.value = "Error: Invalid input format for this operation.";
       }
     }
+
+    // --- NEW: Sys-Scan Telemetry ---
+    function runSysScan() {
+      const out = document.getElementById('sys-scan-output');
+      let html = `<div class="mb-4 text-green-300 font-bold">SYSTEM DIAGNOSTICS INITIATED...</div>`;
+      
+      const data = {
+        "User Agent": navigator.userAgent,
+        "Platform": navigator.platform || "Unknown",
+        "Logical Cores": navigator.hardwareConcurrency || "Unknown",
+        "Device Memory": navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Restricted",
+        "Language": navigator.language,
+        "Cookies Enabled": navigator.cookieEnabled,
+        "Screen Resolution": `${window.screen.width} x ${window.screen.height}`,
+        "Color Depth": `${window.screen.colorDepth}-bit`,
+        "Network Status": navigator.onLine ? "ONLINE" : "OFFLINE",
+        "Network Type": navigator.connection ? navigator.connection.effectiveType : "Unknown",
+        "Timezone": Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+
+      for (const [key, value] of Object.entries(data)) {
+        html += `<div class="mb-2"><span class="text-green-500/50">[${key.toUpperCase()}]</span><br>> ${value}</div>`;
+      }
+      
+      html += `<div class="mt-4 text-green-300 font-bold animate-pulse">SCAN COMPLETE.</div>`;
+      out.innerHTML = html;
+      tryLog(`Ran Sys-Scan Telemetry.`);
+    }
+
+    // --- NEW: Data Vault ---
+    function loadVault() {
+      const input = document.getElementById('vault-input');
+      const saved = localStorage.getItem('aether_vault_data');
+      if(saved) input.value = saved;
+    }
+    function saveVault() {
+      const input = document.getElementById('vault-input').value;
+      localStorage.setItem('aether_vault_data', input);
+      const status = document.getElementById('vault-status');
+      status.innerText = "Saved just now";
+      status.classList.add('text-indigo-300');
+      setTimeout(() => {
+        status.innerText = "Auto-saved locally";
+        status.classList.remove('text-indigo-300');
+      }, 2000);
+    }
+
+    // --- NEW: QR Forge ---
+    function generateQR() {
+      const input = document.getElementById('qr-input').value.trim();
+      const qrOutput = document.getElementById('qr-output');
+      if (!input) return;
+      tryLog(`Forged new QR Code.`);
+      qrOutput.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(input)}&color=ffffff&bgcolor=0f172a`;
+    }
+    document.getElementById('qr-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') generateQR(); });
+
   </script>
 
   <script>
