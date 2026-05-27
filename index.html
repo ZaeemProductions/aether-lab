@@ -13,7 +13,7 @@
       background: radial-gradient(circle at center, #0f172a, #000000); 
       color: #fff; 
       font-family: system-ui, -apple-system, sans-serif; 
-      touch-action: none; /* Prevents weird scrolling on interactive tools */
+      touch-action: none; 
       user-select: none;
     }
     #canvas-container { 
@@ -57,9 +57,11 @@
       <button onclick="openTool('particle')" class="px-3 py-1.5 rounded-full border border-yellow-500/50 text-yellow-300 text-xs font-bold hover:bg-yellow-500/20 transition">✨ Particles</button>
       <button onclick="openTool('camera')" class="px-3 py-1.5 rounded-full border border-green-500/50 text-green-300 text-xs font-bold hover:bg-green-500/20 transition">👁️ Optics</button>
       <button onclick="openTool('mandala')" class="px-3 py-1.5 rounded-full border border-purple-500/50 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition">💠 Glyphs</button>
-      <button onclick="openTool('theremin')" class="px-3 py-1.5 rounded-full border border-red-500/50 text-red-300 text-xs font-bold hover:bg-red-500/20 transition">🎼 Theremin</button>
       <button onclick="openTool('singularity')" class="px-3 py-1.5 rounded-full border border-indigo-500/50 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition">🕳️ Singularity</button>
       <button onclick="openTool('automata')" class="px-3 py-1.5 rounded-full border border-emerald-500/50 text-emerald-300 text-xs font-bold hover:bg-emerald-500/20 transition">🧬 Automata</button>
+      <button onclick="openTool('fractal')" class="px-3 py-1.5 rounded-full border border-lime-500/50 text-lime-300 text-xs font-bold hover:bg-lime-500/20 transition">🌿 Fractal</button>
+      <button onclick="openTool('warp')" class="px-3 py-1.5 rounded-full border border-blue-500/50 text-blue-300 text-xs font-bold hover:bg-blue-500/20 transition">🚀 Warp</button>
+      <button onclick="openTool('matrix')" class="px-3 py-1.5 rounded-full border border-green-400/50 text-green-300 text-xs font-bold hover:bg-green-400/20 transition">💻 Core</button>
     </div>
 
     <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
@@ -119,7 +121,7 @@
           <h2 class="text-xl font-bold text-yellow-400">Particle Forge</h2>
           <button onclick="clearParticles()" class="text-xs border border-yellow-500/50 px-3 py-1 rounded text-yellow-300 hover:bg-yellow-500/20">Clear Canvas</button>
         </div>
-        <div class="w-full flex-1 relative glass bg-black/80 rounded-xl overflow-hidden cursor-crosshair border border-yellow-500/30" id="particle-container">
+        <div class="w-full flex-1 relative glass bg-black/80 rounded-xl overflow-hidden cursor-crosshair border border-yellow-500/30">
           <canvas id="particle-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
           <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
             <span class="text-yellow-500/30 font-mono text-lg" id="particle-hint">Drag your finger here</span>
@@ -150,20 +152,6 @@
         </div>
       </div>
 
-      <div id="tool-theremin" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-red-400">Aether Theremin</h2>
-          <span class="text-xs text-red-400/50 font-mono">Synthesizer Active</span>
-        </div>
-        <div class="w-full flex-1 relative glass bg-black/80 rounded-xl overflow-hidden cursor-crosshair border border-red-500/30 shadow-[inset_0_0_50px_rgba(239,68,68,0.1)]">
-          <canvas id="theremin-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
-          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span class="text-red-500/30 font-mono text-lg" id="theremin-hint">Touch and drag to synthesize sound</span>
-            <span class="text-red-500/20 font-mono text-xs mt-2">X: Pitch | Y: Volume</span>
-          </div>
-        </div>
-      </div>
-
       <div id="tool-singularity" class="hidden flex-1 flex flex-col h-full">
         <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
           <h2 class="text-xl font-bold text-indigo-400">Singularity Engine</h2>
@@ -190,13 +178,49 @@
         </div>
       </div>
 
+      <div id="tool-fractal" class="hidden flex-1 flex flex-col h-full">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+          <h2 class="text-xl font-bold text-lime-400">Fractal Grove</h2>
+          <button onclick="clearFractal()" class="text-xs border border-lime-500/50 px-3 py-1 rounded text-lime-300 hover:bg-lime-500/20">Burn Forest</button>
+        </div>
+        <div class="w-full flex-1 relative glass bg-black/90 rounded-xl overflow-hidden cursor-crosshair border border-lime-500/30">
+          <canvas id="fractal-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span class="text-lime-500/30 font-mono text-lg" id="fractal-hint">Tap anywhere to plant a seed</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="tool-warp" class="hidden flex-1 flex flex-col h-full">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+          <h2 class="text-xl font-bold text-blue-400">Hyperspace Drive</h2>
+          <span class="text-xs text-blue-400/50 font-mono">FTL Engine</span>
+        </div>
+        <div class="w-full flex-1 relative glass bg-black/95 rounded-xl overflow-hidden cursor-crosshair border border-blue-500/30">
+          <canvas id="warp-canvas" class="absolute top-0 left-0 w-full h-full touch-none"></canvas>
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span class="text-blue-500/30 font-mono text-lg" id="warp-hint">Hold to engage warp</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="tool-matrix" class="hidden flex-1 flex flex-col h-full">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+          <h2 class="text-xl font-bold text-green-500">Matrix Core</h2>
+          <span class="text-xs text-green-500/50 font-mono">Raw Data Stream</span>
+        </div>
+        <div class="w-full flex-1 relative glass bg-black rounded-xl overflow-hidden border border-green-500/30">
+          <canvas id="matrix-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+        </div>
+      </div>
+
     </div>
   </main>
 
   <footer class="glass m-4 p-3 z-10 h-24 overflow-hidden flex flex-col shadow-lg">
     <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Network Feed</h3>
     <ul id="activity-feed" class="text-xs text-white/70 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
-      <li>> OS Expanded. Awaiting user input.</li>
+      <li>> OS Expanded to 12 Core Systems. Awaiting user input.</li>
     </ul>
   </footer>
 
@@ -253,7 +277,7 @@
   <script>
     function tryLog(msg) { if(window.globalLogActivity) { window.globalLogActivity(msg); } }
 
-    const allTools = ['chat', 'image', 'glitch', 'audio', 'particle', 'camera', 'mandala', 'theremin', 'singularity', 'automata'];
+    const allTools = ['chat', 'image', 'glitch', 'audio', 'particle', 'camera', 'mandala', 'singularity', 'automata', 'fractal', 'warp', 'matrix'];
     
     function openTool(toolName) {
       document.getElementById('default-view').classList.add('hidden');
@@ -264,19 +288,19 @@
       document.getElementById('tool-' + toolName).classList.remove('hidden');
       document.getElementById('tool-' + toolName).classList.add('flex');
 
-      // Initialize Heavy Tools on Demand
       if(toolName === 'particle' && !window.particleSetup) setupParticles();
       if(toolName === 'mandala' && !window.mandalaSetup) setupMandala();
       if(toolName === 'audio' && window.audioCanvasSetup) window.resizeAudioCanvas();
-      if(toolName === 'theremin' && !window.thereminSetup) setupTheremin();
       if(toolName === 'singularity' && !window.singularitySetup) setupSingularity();
       if(toolName === 'automata' && !window.automataSetup) setupAutomata();
+      if(toolName === 'fractal' && !window.fractalSetup) setupFractal();
+      if(toolName === 'warp' && !window.warpSetup) setupWarp();
+      if(toolName === 'matrix' && !window.matrixSetup) setupMatrix();
     }
 
     // --- 1. AI Chat ---
     async function sendChatMessage() {
-      const input = document.getElementById('chat-input');
-      const output = document.getElementById('chat-output');
+      const input = document.getElementById('chat-input'), output = document.getElementById('chat-output');
       if (!input.value.trim()) return;
       output.innerHTML += `<div class="text-right"><span class="bg-blue-600 px-4 py-2 rounded-lg inline-block text-white">${input.value.trim()}</span></div>`;
       const txt = input.value.trim(); input.value = '';
@@ -296,19 +320,16 @@
     function generateImage() {
       const input = document.getElementById('image-input').value.trim();
       if (!input) return;
-      const placeholder = document.getElementById('image-placeholder');
-      const img = document.getElementById('result-image');
+      const placeholder = document.getElementById('image-placeholder'), img = document.getElementById('result-image');
       placeholder.textContent = "Synthesizing..."; placeholder.classList.remove('hidden'); img.classList.add('hidden');
       const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*10000)}&width=800&height=500&nologo=true`;
-      const temp = new Image();
-      temp.onload = () => { img.src = url; placeholder.classList.add('hidden'); img.classList.remove('hidden'); };
+      const temp = new Image(); temp.onload = () => { img.src = url; placeholder.classList.add('hidden'); img.classList.remove('hidden'); };
       temp.src = url;
     }
 
     // --- 3. Glitch Caster ---
     function runGlitch() {
-      const text = document.getElementById('glitch-input').value;
-      const level = document.getElementById('glitch-level').value;
+      const text = document.getElementById('glitch-input').value, level = document.getElementById('glitch-level').value;
       document.getElementById('glitch-level-display').innerText = level;
       const chars = '\u0300\u0301\u0302\u0303\u0304\u0305\u0306\u0307\u0308\u0309\u030A\u030B\u030C\u030D\u030E\u030F\u0310\u0311\u0312\u0313\u0314\u0315\u0316\u0317\u0318\u0319\u031A\u031B\u031C\u031D\u031E\u031F\u0320\u0321\u0322\u0323\u0324\u0325\u0326\u0327\u0328\u0329\u032A\u032B\u032C\u032D\u032E\u032F';
       let res = '';
@@ -325,10 +346,8 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         document.getElementById('start-audio-btn').classList.add('hidden'); document.getElementById('audio-status').classList.add('hidden');
-        actx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = actx.createAnalyser();
-        actx.createMediaStreamSource(stream).connect(analyser);
-        analyser.fftSize = 256; dataArr = new Uint8Array(analyser.frequencyBinCount);
+        actx = new (window.AudioContext || window.webkitAudioContext)(); analyser = actx.createAnalyser();
+        actx.createMediaStreamSource(stream).connect(analyser); analyser.fftSize = 256; dataArr = new Uint8Array(analyser.frequencyBinCount);
         setupAudioCanvas(); drawAudio();
       } catch(e){}
     }
@@ -339,8 +358,7 @@
     }
     function drawAudio() {
       if(!actx) return;
-      const c = document.getElementById('audio-canvas'), ctx = c.getContext('2d');
-      requestAnimationFrame(drawAudio); analyser.getByteFrequencyData(dataArr);
+      const c = document.getElementById('audio-canvas'), ctx = c.getContext('2d'); requestAnimationFrame(drawAudio); analyser.getByteFrequencyData(dataArr);
       ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0,0,c.width,c.height);
       let x = 0, w = (c.width/dataArr.length)*2.5;
       for(let i = 0; i < dataArr.length; i++) {
@@ -360,14 +378,12 @@
         const rect = e.rect || pCanvas.getBoundingClientRect(), x = e.clientX-rect.left, y = e.clientY-rect.top;
         for(let i=0; i<3; i++) particles.push({x, y, vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4, size:Math.random()*5+2, life:1, c:`hsl(${Math.random()*60+40},100%,50%)`});
       };
-      pCanvas.addEventListener('mousemove', move);
-      pCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); move({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY, rect:pCanvas.getBoundingClientRect()}); });
+      pCanvas.addEventListener('mousemove', move); pCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); move({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY, rect:pCanvas.getBoundingClientRect()}); });
       drawParticles();
     }
     function clearParticles() { particles = []; }
     function drawParticles() {
-      if(!window.particleSetup) return;
-      requestAnimationFrame(drawParticles); pCtx.fillStyle = 'rgba(0,0,0,0.1)'; pCtx.fillRect(0,0,pCanvas.width,pCanvas.height);
+      if(!window.particleSetup) return; requestAnimationFrame(drawParticles); pCtx.fillStyle = 'rgba(0,0,0,0.1)'; pCtx.fillRect(0,0,pCanvas.width,pCanvas.height);
       for(let i=particles.length-1; i>=0; i--) {
         let p = particles[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life-=0.02;
         if(p.life<=0){particles.splice(i,1);continue;}
@@ -391,8 +407,7 @@
       ctx.drawImage(v, (c.width/2)-(v.videoWidth/2)*s, (c.height/2)-(v.videoHeight/2)*s, v.videoWidth*s, v.videoHeight*s);
       let img = ctx.getImageData(0,0,c.width,c.height), d = img.data;
       for(let i=0; i<d.length; i+=4) { let b=(d[i]+d[i+1]+d[i+2])/3; d[i]=0; d[i+1]=b+40; d[i+2]=0; }
-      ctx.putImageData(img,0,0);
-      ctx.fillStyle = 'rgba(0,0,0,0.4)'; for(let i=0; i<c.height; i+=4) ctx.fillRect(0,i,c.width,1);
+      ctx.putImageData(img,0,0); ctx.fillStyle = 'rgba(0,0,0,0.4)'; for(let i=0; i<c.height; i+=4) ctx.fillRect(0,i,c.width,1);
       requestAnimationFrame(() => drawCam(v,c,ctx));
     }
 
@@ -406,8 +421,7 @@
         if(!isD) return; let rect = mC.getBoundingClientRect(), x = e.clientX-rect.left, y = e.clientY-rect.top, cx = mC.width/2, cy = mC.height/2;
         mCtx.lineCap = 'round'; mCtx.lineWidth = 3; mCtx.strokeStyle = `hsl(${hue},100%,60%)`; mCtx.shadowBlur = 10; mCtx.shadowColor = `hsl(${hue},100%,60%)`; hue = (hue+1)%360;
         for(let i=0; i<8; i++) {
-          mCtx.save(); mCtx.translate(cx,cy); mCtx.rotate(i*((Math.PI*2)/8));
-          mCtx.beginPath(); mCtx.moveTo(lx-cx,ly-cy); mCtx.lineTo(x-cx,y-cy); mCtx.stroke();
+          mCtx.save(); mCtx.translate(cx,cy); mCtx.rotate(i*((Math.PI*2)/8)); mCtx.beginPath(); mCtx.moveTo(lx-cx,ly-cy); mCtx.lineTo(x-cx,y-cy); mCtx.stroke();
           mCtx.scale(1,-1); mCtx.beginPath(); mCtx.moveTo(lx-cx,ly-cy); mCtx.lineTo(x-cx,y-cy); mCtx.stroke(); mCtx.restore();
         }
         lx = x; ly = y;
@@ -417,197 +431,150 @@
     }
     function clearMandala() { if(mCtx) mCtx.clearRect(0,0,mC.width,mC.height); }
 
-    // --- 8. Aether Theremin ---
-    let tCtx, tCanvas, synthCtx, osc, gain;
-    function setupTheremin() {
-      window.thereminSetup = true; tCanvas = document.getElementById('theremin-canvas'); tCtx = tCanvas.getContext('2d');
-      const r = () => { tCanvas.width = tCanvas.parentElement.clientWidth; tCanvas.height = tCanvas.parentElement.clientHeight; }; r(); window.addEventListener('resize', r);
-      
-      const st = (e) => {
-        if(!synthCtx) { synthCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        document.getElementById('theremin-hint').classList.add('hidden');
-        osc = synthCtx.createOscillator(); gain = synthCtx.createGain();
-        osc.connect(gain); gain.connect(synthCtx.destination);
-        osc.type = 'sine'; osc.start(); mv(e); drawTheremin(e.x, e.y, true);
-      };
-      const mv = (e) => {
-        if(!osc) return;
-        const rect = tCanvas.getBoundingClientRect();
-        const x = e.clientX || e.touches[0].clientX; const y = e.clientY || e.touches[0].clientY;
-        const localX = x - rect.left, localY = y - rect.top;
-        
-        // Map X to Freq (100 - 1500Hz)
-        osc.frequency.value = 100 + (localX / tCanvas.width) * 1400;
-        // Map Y to Vol (0 - 1) inverted
-        gain.gain.value = 1 - (localY / tCanvas.height);
-        drawTheremin(localX, localY, true);
-      };
-      const en = () => { if(osc) { osc.stop(); osc.disconnect(); osc = null; } drawTheremin(0,0,false); };
-
-      tCanvas.addEventListener('mousedown', (e)=>{st({clientX:e.clientX, clientY:e.clientY, x:e.clientX, y:e.clientY})});
-      tCanvas.addEventListener('mousemove', mv); tCanvas.addEventListener('mouseup', en); tCanvas.addEventListener('mouseout', en);
-      tCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); st({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY, x:e.touches[0].clientX, y:e.touches[0].clientY})});
-      tCanvas.addEventListener('touchmove', (e)=>{e.preventDefault(); mv(e);}); tCanvas.addEventListener('touchend', en);
-    }
-    function drawTheremin(x, y, active) {
-      tCtx.clearRect(0,0,tCanvas.width,tCanvas.height);
-      if(!active) return;
-      tCtx.beginPath(); tCtx.moveTo(x, 0); tCtx.lineTo(x, tCanvas.height);
-      tCtx.moveTo(0, y); tCtx.lineTo(tCanvas.width, y);
-      tCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)'; tCtx.lineWidth = 2; tCtx.stroke();
-      tCtx.beginPath(); tCtx.arc(x, y, 15, 0, Math.PI*2);
-      tCtx.fillStyle = 'rgba(239, 68, 68, 0.8)'; tCtx.shadowBlur = 20; tCtx.shadowColor = 'red'; tCtx.fill();
-      tCtx.shadowBlur = 0;
-    }
-
-    // --- 9. Singularity Engine (Gravity Sim) ---
+    // --- 8. Singularity Engine (Gravity Sim) ---
     let sCanvas, sCtx, stars = [], gravityX = -1, gravityY = -1, isPulling = false;
     function setupSingularity() {
       window.singularitySetup = true; sCanvas = document.getElementById('singularity-canvas'); sCtx = sCanvas.getContext('2d');
       const r = () => { sCanvas.width = sCanvas.parentElement.clientWidth; sCanvas.height = sCanvas.parentElement.clientHeight; initStars(); }; r(); window.addEventListener('resize', r);
-      
       const setG = (e) => {
         isPulling = true; document.getElementById('singularity-hint').classList.add('hidden');
-        const rect = sCanvas.getBoundingClientRect();
-        gravityX = (e.clientX || e.touches[0].clientX) - rect.left;
-        gravityY = (e.clientY || e.touches[0].clientY) - rect.top;
+        const rect = sCanvas.getBoundingClientRect(); gravityX = (e.clientX || e.touches[0].clientX) - rect.left; gravityY = (e.clientY || e.touches[0].clientY) - rect.top;
       };
       const clearG = () => { isPulling = false; gravityX = -1; gravityY = -1; };
-      
       sCanvas.addEventListener('mousedown', setG); sCanvas.addEventListener('mousemove', (e) => { if(isPulling) setG(e); });
       sCanvas.addEventListener('mouseup', clearG); sCanvas.addEventListener('mouseout', clearG);
       sCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); setG(e);}); sCanvas.addEventListener('touchmove', (e)=>{e.preventDefault(); setG(e);}); sCanvas.addEventListener('touchend', clearG);
-      
       drawSingularity();
     }
-    function initStars() {
-      stars = [];
-      for(let i=0; i<400; i++) {
-        stars.push({ ox: Math.random()*sCanvas.width, oy: Math.random()*sCanvas.height, x: 0, y: 0, size: Math.random()*2+1 });
-      }
-      stars.forEach(s => { s.x = s.ox; s.y = s.oy; });
-    }
+    function initStars() { stars = []; for(let i=0; i<400; i++) stars.push({ ox: Math.random()*sCanvas.width, oy: Math.random()*sCanvas.height, x: 0, y: 0, size: Math.random()*2+1 }); stars.forEach(s => { s.x = s.ox; s.y = s.oy; }); }
     function drawSingularity() {
-      if(!window.singularitySetup) return;
-      requestAnimationFrame(drawSingularity);
+      if(!window.singularitySetup) return; requestAnimationFrame(drawSingularity);
       sCtx.fillStyle = 'rgba(0, 0, 0, 0.3)'; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height);
-      
-      if(isPulling) { // Draw Black hole
-        sCtx.beginPath(); sCtx.arc(gravityX, gravityY, 20, 0, Math.PI*2);
-        sCtx.fillStyle = '#000'; sCtx.shadowBlur = 30; sCtx.shadowColor = '#6366f1'; sCtx.fill(); sCtx.shadowBlur = 0;
-      }
-
+      if(isPulling) { sCtx.beginPath(); sCtx.arc(gravityX, gravityY, 20, 0, Math.PI*2); sCtx.fillStyle = '#000'; sCtx.shadowBlur = 30; sCtx.shadowColor = '#6366f1'; sCtx.fill(); sCtx.shadowBlur = 0; }
       sCtx.fillStyle = '#c7d2fe';
       stars.forEach(s => {
         if(isPulling) {
-          const dx = gravityX - s.x, dy = gravityY - s.y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          if(dist < 5) { s.x = s.ox; s.y = s.oy; } // Reset if sucked in
-          else { const force = 500 / (dist * dist); s.x += dx * force * 0.1; s.y += dy * force * 0.1; }
-        } else {
-          // Slowly return to origin
-          s.x += (s.ox - s.x) * 0.05; s.y += (s.oy - s.y) * 0.05;
-        }
+          const dx = gravityX - s.x, dy = gravityY - s.y, dist = Math.sqrt(dx*dx + dy*dy);
+          if(dist < 5) { s.x = s.ox; s.y = s.oy; } else { const force = 500 / (dist * dist); s.x += dx * force * 0.1; s.y += dy * force * 0.1; }
+        } else { s.x += (s.ox - s.x) * 0.05; s.y += (s.oy - s.y) * 0.05; }
         sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI*2); sCtx.fill();
       });
     }
 
-    // --- 10. Neon Automata (Game of Life) ---
+    // --- 9. Neon Automata (Game of Life) ---
     let aCanvas, aCtx, grid = [], cols, rows, res = 15;
     function setupAutomata() {
       window.automataSetup = true; aCanvas = document.getElementById('automata-canvas'); aCtx = aCanvas.getContext('2d');
-      const r = () => { 
-        aCanvas.width = aCanvas.parentElement.clientWidth; aCanvas.height = aCanvas.parentElement.clientHeight; 
-        cols = Math.floor(aCanvas.width/res); rows = Math.floor(aCanvas.height/res); clearAutomata();
-      }; r(); window.addEventListener('resize', r);
-      
+      const r = () => { aCanvas.width = aCanvas.parentElement.clientWidth; aCanvas.height = aCanvas.parentElement.clientHeight; cols = Math.floor(aCanvas.width/res); rows = Math.floor(aCanvas.height/res); clearAutomata(); }; r(); window.addEventListener('resize', r);
       const drawCell = (e) => {
         document.getElementById('automata-hint').classList.add('hidden');
-        const rect = aCanvas.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
-        const col = Math.floor(x/res), row = Math.floor(y/res);
-        if(col>=0 && col<cols && row>=0 && row<rows) {
-           grid[col][row] = 1;
-           // Add a cluster to make it live longer
-           if(col+1<cols) grid[col+1][row]=1; if(row+1<rows) grid[col][row+1]=1; if(col>0 && row>0) grid[col-1][row-1]=1;
-        }
+        const rect = aCanvas.getBoundingClientRect(), x = (e.clientX || e.touches[0].clientX) - rect.left, y = (e.clientY || e.touches[0].clientY) - rect.top, col = Math.floor(x/res), row = Math.floor(y/res);
+        if(col>=0 && col<cols && row>=0 && row<rows) { grid[col][row] = 1; if(col+1<cols) grid[col+1][row]=1; if(row+1<rows) grid[col][row+1]=1; if(col>0 && row>0) grid[col-1][row-1]=1; }
       };
-      
       let isD = false;
-      aCanvas.addEventListener('mousedown', (e)=>{isD=true; drawCell(e);}); aCanvas.addEventListener('mousemove', (e)=>{if(isD)drawCell(e);});
-      aCanvas.addEventListener('mouseup', ()=>isD=false);
-      aCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); isD=true; drawCell(e);}); aCanvas.addEventListener('touchmove', (e)=>{e.preventDefault(); if(isD)drawCell(e);});
-      aCanvas.addEventListener('touchend', ()=>isD=false);
-      
-      setInterval(updateAutomata, 100); // 10fps for visual clarity
+      aCanvas.addEventListener('mousedown', (e)=>{isD=true; drawCell(e);}); aCanvas.addEventListener('mousemove', (e)=>{if(isD)drawCell(e);}); aCanvas.addEventListener('mouseup', ()=>isD=false);
+      aCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); isD=true; drawCell(e);}); aCanvas.addEventListener('touchmove', (e)=>{e.preventDefault(); if(isD)drawCell(e);}); aCanvas.addEventListener('touchend', ()=>isD=false);
+      setInterval(updateAutomata, 100);
     }
-    function clearAutomata() {
-      grid = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
-    }
+    function clearAutomata() { grid = new Array(cols).fill(null).map(() => new Array(rows).fill(0)); }
     function updateAutomata() {
-      if(!window.automataSetup) return;
-      let next = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
+      if(!window.automataSetup) return; let next = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
       aCtx.fillStyle = 'rgba(0,0,0,0.5)'; aCtx.fillRect(0,0,aCanvas.width,aCanvas.height);
-      
       for(let i=0; i<cols; i++) {
         for(let j=0; j<rows; j++) {
-          let state = grid[i][j];
-          let neighbors = countNeighbors(grid, i, j);
-          
-          if(state === 0 && neighbors === 3) next[i][j] = 1;
-          else if(state === 1 && (neighbors < 2 || neighbors > 3)) next[i][j] = 0;
-          else next[i][j] = state;
-          
-          if(next[i][j] === 1) {
-            aCtx.fillStyle = '#10b981'; // Emerald
-            aCtx.shadowBlur = 10; aCtx.shadowColor = '#10b981';
-            aCtx.fillRect(i*res, j*res, res-1, res-1);
-          }
+          let state = grid[i][j], neighbors = countNeighbors(grid, i, j);
+          if(state === 0 && neighbors === 3) next[i][j] = 1; else if(state === 1 && (neighbors < 2 || neighbors > 3)) next[i][j] = 0; else next[i][j] = state;
+          if(next[i][j] === 1) { aCtx.fillStyle = '#10b981'; aCtx.shadowBlur = 10; aCtx.shadowColor = '#10b981'; aCtx.fillRect(i*res, j*res, res-1, res-1); }
         }
       }
-      grid = next;
-      aCtx.shadowBlur = 0;
+      grid = next; aCtx.shadowBlur = 0;
     }
-    function countNeighbors(g, x, y) {
-      let sum = 0;
-      for(let i=-1; i<2; i++) {
-        for(let j=-1; j<2; j++) {
-          let col = (x + i + cols) % cols; let row = (y + j + rows) % rows;
-          sum += g[col][row];
-        }
+    function countNeighbors(g, x, y) { let sum = 0; for(let i=-1; i<2; i++) { for(let j=-1; j<2; j++) { let col = (x + i + cols) % cols; let row = (y + j + rows) % rows; sum += g[col][row]; } } sum -= g[x][y]; return sum; }
+
+    // --- 10. Fractal Grove ---
+    let fCanvas, fCtx;
+    function setupFractal() {
+      window.fractalSetup = true; fCanvas = document.getElementById('fractal-canvas'); fCtx = fCanvas.getContext('2d');
+      const r = () => { fCanvas.width = fCanvas.parentElement.clientWidth; fCanvas.height = fCanvas.parentElement.clientHeight; }; r(); window.addEventListener('resize', r);
+      const tap = (e) => {
+        document.getElementById('fractal-hint').classList.add('hidden');
+        const rect = fCanvas.getBoundingClientRect(), x = (e.clientX || e.touches[0].clientX) - rect.left, y = (e.clientY || e.touches[0].clientY) - rect.top;
+        drawTree(x, y, Math.random()*40 + 40, 0, 8, `hsl(${Math.random()*60+80},100%,70%)`, `hsl(${Math.random()*60+120},100%,50%)`);
+      };
+      fCanvas.addEventListener('mousedown', tap); fCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); tap(e);});
+    }
+    function clearFractal() { if(fCtx) fCtx.clearRect(0,0,fCanvas.width,fCanvas.height); }
+    function drawTree(x, y, len, angle, branchWidth, c1, c2) {
+      fCtx.beginPath(); fCtx.save(); fCtx.strokeStyle = c1; fCtx.fillStyle = c2; fCtx.shadowBlur = 15; fCtx.shadowColor = c1; fCtx.lineWidth = branchWidth;
+      fCtx.translate(x, y); fCtx.rotate(angle * Math.PI/180); fCtx.moveTo(0, 0); fCtx.lineTo(0, -len); fCtx.stroke();
+      if(len < 10) { fCtx.restore(); return; }
+      setTimeout(() => { // Animated growth
+        drawTree(0, -len, len*0.75, angle + (Math.random()*20+10), branchWidth*0.7, c1, c2);
+        drawTree(0, -len, len*0.75, angle - (Math.random()*20+10), branchWidth*0.7, c1, c2);
+      }, 50);
+      fCtx.restore();
+    }
+
+    // --- 11. Hyperspace Drive ---
+    let wCanvas, wCtx, warpStars = [], speed = 0.5, isWarping = false;
+    function setupWarp() {
+      window.warpSetup = true; wCanvas = document.getElementById('warp-canvas'); wCtx = wCanvas.getContext('2d');
+      const r = () => { wCanvas.width = wCanvas.parentElement.clientWidth; wCanvas.height = wCanvas.parentElement.clientHeight; initWarpStars(); }; r(); window.addEventListener('resize', r);
+      const press = () => { isWarping = true; document.getElementById('warp-hint').classList.add('hidden'); }; const release = () => { isWarping = false; };
+      wCanvas.addEventListener('mousedown', press); wCanvas.addEventListener('mouseup', release); wCanvas.addEventListener('mouseout', release);
+      wCanvas.addEventListener('touchstart', (e)=>{e.preventDefault(); press();}); wCanvas.addEventListener('touchend', release);
+      drawWarp();
+    }
+    function initWarpStars() { warpStars = []; for(let i=0; i<600; i++) warpStars.push({x: Math.random()*2000-1000, y: Math.random()*2000-1000, z: Math.random()*2000}); }
+    function drawWarp() {
+      if(!window.warpSetup) return; requestAnimationFrame(drawWarp);
+      wCtx.fillStyle = 'rgba(0,0,0,0.3)'; wCtx.fillRect(0,0,wCanvas.width,wCanvas.height);
+      const cx = wCanvas.width/2, cy = wCanvas.height/2;
+      speed = isWarping ? speed + (30 - speed)*0.1 : speed + (0.5 - speed)*0.1;
+      warpStars.forEach(s => {
+        s.pz = s.z; s.z -= speed;
+        if(s.z < 1) { s.z = 2000; s.pz = 2000; s.x = Math.random()*2000-1000; s.y = Math.random()*2000-1000; }
+        const px = cx + (s.x / s.z) * 500, py = cy + (s.y / s.z) * 500;
+        const lx = cx + (s.x / s.pz) * 500, ly = cy + (s.y / s.pz) * 500;
+        wCtx.beginPath(); wCtx.moveTo(lx, ly); wCtx.lineTo(px, py);
+        wCtx.lineWidth = isWarping ? 3 : Math.max(0.1, 2-(s.z/1000));
+        wCtx.strokeStyle = isWarping ? '#60a5fa' : '#ffffff';
+        wCtx.stroke();
+      });
+    }
+
+    // --- 12. Matrix Core ---
+    let matCanvas, matCtx, drops = [], matChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~".split("");
+    let fontSize = 16, columns;
+    function setupMatrix() {
+      window.matrixSetup = true; matCanvas = document.getElementById('matrix-canvas'); matCtx = matCanvas.getContext('2d');
+      const r = () => { 
+        matCanvas.width = matCanvas.parentElement.clientWidth; matCanvas.height = matCanvas.parentElement.clientHeight; 
+        columns = Math.floor(matCanvas.width/fontSize); drops = []; for(let x=0; x<columns; x++) drops[x] = Math.random()* -100;
+      }; r(); window.addEventListener('resize', r);
+      setInterval(drawMatrix, 50);
+    }
+    function drawMatrix() {
+      if(!window.matrixSetup) return;
+      matCtx.fillStyle = "rgba(0, 0, 0, 0.05)"; matCtx.fillRect(0, 0, matCanvas.width, matCanvas.height);
+      matCtx.fillStyle = "#4ade80"; matCtx.font = fontSize + "px monospace";
+      for(let i=0; i<drops.length; i++) {
+        let text = matChars[Math.floor(Math.random()*matChars.length)];
+        matCtx.fillText(text, i*fontSize, drops[i]*fontSize);
+        if(drops[i]*fontSize > matCanvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
       }
-      sum -= g[x][y];
-      return sum;
     }
   </script>
 
   <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100);
-    const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.15 });
-    const torus = new THREE.Mesh(geometry, material);
-    scene.add(torus);
-    camera.position.z = 25;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      torus.rotation.x += 0.0005;
-      torus.rotation.y += 0.001;
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100); const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.15 });
+    const torus = new THREE.Mesh(geometry, material); scene.add(torus); camera.position.z = 25;
+    function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.0005; torus.rotation.y += 0.001; renderer.render(scene, camera); } animate();
+    window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
   </script>
 </body>
 </html>
