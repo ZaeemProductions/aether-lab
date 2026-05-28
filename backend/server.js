@@ -7,10 +7,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// 🟢 Keep-Alive Route for cron-job.org
-app.get('/ping', (req, res) => {
-  res.status(200).send('Pong! Aether Backend is wide awake.');
+awake.');
 });
 
 // 🔴 The Stealth Extraction Matrix (Agent Bypass Edition)
@@ -58,6 +55,9 @@ app.get('/api/rip', async (req, res) => {
   }
 });
 
+// 🟢 Keep-Alive Route for cron-job.org
+app.get('/ping', (req, res) => {
+  res.status(200).send('Pong! Aether Backend is wide 
 // Start the server
 app.listen(PORT, () => {
   console.log(`Aether Backend running on port ${PORT}`);
