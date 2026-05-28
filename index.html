@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aether OS // V4 Limitless Paradigm</title>
+    <title>Aether OS // Utility Paradigm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
             --aether-bg: #030305;
-            --aether-surface: rgba(15, 15, 20, 0.6);
+            --aether-surface: rgba(15, 15, 20, 0.7);
             --aether-glass: rgba(255, 255, 255, 0.03);
             --aether-glass-hover: rgba(255, 255, 255, 0.08);
-            --aether-border: rgba(255, 255, 255, 0.05);
-            --aether-border-highlight: rgba(6, 182, 212, 0.3);
-            --accent-cyan: #06b6d4; --accent-purple: #a855f7;
+            --aether-border: rgba(255, 255, 255, 0.08);
+            --aether-border-highlight: rgba(6, 182, 212, 0.4);
+            --accent-cyan: #06b6d4; --accent-purple: #a855f7; --accent-rose: #f43f5e;
             --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
             --font-sans: system-ui, -apple-system, sans-serif;
-            --taskbar-height: 48px;
+            --taskbar-height: 52px;
             --window-border-radius: 12px;
-            --glass-blur: blur(20px);
+            --glass-blur: blur(25px);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--aether-bg); color: #e2e8f0; font-family: var(--font-sans); overflow: hidden; width: 100vw; height: 100vh; user-select: none; -webkit-font-smoothing: antialiased; }
@@ -27,67 +27,57 @@
         @keyframes windowOpen { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         #os-matrix-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
         .os-scanline { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.25) 51%); background-size: 100% 4px; z-index: 9999; pointer-events: none; opacity: 0.15; }
-        .os-booting { animation: bootSequence 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .os-window { position: absolute; background: var(--aether-surface); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--aether-border); border-radius: var(--window-border-radius); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); display: flex; flex-direction: column; overflow: hidden; animation: windowOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; min-width: 350px; min-height: 250px; z-index: 10; }
-        .os-window.active { border-color: var(--aether-border-highlight); box-shadow: 0 0 30px rgba(6, 182, 212, 0.1), 0 25px 50px -12px rgba(0, 0, 0, 0.7); z-index: 100; }
-        .os-window-header { height: 40px; background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid var(--aether-border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; cursor: grab; flex-shrink: 0; }
+        .os-booting { animation: bootSequence 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        .os-window { position: absolute; background: var(--aether-surface); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--aether-border); border-radius: var(--window-border-radius); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column; overflow: hidden; animation: windowOpen 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; min-width: 380px; min-height: 280px; z-index: 10; }
+        .os-window.active { border-color: var(--aether-border-highlight); box-shadow: 0 0 30px rgba(6, 182, 212, 0.15), 0 25px 50px -12px rgba(0, 0, 0, 0.9); z-index: 100; }
+        .os-window-header { height: 42px; background: rgba(0, 0, 0, 0.5); border-bottom: 1px solid var(--aether-border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; cursor: grab; flex-shrink: 0; }
         .os-window-header:active { cursor: grabbing; }
         .os-window-controls { display: flex; gap: 8px; }
         .control-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; transition: opacity 0.2s; }
         .control-dot:hover { opacity: 0.8; }
         .dot-close { background-color: #ef4444; } .dot-min { background-color: #eab308; } .dot-max { background-color: #22c55e; }
-        .os-window-title { font-family: var(--font-mono); font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); letter-spacing: 0.05em; text-transform: uppercase; pointer-events: none; }
+        .os-window-title { font-family: var(--font-mono); font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); letter-spacing: 0.05em; text-transform: uppercase; pointer-events: none; }
         .os-window-content { flex: 1; padding: 16px; overflow-y: auto; position: relative; }
-        .os-taskbar { position: absolute; bottom: 0; left: 0; right: 0; height: var(--taskbar-height); background: rgba(5, 5, 10, 0.8); backdrop-filter: blur(20px); border-top: 1px solid var(--aether-border); display: flex; align-items: center; padding: 0 16px; z-index: 1000; }
-        .taskbar-start { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); transition: all 0.2s; }
+        
+        .os-taskbar { position: absolute; bottom: 0; left: 0; right: 0; height: var(--taskbar-height); background: rgba(5, 5, 10, 0.85); backdrop-filter: blur(25px); border-top: 1px solid var(--aether-border); display: flex; align-items: center; padding: 0 16px; z-index: 1000; }
+        .taskbar-start { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); transition: all 0.2s; }
         .taskbar-start:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(168, 85, 247, 0.6); }
         .taskbar-items { display: flex; gap: 8px; margin-left: 24px; flex: 1; overflow-x: auto; }
-        .taskbar-item { padding: 6px 12px; border-radius: 6px; background: var(--aether-glass); border: 1px solid transparent; font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .taskbar-item { padding: 8px 14px; border-radius: 6px; background: var(--aether-glass); border: 1px solid transparent; font-size: 0.8rem; font-family: var(--font-mono); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
         .taskbar-item:hover { background: var(--aether-glass-hover); border-color: var(--aether-border); }
-        .taskbar-item.active { background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.3); color: var(--accent-cyan); }
-        .taskbar-tray { display: flex; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); }
+        .taskbar-item.active { background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.4); color: var(--accent-cyan); }
+        .taskbar-tray { display: flex; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); }
+        
         ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
 <body class="os-booting">
     <div id="os-matrix-bg"></div>
     <div class="os-scanline"></div>
-    <div id="os-desktop" class="absolute inset-0 bottom-[48px] overflow-hidden"></div>
+    <div id="os-desktop" class="absolute inset-0 bottom-[52px] overflow-hidden"></div>
+    
     <div class="os-taskbar">
-        <div class="taskbar-start" id="start-menu-btn"><span class="text-white font-bold text-xs">A</span></div>
+        <div class="taskbar-start" id="start-menu-btn"><span class="text-white font-bold text-sm">A</span></div>
         <div class="taskbar-items" id="taskbar-item-container"></div>
         <div class="taskbar-tray">
             <span id="tray-network" class="text-green-400">NET: OK</span>
-            <span id="tray-memory">MEM: --</span>
             <span id="tray-clock">00:00:00</span>
         </div>
     </div>
 
     <script>
         const AetherOS = {
-            version: '4.0.GOD_TIER',
+            version: '5.0.UTILITY',
             windows: new Map(),
-            activeWindowId: null,
             zIndexCounter: 100,
             
             boot() {
                 this.initClock();
                 this.initTelemetry();
-                this.spawnBackgroundWorkers();
                 this.initWebGLMatrix();
-                this.initDesktopContextMenu();
-                this.createWindow('sys-diag', 'System Diagnostics', this.templates.diagnostics(), 600, 400);
-            },
-
-            spawnBackgroundWorkers() {
-                const cwCode = `self.onmessage = async (e) => {
-                    const { action, payload, id } = e.data;
-                    if(action === 'SHA-256') {
-                        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload));
-                        self.postMessage({ id, result: Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('') });
-                    }
-                };`;
-                this.cryptoWorker = new Worker(URL.createObjectURL(new Blob([cwCode], {type:'text/javascript'})));
+                // Spawn Image Maker immediately on boot so it's front and center
+                this.createWindow('dream', 'Dream Weaver (Image Maker)', this.templates.dreamWeaver(), 600, 550);
             },
 
             createWindow(id, title, htmlContent, width=400, height=300) {
@@ -96,8 +86,21 @@
                 winEl.className = 'os-window'; winEl.id = `window-${id}`;
                 winEl.style.width = `${width}px`; winEl.style.height = `${height}px`;
                 winEl.style.left = `${Math.max(10, (window.innerWidth-width)/2 + (Math.random()*40-20))}px`;
-                winEl.style.top = `${Math.max(10, (window.innerHeight-height-48)/2 + (Math.random()*40-20))}px`;
-                winEl.innerHTML = `<div class="os-window-header" id="header-${id}"><div class="os-window-controls"><div class="control-dot dot-close" onclick="AetherOS.closeWindow('${id}')"></div><div class="control-dot dot-min"></div><div class="control-dot dot-max"></div></div><div class="os-window-title">${title}</div><div class="w-4"></div></div><div class="os-window-content">${htmlContent}</div>`;
+                winEl.style.top = `${Math.max(10, (window.innerHeight-height-52)/2 + (Math.random()*40-20))}px`;
+                
+                winEl.innerHTML = `
+                    <div class="os-window-header" id="header-${id}">
+                        <div class="os-window-controls">
+                            <div class="control-dot dot-close" onclick="AetherOS.closeWindow('${id}')"></div>
+                            <div class="control-dot dot-min"></div>
+                            <div class="control-dot dot-max"></div>
+                        </div>
+                        <div class="os-window-title">${title}</div>
+                        <div class="w-4"></div>
+                    </div>
+                    <div class="os-window-content">${htmlContent}</div>
+                `;
+                
                 document.getElementById('os-desktop').appendChild(winEl);
                 this.windows.set(id, { el: winEl, title });
                 this.makeDraggable(winEl, document.getElementById(`header-${id}`));
@@ -137,172 +140,171 @@
             },
 
             initClock() { setInterval(() => document.getElementById('tray-clock').innerText = new Date().toLocaleTimeString('en-US',{hour12:false}), 1000); },
-            initTelemetry() { setInterval(() => { document.getElementById('tray-memory').innerText = navigator.deviceMemory ? `MEM: ${navigator.deviceMemory}GB+` : `CORES: ${navigator.hardwareConcurrency}`; document.getElementById('tray-network').className = navigator.onLine ? 'text-green-400' : 'text-red-500 animate-pulse'; document.getElementById('tray-network').innerText = navigator.onLine ? 'NET: OK' : 'NET: ERR'; }, 5000); },
-            initDesktopContextMenu() {
-                const ctx = document.createElement('div'); ctx.className = 'absolute hidden bg-black/90 backdrop-blur border border-white/20 rounded shadow-2xl z-[99999] w-48 py-1 font-mono text-xs text-white';
-                ctx.innerHTML = `<div class="px-4 py-2 text-white/40 uppercase tracking-widest text-[9px] border-b border-white/10 mb-1">AETHER SHELL</div><button onclick="location.reload()" class="w-full text-left px-4 py-2 hover:bg-red-900/50 hover:text-red-400 text-red-300">Reboot Kernel</button>`;
-                document.body.appendChild(ctx);
-                document.getElementById('os-desktop').addEventListener('contextmenu', e => { e.preventDefault(); ctx.style.left=`${e.clientX}px`; ctx.style.top=`${e.clientY}px`; ctx.classList.remove('hidden'); });
-                document.addEventListener('click', e => { if(!ctx.contains(e.target)) ctx.classList.add('hidden'); });
-            },
+            initTelemetry() { setInterval(() => { document.getElementById('tray-network').className = navigator.onLine ? 'text-green-400' : 'text-red-500 animate-pulse'; document.getElementById('tray-network').innerText = navigator.onLine ? 'NET: OK' : 'NET: ERR'; }, 5000); },
 
             initWebGLMatrix() {
                 const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000), ren = new THREE.WebGLRenderer({alpha:true, antialias:true});
                 ren.setSize(window.innerWidth, window.innerHeight); document.getElementById('os-matrix-bg').appendChild(ren.domElement);
-                const geo = new THREE.PlaneGeometry(200, 200, 40, 40), mat = new THREE.MeshBasicMaterial({color:0x06b6d4, wireframe:true, transparent:true, opacity:0.08});
+                const geo = new THREE.PlaneGeometry(200, 200, 40, 40), mat = new THREE.MeshBasicMaterial({color:0x06b6d4, wireframe:true, transparent:true, opacity:0.06});
                 const grid = new THREE.Mesh(geo, mat); grid.rotation.x = -Math.PI/2; grid.position.y = -10; sc.add(grid);
                 cam.position.set(0, 5, 20); let t = 0;
-                const anim = () => { requestAnimationFrame(anim); t+=0.005; const pos = grid.geometry.attributes.position; for(let i=0; i<pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i)*0.1+t)*2 + Math.cos(pos.getY(i)*0.1+t)*2); pos.needsUpdate=true; ren.render(sc, cam); }; anim();
+                const anim = () => { requestAnimationFrame(anim); t+=0.003; const pos = grid.geometry.attributes.position; for(let i=0; i<pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i)*0.1+t)*2 + Math.cos(pos.getY(i)*0.1+t)*2); pos.needsUpdate=true; ren.render(sc, cam); }; anim();
                 window.addEventListener('resize', () => { cam.aspect=window.innerWidth/window.innerHeight; cam.updateProjectionMatrix(); ren.setSize(window.innerWidth, window.innerHeight); });
             },
 
             templates: {
-                diagnostics: () => `<div class="font-mono text-sm space-y-2"><div class="text-cyan-400 font-bold border-b border-white/10 pb-2 mb-2">SYSTEM TELEMETRY</div><div>User Agent: <span class="text-green-300 text-xs">${navigator.userAgent}</span></div><div>Cores: <span class="text-green-300">${navigator.hardwareConcurrency}</span></div><div>GPU Thread: <span class="text-green-300 animate-pulse">Active</span></div></div>`,
+                // THE IMAGE MAKER
+                dreamWeaver: () => `
+                    <div class="flex flex-col h-full gap-4">
+                        <div class="flex gap-2 shrink-0">
+                            <input type="text" id="dream-input" class="flex-1 bg-black/60 border border-purple-500/40 rounded p-4 text-white outline-none focus:border-purple-400 transition font-mono text-sm" placeholder="Prompt an image (e.g. 'cyberpunk city night')..." onkeypress="if(event.key === 'Enter') AetherApps.genImage()">
+                            <button onclick="AetherApps.genImage()" class="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded font-bold transition text-sm uppercase tracking-widest shadow-[0_0_15px_rgba(168,85,247,0.4)]">Generate</button>
+                        </div>
+                        <div class="flex-1 bg-black/80 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden relative shadow-inner group p-2">
+                            <div id="dream-placeholder" class="text-center">
+                                <div class="text-6xl mb-4 opacity-40">🖼️</div>
+                                <p class="text-purple-400/50 font-mono text-sm uppercase tracking-widest">Image Matrix Ready</p>
+                            </div>
+                            <div id="dream-loader" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-10">
+                                <div class="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                <p class="text-purple-400 font-mono text-xs animate-pulse">Synthesizing Pixels...</p>
+                            </div>
+                            <img id="dream-output" src="" class="hidden w-full h-full object-contain rounded transition-transform duration-700">
+                        </div>
+                    </div>
+                `,
                 
-                aiLogic: () => `<div class="flex flex-col h-full"><div id="ai-out" class="flex-1 bg-black/40 border border-white/10 rounded p-4 mb-2 overflow-y-auto font-mono text-xs space-y-2"><div class="text-blue-300">Terminal ready.</div></div><input id="ai-in" class="bg-black/60 border border-white/20 rounded p-2 text-white font-mono text-sm" placeholder="Execute prompt..." onkeypress="if(event.key==='Enter') AetherApps.sendChat()"></div>`,
+                // MEDIA FETCHER (YT/IG/FB)
+                mediaFetcher: () => `
+                    <div class="flex flex-col h-full gap-4">
+                        <div class="text-rose-400 font-bold border-b border-rose-500/30 pb-2 flex justify-between items-center">
+                            <span>MEDIA FETCHER (YT / IG / FB / TIKTOK)</span>
+                            <span class="text-[10px] text-rose-500/50">Powered by Cobalt API</span>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <input type="text" id="media-url" class="flex-1 bg-black/60 border border-white/20 rounded p-3 text-white focus:border-rose-400 outline-none transition font-mono text-sm" placeholder="Paste video link here..." onkeypress="if(event.key === 'Enter') AetherApps.downloadMedia()">
+                            <button onclick="AetherApps.downloadMedia()" class="bg-rose-700/90 hover:bg-rose-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(225,29,72,0.3)]">Rip Video</button>
+                        </div>
+                        <div id="media-output" class="flex-1 bg-black/80 border border-white/10 rounded p-4 text-white/70 font-mono text-xs overflow-y-auto space-y-2 shadow-inner">
+                            <div class="text-white/40">> Awaiting target URL. Ready to extract media payloads...</div>
+                        </div>
+                    </div>
+                `,
+
+                aiLogic: () => `<div class="flex flex-col h-full"><div id="ai-out" class="flex-1 bg-black/60 border border-white/10 rounded-xl p-4 mb-3 overflow-y-auto font-mono text-sm space-y-3"><div class="text-cyan-300">> System online. How can I assist?</div></div><div class="flex gap-2"><input id="ai-in" class="flex-1 bg-black/60 border border-cyan-500/30 rounded p-3 text-white font-mono text-sm outline-none focus:border-cyan-400" placeholder="Type message..." onkeypress="if(event.key==='Enter') AetherApps.sendChat()"><button onclick="AetherApps.sendChat()" class="bg-cyan-700 hover:bg-cyan-600 px-6 rounded font-bold transition">SEND</button></div></div>`,
                 
-                cipherCore: () => `<div class="flex flex-col h-full gap-2"><textarea id="c-in" class="h-20 bg-black/40 border border-white/20 rounded p-2 text-white font-mono text-xs" placeholder="Payload..."></textarea><div class="grid grid-cols-3 gap-2"><button onclick="AetherApps.runC('b64-enc')" class="bg-yellow-900/50 text-yellow-400 rounded text-xs py-1 border border-yellow-600">B64 Enc</button><button onclick="AetherApps.runC('b64-dec')" class="bg-yellow-900/50 text-yellow-400 rounded text-xs py-1 border border-yellow-600">B64 Dec</button><button onclick="AetherApps.runC('sha256')" class="bg-red-900/50 text-red-400 rounded text-xs py-1 border border-red-600">SHA-256</button></div><textarea id="c-out" class="flex-1 bg-black/80 border border-white/10 rounded p-2 text-yellow-400 font-mono text-xs break-all" readonly placeholder="Output..."></textarea></div>`,
+                cipherCore: () => `<div class="flex flex-col h-full gap-3"><textarea id="c-in" class="h-24 bg-black/40 border border-white/20 rounded p-3 text-white font-mono text-sm resize-none outline-none focus:border-yellow-500" placeholder="Paste payload to encrypt/decrypt..."></textarea><div class="grid grid-cols-3 gap-2"><button onclick="AetherApps.runC('b64-enc')" class="bg-yellow-900/40 hover:bg-yellow-600/80 text-yellow-400 hover:text-white rounded text-xs py-2 border border-yellow-600/50 transition font-bold uppercase">B64 Encode</button><button onclick="AetherApps.runC('b64-dec')" class="bg-yellow-900/40 hover:bg-yellow-600/80 text-yellow-400 hover:text-white rounded text-xs py-2 border border-yellow-600/50 transition font-bold uppercase">B64 Decode</button><button onclick="AetherApps.runC('sha256')" class="bg-red-900/40 hover:bg-red-600/80 text-red-400 hover:text-white rounded text-xs py-2 border border-red-600/50 transition font-bold uppercase">SHA-256</button></div><textarea id="c-out" class="flex-1 bg-black/80 border border-white/10 rounded p-3 text-yellow-400 font-mono text-sm break-all resize-none shadow-inner" readonly placeholder="Result output..."></textarea></div>`,
                 
-                dataVault: () => `<textarea id="vault-txt" oninput="localStorage.setItem('aether_v', this.value)" class="w-full h-full bg-black/40 border border-indigo-500/30 rounded p-4 text-indigo-100 font-mono resize-none" placeholder="LocalStorage Scratchpad..."></textarea>`,
-                
-                ghostCanvas: () => `<div class="flex flex-col h-full gap-2"><input type="file" onchange="AetherApps.loadStego(event)" class="text-xs text-pink-300 bg-pink-900/20 p-2 rounded border border-pink-500/30"><div class="flex gap-2"><button onclick="AetherApps.encStego()" class="flex-1 bg-pink-700 text-white text-xs py-1 rounded">Embed LSB</button><button onclick="AetherApps.decStego()" class="flex-1 bg-purple-700 text-white text-xs py-1 rounded">Extract LSB</button></div><input id="stego-sec" class="bg-black/60 border border-white/20 p-2 text-pink-100 font-mono text-xs" placeholder="Secret..."><canvas id="stego-cvs" class="max-w-full h-32 object-contain bg-black/80 rounded border border-white/10 hidden"></canvas></div>`,
-                
-                peerLink: () => `<div class="flex flex-col h-full gap-2 font-mono text-xs"><div class="text-red-400">WebRTC SCTP Data Channel</div><button onclick="AetherApps.genOffer()" class="bg-red-900/40 border border-red-500/50 text-red-300 py-1 rounded">1. Gen Offer</button><input id="rtc-loc" class="bg-black/60 p-1 text-red-200" readonly placeholder="Local SDP"><input id="rtc-rem" class="bg-black/60 p-1 text-blue-200" placeholder="Paste Remote SDP"><button onclick="AetherApps.accAnswer()" class="bg-blue-900/40 border border-blue-500/50 text-blue-300 py-1 rounded">2. Accept</button><div id="rtc-log" class="flex-1 bg-black/80 p-2 overflow-auto text-white/50"></div><input id="rtc-in" class="bg-black/60 p-2 text-white" placeholder="Msg..." onkeypress="if(event.key==='Enter') AetherApps.sendRTC()"></div>`,
-                
-                // NEW: God Tier Modules
-                photonCore: () => `<div class="flex flex-col h-full gap-4"><div class="text-cyan-400 font-bold border-b border-white/10 pb-2">HDR PHOTON CORE</div><p class="text-xs text-white/60 font-mono">OffscreenCanvas 32-bit Merge Simulator (Handles massive 185MB array ingestion)</p><button onclick="AetherApps.runHDR()" id="hdr-btn" class="bg-cyan-700 hover:bg-cyan-600 text-white py-4 rounded font-bold uppercase tracking-widest transition">Simulate 185MB Merge</button><div class="w-full bg-black/60 h-4 rounded overflow-hidden"><div id="hdr-prog" class="bg-cyan-400 h-full w-0 transition-all duration-200"></div></div><div id="hdr-log" class="flex-1 bg-black/80 font-mono text-[10px] text-cyan-200 p-2 overflow-auto"></div></div>`,
-                
-                combatMatrix: () => `<div class="flex flex-col h-full"><div class="text-red-500 font-bold border-b border-red-500/30 pb-2 mb-2 flex justify-between"><span>COMBAT INPUT TELEMETRY</span><span id="cpm-bpm" class="text-white">0 APM</span></div><p class="text-[10px] text-white/50 mb-2">Listening to global keydown events. Visualizing millisecond deltas for Uppercut Loops & M1 Extenders.</p><div id="combat-log" class="flex-1 bg-black/80 border border-red-500/20 rounded p-2 overflow-y-auto font-mono text-[11px] space-y-1"></div></div>`,
-                
-                bleForge: () => `<div class="flex flex-col h-full gap-4 items-center justify-center text-center p-4"><div class="text-blue-400 text-4xl mb-2">⌚</div><h3 class="font-bold text-white">BLE Firmware Forge</h3><p class="text-xs text-white/50 font-mono mb-4">GATT Server Request for custom Watch Face injection (e.g. Haylou Watch 4S).</p><button onclick="AetherApps.reqBLE()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded text-white font-bold transition shadow-[0_0_15px_rgba(37,99,235,0.4)]">Scan Surroundings</button><div id="ble-log" class="w-full bg-black/60 p-2 font-mono text-[10px] text-blue-200 text-left h-24 overflow-auto border border-blue-500/30 rounded">Awaiting pairing...</div></div>`,
-                
-                graphiteEngine: () => `<div class="flex flex-col h-full"><div class="flex justify-between items-center bg-black/40 p-2 border-b border-white/10"><span class="text-white/60 text-xs font-mono">PointerEvent Pressure Matrix (Matador HB)</span><button onclick="AetherApps.clearGraphite()" class="text-[10px] bg-white/10 px-2 rounded hover:bg-white/20">Clear</button></div><canvas id="graphite-cvs" class="flex-1 bg-[#1a1a1a] cursor-crosshair touch-none"></canvas></div>`,
-                
-                mechTelemetry: () => `<div class="flex flex-col h-full gap-4"><div class="text-yellow-500 font-bold border-b border-yellow-500/30 pb-2">DRIVETRAIN TELEMETRY</div><div class="grid grid-cols-2 gap-2 text-xs font-mono"><div class="flex flex-col gap-1 text-white/60"><label>Front Chainring (T)</label><input type="number" id="mech-front" value="32" class="bg-black/60 p-2 border border-white/20 rounded text-white"></div><div class="flex flex-col gap-1 text-white/60"><label>Rear Cog (T) - 8 Spd</label><input type="number" id="mech-rear" value="15" class="bg-black/60 p-2 border border-white/20 rounded text-white"></div><div class="flex flex-col gap-1 text-white/60"><label>Wheel Dia (in)</label><input type="number" id="mech-wheel" value="29" class="bg-black/60 p-2 border border-white/20 rounded text-white"></div></div><button onclick="AetherApps.calcMech()" class="bg-yellow-600 text-white font-bold py-2 rounded uppercase text-xs">Calculate Torque Ratio</button><div id="mech-out" class="flex-1 bg-black/80 border border-yellow-500/30 rounded p-4 text-yellow-300 font-mono text-sm flex flex-col justify-center items-center text-center"></div></div>`
+                dataVault: () => `<div class="flex flex-col h-full relative"><div class="absolute top-2 right-4 text-xs font-mono text-indigo-400/50" id="vault-status">Auto-saving...</div><textarea id="vault-txt" oninput="AetherApps.saveVault(this.value)" class="w-full h-full bg-black/40 border border-indigo-500/30 rounded-xl p-6 text-indigo-100 font-mono resize-none focus:outline-none focus:border-indigo-400 transition" spellcheck="false" placeholder="Persistent LocalStorage Scratchpad..."></textarea></div>`
             }
         };
 
         window.AetherApps = {
-            // Core
+            // Dream Weaver
+            launchDream: () => AetherOS.createWindow('dream', 'Dream Weaver', AetherOS.templates.dreamWeaver(), 600, 550),
+            genImage: () => {
+                const input = document.getElementById('dream-input').value.trim();
+                if (!input) return;
+                document.getElementById('dream-placeholder').classList.add('hidden');
+                document.getElementById('dream-output').classList.add('hidden');
+                document.getElementById('dream-loader').classList.remove('hidden');
+                
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*100000)}&width=1024&height=1024&nologo=true`;
+                const tempImg = new Image();
+                tempImg.onload = () => { 
+                    const out = document.getElementById('dream-output');
+                    out.src = url; 
+                    document.getElementById('dream-loader').classList.add('hidden'); 
+                    out.classList.remove('hidden');
+                };
+                tempImg.onerror = () => {
+                    document.getElementById('dream-loader').classList.add('hidden');
+                    document.getElementById('dream-placeholder').classList.remove('hidden');
+                    alert("Synthesis failed. Try again.");
+                };
+                tempImg.src = url;
+            },
+
+            // Media Fetcher (YT/IG/FB) via Cobalt API
+            launchMedia: () => AetherOS.createWindow('media', 'Media Fetcher', AetherOS.templates.mediaFetcher(), 500, 450),
+            downloadMedia: async () => {
+                const url = document.getElementById('media-url').value.trim();
+                const out = document.getElementById('media-output');
+                if(!url) return;
+                
+                out.innerHTML += `<div class="text-rose-300 mt-2">> Intercepting stream for: <span class="text-white/60">${url.substring(0, 40)}...</span></div>`;
+                out.scrollTop = out.scrollHeight;
+                
+                try {
+                    // Cobalt public API for bypassing CORS and fetching raw media
+                    const res = await fetch('https://api.cobalt.tools/api/json', {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: url, vQuality: "720" })
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if(data && data.url) {
+                        out.innerHTML += `
+                            <div class="text-green-400 mt-1">> SUCCESS: Payload isolated.</div>
+                            <a href="${data.url}" target="_blank" class="block bg-rose-600/20 border border-rose-500/50 p-3 rounded text-center text-rose-300 hover:bg-rose-600/40 hover:text-white font-bold tracking-widest transition mt-2 cursor-pointer">
+                                ⬇️ Download Media File
+                            </a>`;
+                    } else {
+                        out.innerHTML += `<div class="text-red-400 mt-1">> ERR: Platform restriction or invalid link. Try another URL.</div>`;
+                    }
+                } catch(e) {
+                    out.innerHTML += `<div class="text-red-400 mt-1">> ERR: API Fetch failed. The public scraping node might be overloaded.</div>`;
+                }
+                out.scrollTop = out.scrollHeight;
+            },
+
+            // AI Core
+            launchAI: () => AetherOS.createWindow('ai', 'AI Logic Core', AetherOS.templates.aiLogic(), 450, 500),
             sendChat: async () => {
                 const i = document.getElementById('ai-in'), o = document.getElementById('ai-out');
-                if(!i.value) return; o.innerHTML += `<div class="text-cyan-200 text-right">>${i.value}</div>`;
-                const id = Date.now(); o.innerHTML += `<div id="l-${id}" class="text-blue-500 animate-pulse">...</div>`;
-                try { const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent(i.value)}`); document.getElementById(`l-${id}`).outerHTML = `<div class="text-blue-100">${await r.text()}</div>`; } catch(e){}
+                if(!i.value) return; o.innerHTML += `<div class="text-cyan-100 text-right mb-2"><span class="bg-cyan-900/50 px-3 py-1 rounded inline-block border border-cyan-500/30">${i.value}</span></div>`;
+                const id = Date.now(); o.innerHTML += `<div id="l-${id}" class="text-cyan-500 animate-pulse mb-2">> Synthesizing...</div>`;
+                try { const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent(i.value)}`); document.getElementById(`l-${id}`).outerHTML = `<div class="text-blue-100 bg-blue-900/20 p-3 rounded border border-blue-500/20 mb-2 whitespace-pre-wrap">${await r.text()}</div>`; } catch(e){}
                 i.value = ''; o.scrollTop = o.scrollHeight;
             },
+
+            // Cipher Core
+            launchCipher: () => AetherOS.createWindow('ci', 'Cipher Core', AetherOS.templates.cipherCore(), 500, 400),
             runC: async (a) => {
                 const i = document.getElementById('c-in').value, o = document.getElementById('c-out');
                 if(a==='b64-enc') o.value = btoa(unescape(encodeURIComponent(i)));
                 if(a==='b64-dec') o.value = decodeURIComponent(escape(atob(i)));
                 if(a==='sha256') { const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(i)); o.value = Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
             },
-            // WebRTC
-            rc: null, dc: null,
-            genOffer: async () => { AetherApps.rc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}); AetherApps.rc.onicecandidate=e=>{if(e.candidate)document.getElementById('rtc-loc').value=btoa(JSON.stringify(AetherApps.rc.localDescription))}; AetherApps.dc = AetherApps.rc.createDataChannel('sctp'); AetherApps.dc.onmessage=e=>document.getElementById('rtc-log').innerHTML+=`<div class="text-blue-300">${e.data}</div>`; const o = await AetherApps.rc.createOffer(); await AetherApps.rc.setLocalDescription(o); },
-            accAnswer: async () => { const r = JSON.parse(atob(document.getElementById('rtc-rem').value)); if(!AetherApps.rc){ AetherApps.genOffer(); await AetherApps.rc.setRemoteDescription(r); const a = await AetherApps.rc.createAnswer(); await AetherApps.rc.setLocalDescription(a); document.getElementById('rtc-loc').value=btoa(JSON.stringify(AetherApps.rc.localDescription)); }else{ await AetherApps.rc.setRemoteDescription(r); document.getElementById('rtc-log').innerHTML+=`<div>Connected.</div>`; } },
-            sendRTC: () => { const v = document.getElementById('rtc-in').value; AetherApps.dc.send(v); document.getElementById('rtc-log').innerHTML+=`<div class="text-red-300">${v}</div>`; document.getElementById('rtc-in').value=''; },
-            
-            // --- GOD TIER LOGIC ---
-            
-            // 1. HDR Photon Core
-            runHDR: () => {
-                const btn = document.getElementById('hdr-btn'), prog = document.getElementById('hdr-prog'), log = document.getElementById('hdr-log');
-                btn.disabled = true; btn.innerText = "Processing..."; log.innerHTML = ""; prog.style.width = "0%";
-                let step = 0;
-                const msgs = ["[SYS] Ingesting 185MB RAW payload...", "[GPU] Allocating OffscreenCanvas WebGL context...", "[ALGO] Mapping 32-bit color space bounds...", "[MATH] Executing exposure fusion matrix...", "[SYS] Compressing artifact cache..."];
-                const iv = setInterval(() => {
-                    prog.style.width = `${(step+1)*20}%`;
-                    log.innerHTML += `<div>${msgs[step]}</div>`;
-                    log.scrollTop = log.scrollHeight;
-                    step++;
-                    if(step >= msgs.length) { clearInterval(iv); setTimeout(() => { log.innerHTML += `<div class="text-green-400 mt-2">MERGE COMPLETE. Yield: 1x HDR Output Matrix.</div>`; btn.innerText="Simulate 185MB Merge"; btn.disabled=false; }, 500); }
-                }, 800);
+
+            // Data Vault
+            launchVault: () => {
+                AetherOS.createWindow('dv', 'Data Vault', AetherOS.templates.dataVault(), 400, 350);
+                setTimeout(()=>document.getElementById('vault-txt').value=localStorage.getItem('aether_v')||'',100);
             },
-
-            // 2. Combat Matrix
-            lastHit: 0, hits: 0,
-            initCombat: () => {
-                window.addEventListener('keydown', (e) => {
-                    const log = document.getElementById('combat-log');
-                    if(!log || !document.getElementById('window-combat').classList.contains('active')) return;
-                    const now = performance.now(); const delta = AetherApps.lastHit ? (now - AetherApps.lastHit).toFixed(2) : 0;
-                    AetherApps.lastHit = now; AetherApps.hits++;
-                    
-                    let tech = "Standard Input"; let color = "text-white/70";
-                    if(delta > 0 && delta < 50) { tech = "Frame-Perfect Tech / Loop Dash"; color = "text-red-400 font-bold"; }
-                    else if (delta >= 50 && delta < 150) { tech = "M1 Extender Window"; color = "text-yellow-400"; }
-
-                    log.innerHTML = `<div class="flex justify-between border-b border-red-500/20 pb-1"><span>[${e.key.toUpperCase()}]</span><span class="${color}">${delta}ms (${tech})</span></div>` + log.innerHTML;
-                    document.getElementById('cpm-bpm').innerText = `${Math.floor(AetherApps.hits / (performance.now()/60000))} APM`;
-                });
-            },
-
-            // 3. BLE Forge
-            reqBLE: async () => {
-                const log = document.getElementById('ble-log');
-                try {
-                    log.innerHTML += `\n> Requesting navigator.bluetooth...\n> Filter: acceptAllDevices`;
-                    // Native prompt triggers here
-                    const dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
-                    log.innerHTML += `\n> PAIRED: ${dev.name || 'Unknown Peripheral'}\n> GATT Server ready for firmware injection.`;
-                } catch(e) { log.innerHTML += `\n> [ERR]: ${e.message}\n> Topology unsupported or prompt cancelled.`; }
-            },
-
-            // 4. Graphite Engine
-            ctxG: null, isDrawing: false,
-            initGraphite: () => {
-                setTimeout(() => {
-                    const cvs = document.getElementById('graphite-cvs'); if(!cvs) return;
-                    cvs.width = cvs.parentElement.clientWidth; cvs.height = cvs.parentElement.clientHeight;
-                    AetherApps.ctxG = cvs.getContext('2d'); AetherApps.ctxG.lineCap = 'round'; AetherApps.ctxG.lineJoin = 'round';
-                    
-                    cvs.addEventListener('pointerdown', e => { AetherApps.isDrawing = true; AetherApps.ctxG.beginPath(); AetherApps.ctxG.moveTo(e.offsetX, e.offsetY); });
-                    cvs.addEventListener('pointermove', e => {
-                        if(!AetherApps.isDrawing) return;
-                        // Math utilizing pointer pressure to simulate Matador HB
-                        const pressure = e.pressure || 0.5;
-                        AetherApps.ctxG.lineWidth = pressure * 5;
-                        AetherApps.ctxG.strokeStyle = `rgba(200, 200, 200, ${pressure})`;
-                        AetherApps.ctxG.lineTo(e.offsetX, e.offsetY); AetherApps.ctxG.stroke();
-                    });
-                    cvs.addEventListener('pointerup', () => AetherApps.isDrawing = false);
-                }, 100);
-            },
-            clearGraphite: () => { if(AetherApps.ctxG) { const cvs = document.getElementById('graphite-cvs'); AetherApps.ctxG.clearRect(0,0,cvs.width,cvs.height); } },
-
-            // 5. Mech Telemetry
-            calcMech: () => {
-                const f = parseFloat(document.getElementById('mech-front').value);
-                const r = parseFloat(document.getElementById('mech-rear').value);
-                const w = parseFloat(document.getElementById('mech-wheel').value);
-                const ratio = (f / r).toFixed(2);
-                const gi = (ratio * w).toFixed(1);
-                document.getElementById('mech-out').innerHTML = `<div class="text-3xl font-bold mb-2">${ratio}:1</div><div class="text-xs text-yellow-500/70">Torque Ratio</div><div class="mt-4 text-xl">${gi}"</div><div class="text-xs text-yellow-500/70">Gear Inches (Rollout)</div>`;
+            saveVault: (val) => {
+                localStorage.setItem('aether_v', val);
+                const s = document.getElementById('vault-status'); s.innerText="Syncing..."; s.classList.replace('text-indigo-400/50','text-indigo-300');
+                clearTimeout(window.vt); window.vt = setTimeout(()=>{ s.innerText="Auto-saved"; s.classList.replace('text-indigo-300','text-indigo-400/50'); }, 800);
             }
         };
 
-        // Registry
+        // Registry & Start Menu
         AetherOS.initStartMenu = function() {
             const menu = document.createElement('div'); menu.id = 'start-menu';
-            menu.className = 'absolute bottom-[58px] left-2 w-72 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl p-4 flex flex-col gap-1 shadow-2xl transition-all duration-200 opacity-0 pointer-events-none scale-95 origin-bottom-left z-[9999] max-h-[80vh] overflow-y-auto';
+            menu.className = 'absolute bottom-[62px] left-2 w-72 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl p-4 flex flex-col gap-1 shadow-2xl transition-all duration-200 opacity-0 pointer-events-none scale-95 origin-bottom-left z-[9999]';
             
-            const btn = (name, icon, fn) => `<button onclick="${fn}" class="w-full text-left px-3 py-2 rounded text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white/80 hover:text-white border border-transparent hover:border-white/5"><span class="text-lg">${icon}</span> ${name}</button>`;
+            const btn = (name, icon, fn) => `<button onclick="${fn}" class="w-full text-left px-4 py-3 rounded-lg text-sm font-mono flex items-center gap-3 hover:bg-white/10 transition text-white/90 hover:text-white border border-transparent hover:border-white/5"><span class="text-xl">${icon}</span> ${name}</button>`;
             
             menu.innerHTML = `
-                <div class="text-[10px] text-white/40 font-mono uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Core Utilities</div>
-                ${btn('AI Logic Core', '🤖', "AetherOS.createWindow('ai', 'AI Logic Core', AetherOS.templates.aiLogic(), 400, 500); AetherOS.toggleStartMenu(false)")}
-                ${btn('Cipher Core', '🔐', "AetherOS.createWindow('ci', 'Cipher Core', AetherOS.templates.cipherCore(), 500, 400); AetherOS.toggleStartMenu(false)")}
-                ${btn('Data Vault', '💾', "AetherOS.createWindow('dv', 'Data Vault', AetherOS.templates.dataVault(), 400, 300); setTimeout(()=>document.getElementById('vault-txt').value=localStorage.getItem('aether_v')||'',100); AetherOS.toggleStartMenu(false)")}
-                ${btn('Ghost Canvas', '🎭', "AetherOS.createWindow('gh', 'Ghost Canvas', AetherOS.templates.ghostCanvas(), 500, 450); AetherOS.toggleStartMenu(false)")}
-                ${btn('Peer Link Protocol', '🌐', "AetherOS.createWindow('pl', 'Peer Link', AetherOS.templates.peerLink(), 500, 450); AetherOS.toggleStartMenu(false)")}
-                
-                <div class="text-[10px] text-white/40 font-mono uppercase tracking-widest mb-1 mt-3 border-b border-white/10 pb-1">God-Tier Compute</div>
-                ${btn('HDR Photon Core', '📸', "AetherOS.createWindow('hdr', 'Photon Core', AetherOS.templates.photonCore(), 500, 300); AetherOS.toggleStartMenu(false)")}
-                ${btn('Combat Input Matrix', '⚔️', "AetherOS.createWindow('combat', 'Combat Matrix', AetherOS.templates.combatMatrix(), 400, 500); AetherApps.initCombat(); AetherOS.toggleStartMenu(false)")}
-                ${btn('BLE Firmware Forge', '⌚', "AetherOS.createWindow('ble', 'BLE Forge', AetherOS.templates.bleForge(), 400, 350); AetherOS.toggleStartMenu(false)")}
-                ${btn('Graphite Engine', '✏️', "AetherOS.createWindow('graph', 'Graphite Engine', AetherOS.templates.graphiteEngine(), 600, 500); AetherApps.initGraphite(); AetherOS.toggleStartMenu(false)")}
-                ${btn('Mech Telemetry', '⚙️', "AetherOS.createWindow('mech', 'Mech Telemetry', AetherOS.templates.mechTelemetry(), 400, 350); AetherApps.calcMech(); AetherOS.toggleStartMenu(false)")}
+                <div class="text-[10px] text-white/40 font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2 px-2">Primary Utilities</div>
+                ${btn('Dream Weaver', '🖼️', "AetherApps.launchDream(); AetherOS.toggleStartMenu(false)")}
+                ${btn('Media Fetcher', '📥', "AetherApps.launchMedia(); AetherOS.toggleStartMenu(false)")}
+                ${btn('AI Logic Core', '🤖', "AetherApps.launchAI(); AetherOS.toggleStartMenu(false)")}
+                ${btn('Cipher Core', '🔐', "AetherApps.launchCipher(); AetherOS.toggleStartMenu(false)")}
+                ${btn('Data Vault', '💾', "AetherApps.launchVault(); AetherOS.toggleStartMenu(false)")}
             `;
             document.getElementById('os-desktop').appendChild(menu);
             document.getElementById('start-menu-btn').onclick = e => { e.stopPropagation(); this.toggleStartMenu(); };
