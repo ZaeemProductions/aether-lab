@@ -1,73 +1,72 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Lab // Mesh</title>
+  <title>Aether Lab // Restored</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: #000; color: #fff; font-family: system-ui, sans-serif; }
+    body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0f172a, #000000); color: #fff; font-family: system-ui, sans-serif; }
     #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
     .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
-    .hidden { display: none !important; }
+    /* Fix for tab toggle */
+    .tool-tab { display: none !important; }
+    .tool-tab.active { display: flex !important; }
   </style>
 </head>
 <body class="h-screen flex flex-col p-4">
 
   <div id="canvas-container"></div>
 
-  <nav class="glass p-4 mb-4 flex gap-3 justify-center">
+  <nav class="glass p-4 mb-4 flex gap-3 justify-center z-10">
     <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-blue-500/30 text-blue-300 text-sm font-bold hover:bg-blue-500/20">AI Core</button>
+    <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-purple-500/30 text-purple-300 text-sm font-bold hover:bg-purple-500/20">Dream</button>
     <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-yellow-500/30 text-yellow-300 text-sm font-bold hover:bg-yellow-500/20">Cipher</button>
     <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/30 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20">Vault</button>
   </nav>
 
-  <div class="glass flex-1 p-6 relative" id="tool-container">
-    <div id="tool-chat" class="hidden h-full flex-col">
+  <div class="glass flex-1 p-6 relative z-10" id="tool-container">
+    <div id="default-view" class="h-full flex items-center justify-center text-white/50">Select a core function to begin.</div>
+    
+    <div id="tool-chat" class="tool-tab h-full flex-col">
         <h2 class="text-blue-400 font-bold mb-2">AI Logic Core</h2>
-        <div class="flex-1 bg-black/50 p-4 rounded text-sm font-mono">System Ready.</div>
+        <div class="flex-1 bg-black/50 p-4 rounded text-sm font-mono text-white">System Ready.</div>
     </div>
-    <div id="tool-cipher" class="hidden h-full flex-col">
+    <div id="tool-image" class="tool-tab h-full flex-col">
+        <h2 class="text-purple-400 font-bold mb-2">Dream Weaver</h2>
+        <div class="flex-1 bg-black/50 p-4 rounded">Image Generator Ready.</div>
+    </div>
+    <div id="tool-cipher" class="tool-tab h-full flex-col">
         <h2 class="text-yellow-400 font-bold mb-2">Cipher Matrix</h2>
         <textarea class="w-full h-32 bg-black/50 text-white p-2"></textarea>
     </div>
-    <div id="tool-vault" class="hidden h-full flex-col">
+    <div id="tool-vault" class="tool-tab h-full flex-col">
         <h2 class="text-indigo-400 font-bold mb-2">Data Vault</h2>
         <textarea class="w-full h-32 bg-black/50 text-white p-2"></textarea>
     </div>
   </div>
 
   <script>
-    // 1. Tool Switcher Logic
+    // Tab Switcher Logic
     function openTool(name) {
-      console.log("Switching to:", name);
-      document.querySelectorAll('[id^="tool-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById('default-view').style.display = 'none';
+      document.querySelectorAll('.tool-tab').forEach(el => el.classList.remove('active'));
       const target = document.getElementById('tool-' + name);
-      if (target) {
-        target.classList.remove('hidden');
-        target.classList.add('flex');
-      }
+      if (target) target.classList.add('active');
     }
 
-    // 2. Three.js Background Mesh
+    // Three.js Background
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({alpha: true});
+    const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-    const geo = new THREE.IcosahedronGeometry(10, 2);
-    const mat = new THREE.MeshBasicMaterial({color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.2});
-    const mesh = new THREE.Mesh(geo, mat);
-    scene.add(mesh);
-    camera.position.z = 20;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      mesh.rotation.y += 0.005;
-      renderer.render(scene, camera);
-    }
+    const geo = new THREE.TorusGeometry(14, 0.1, 16, 100);
+    const mat = new THREE.MeshBasicMaterial({color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.15});
+    const torus = new THREE.Mesh(geo, mat);
+    scene.add(torus); camera.position.z = 25;
+    function animate() { requestAnimationFrame(animate); torus.rotation.y += 0.005; renderer.render(scene, camera); }
     animate();
   </script>
 </body>
