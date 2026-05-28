@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aether OS // Utility Paradigm</title>
+    <title>Aether OS // Full Stack Paradigm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -68,7 +68,7 @@
 
     <script>
         const AetherOS = {
-            version: '5.1.UTILITY_AUTHORIZED',
+            version: '6.0.FULLSTACK',
             windows: new Map(),
             zIndexCounter: 100,
             
@@ -76,7 +76,7 @@
                 this.initClock();
                 this.initTelemetry();
                 this.initWebGLMatrix();
-                this.createWindow('dream', 'Dream Weaver (Image Maker)', this.templates.dreamWeaver(), 600, 550);
+                this.createWindow('media', 'Media Ripper (Backend Attached)', this.templates.mediaRipper(), 550, 450);
             },
 
             createWindow(id, title, htmlContent, width=400, height=300) {
@@ -152,6 +152,24 @@
             },
 
             templates: {
+                mediaRipper: () => `
+                    <div class="flex flex-col h-full gap-4">
+                        <div class="text-rose-400 font-bold border-b border-rose-500/30 pb-2 flex justify-between items-center">
+                            <span>MEDIA RIPPER (YT CAPTURE)</span>
+                            <span class="text-[10px] text-green-400 font-mono flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Node Attached
+                            </span>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <input type="text" id="media-url" class="flex-1 bg-black/60 border border-white/20 rounded p-3 text-white focus:border-rose-400 outline-none transition font-mono text-sm" placeholder="Paste YouTube link here..." onkeypress="if(event.key === 'Enter') AetherApps.downloadMedia()">
+                            <button onclick="AetherApps.downloadMedia()" class="bg-rose-700/90 hover:bg-rose-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(225,29,72,0.3)]">Rip Video</button>
+                        </div>
+                        <div id="media-output" class="flex-1 bg-black/80 border border-white/10 rounded p-4 text-white/70 font-mono text-xs overflow-y-auto space-y-2 shadow-inner">
+                            <div class="text-white/40">> Awaiting target URL. Ready to ping Render execution node...</div>
+                        </div>
+                    </div>
+                `,
+
                 dreamWeaver: () => `
                     <div class="flex flex-col h-full gap-4">
                         <div class="flex gap-2 shrink-0">
@@ -171,22 +189,6 @@
                         </div>
                     </div>
                 `,
-                
-                streamMatrix: () => `
-                    <div class="flex flex-col h-full gap-4">
-                        <div class="text-rose-400 font-bold border-b border-rose-500/30 pb-2 flex justify-between items-center">
-                            <span>STREAM MATRIX</span>
-                            <span class="text-[10px] text-rose-500/50">Authorized iFrame Nodes</span>
-                        </div>
-                        <div class="flex gap-2 shrink-0">
-                            <input type="text" id="embed-url" class="flex-1 bg-black/60 border border-white/20 rounded p-3 text-white focus:border-rose-400 outline-none transition font-mono text-sm" placeholder="Paste YouTube or Spotify URL..." onkeypress="if(event.key === 'Enter') AetherApps.renderEmbed()">
-                            <button onclick="AetherApps.renderEmbed()" class="bg-rose-700/90 hover:bg-rose-600 text-white px-6 py-2 rounded font-bold transition text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(225,29,72,0.3)]">Inject</button>
-                        </div>
-                        <div id="embed-output" class="flex-1 bg-black/80 border border-white/10 rounded flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
-                            <div id="embed-placeholder" class="text-white/40 font-mono text-xs text-center p-4">> Awaiting authorized stream URL...</div>
-                        </div>
-                    </div>
-                `,
 
                 aiLogic: () => `<div class="flex flex-col h-full"><div id="ai-out" class="flex-1 bg-black/60 border border-white/10 rounded-xl p-4 mb-3 overflow-y-auto font-mono text-sm space-y-3"><div class="text-cyan-300">> System online. How can I assist?</div></div><div class="flex gap-2"><input id="ai-in" class="flex-1 bg-black/60 border border-cyan-500/30 rounded p-3 text-white font-mono text-sm outline-none focus:border-cyan-400" placeholder="Type message..." onkeypress="if(event.key==='Enter') AetherApps.sendChat()"><button onclick="AetherApps.sendChat()" class="bg-cyan-700 hover:bg-cyan-600 px-6 rounded font-bold transition">SEND</button></div></div>`,
                 
@@ -197,6 +199,27 @@
         };
 
         window.AetherApps = {
+            // BACKEND HANDSHAKE LOGIC
+            launchRipper: () => AetherOS.createWindow('media', 'Media Ripper', AetherOS.templates.mediaRipper(), 550, 450),
+            downloadMedia: () => {
+                const url = document.getElementById('media-url').value.trim();
+                const out = document.getElementById('media-output');
+                if(!url) return;
+                
+                out.innerHTML += `<div class="text-rose-400 font-mono text-xs mt-2">> Establishing secure handshake with Aether Backend...</div>`;
+                out.scrollTop = out.scrollHeight;
+                
+                // PINGING YOUR LIVE RENDER SERVER
+                const backendUrl = `https://aether-backend-t0kx.onrender.com/api/rip?url=${encodeURIComponent(url)}`;
+                window.location.href = backendUrl;
+                
+                setTimeout(() => {
+                    out.innerHTML += `<div class="text-green-400 font-mono text-xs mt-1">> Payload extraction initiated. Node handling conversion... Check your local downloads folder.</div>`;
+                    out.scrollTop = out.scrollHeight;
+                    document.getElementById('media-url').value = '';
+                }, 2000);
+            },
+
             launchDream: () => AetherOS.createWindow('dream', 'Dream Weaver', AetherOS.templates.dreamWeaver(), 600, 550),
             genImage: () => {
                 const input = document.getElementById('dream-input').value.trim();
@@ -219,27 +242,6 @@
                     alert("Synthesis failed. Try again.");
                 };
                 tempImg.src = url;
-            },
-
-            launchEmbed: () => AetherOS.createWindow('embed', 'Stream Matrix', AetherOS.templates.streamMatrix(), 550, 450),
-            renderEmbed: () => {
-                const url = document.getElementById('embed-url').value.trim();
-                const out = document.getElementById('embed-output');
-                if(!url) return;
-                
-                let embedHtml = `<div class="text-red-400 font-mono text-xs">> ERR: Unsupported URI format. Use standard YouTube or Spotify links.</div>`;
-                
-                const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-                const spotMatch = url.match(/spotify\.com\/(track|album|playlist|episode)\/([\w]+)/);
-
-                if (ytMatch && ytMatch[1]) {
-                    embedHtml = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded"></iframe>`;
-                } else if (spotMatch && spotMatch[1] && spotMatch[2]) {
-                    embedHtml = `<iframe src="https://open.spotify.com/embed/${spotMatch[1]}/${spotMatch[2]}" width="100%" height="100%" frameborder="0" allowtransparency="true" allow="encrypted-media" class="rounded"></iframe>`;
-                }
-                
-                out.innerHTML = embedHtml;
-                document.getElementById('embed-url').value = '';
             },
 
             launchAI: () => AetherOS.createWindow('ai', 'AI Logic Core', AetherOS.templates.aiLogic(), 450, 500),
@@ -278,8 +280,8 @@
             
             menu.innerHTML = `
                 <div class="text-[10px] text-white/40 font-mono uppercase tracking-widest mb-2 border-b border-white/10 pb-2 px-2">Primary Utilities</div>
+                ${btn('Media Ripper', '📥', "AetherApps.launchRipper(); AetherOS.toggleStartMenu(false)")}
                 ${btn('Dream Weaver', '🖼️', "AetherApps.launchDream(); AetherOS.toggleStartMenu(false)")}
-                ${btn('Stream Matrix', '🎬', "AetherApps.launchEmbed(); AetherOS.toggleStartMenu(false)")}
                 ${btn('AI Logic Core', '🤖', "AetherApps.launchAI(); AetherOS.toggleStartMenu(false)")}
                 ${btn('Cipher Core', '🔐', "AetherApps.launchCipher(); AetherOS.toggleStartMenu(false)")}
                 ${btn('Data Vault', '💾', "AetherApps.launchVault(); AetherOS.toggleStartMenu(false)")}
