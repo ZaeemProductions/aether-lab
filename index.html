@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Lab // Connected Client</title>
+  <title>Aether Lab // Production Core</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
@@ -87,14 +87,14 @@
         </div>
       </div>
 
-      <div id="tool-vault" class="tool-tab hidden flex-1 flex-col h-full w-full">
+      <div id="tool-vault" class="tool-tab hidden flex flex-col h-full w-full">
         <h2 class="text-xl font-bold mb-4 text-indigo-400 border-b border-white/10 pb-2">Local Vault</h2>
         <textarea id="vault-in" oninput="saveVault()" class="w-full flex-1 bg-black/40 border border-indigo-500/30 rounded-xl p-6 text-indigo-100 focus:outline-none focus:border-indigo-400 transition font-mono leading-relaxed" spellcheck="false" placeholder="Drop secrets or configurations here. Stays persistent on device runtime."></textarea>
       </div>
 
       <div id="tool-workers" class="tool-tab hidden flex-1 flex-col h-full w-full">
         <div class="flex flex-wrap justify-between items-center mb-3 border-b border-white/10 pb-2 gap-2">
-          <h2 class="text-xl font-bold text-teal-400">Worker Live Registry</h2>
+          <h2 class="text-xl font-bold text-teal-400">Worker Automation Registry</h2>
           <span class="text-xs font-mono bg-teal-950/40 border border-teal-500/30 px-3 py-1 rounded-full text-teal-300">
             Active Nodes: <span id="worker-count">0</span> / 100
           </span>
@@ -114,7 +114,7 @@
             <div>Node ID</div>
             <div>Identity Hash</div>
             <div>Operation State</div>
-            <div class="text-right">Database Sync</div>
+            <div class="text-right">Clock Cycle</div>
           </div>
           <div id="worker-list-container" class="flex-1 overflow-y-auto font-mono text-xs divide-y divide-white/5 space-y-0 shadow-inner"></div>
         </div>
@@ -133,7 +133,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, push, onChildAdded, onChildChanged, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAk_rARkhkZGriWHMWkD6vRGhd82Ko32wM",
@@ -148,8 +148,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
-
-    window.FirebaseGateway = { db, ref, onChildAdded, onChildChanged };
 
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
@@ -206,12 +204,12 @@
       }
 
       if (toolName === 'vault') loadVault();
-      if (toolName === 'workers' && !window.databaseConnected) {
-        initWorkersRealtimeSync();
+      if (toolName === 'workers' && !window.simulationRunning) {
+        initializeWorkerSimulation();
       }
     }
 
-    // Client-Side AI Response Engine
+    // AI Language Model Router
     async function sendChat() {
         const input = document.getElementById('chat-in');
         const output = document.getElementById('chat-out');
@@ -230,12 +228,12 @@
             output.innerHTML += `<div class="bg-blue-950/20 border border-blue-500/20 p-3 rounded-lg mt-2 text-blue-200">${await res.text()}</div>`;
         } catch (err) { 
             document.getElementById(loaderId).className = "text-red-400";
-            document.getElementById(loaderId).innerText = `> Error: Transmission network broken.`; 
+            document.getElementById(loaderId).innerText = `> Error: Link to core matrix dropped.`; 
         }
         output.scrollTop = output.scrollHeight;
     }
 
-    // Client-Side Graphics Synthesis
+    // AI Imaging Synthesis Engine
     function genImg() {
         const input = document.getElementById('img-in').value.trim();
         if (!input) return;
@@ -257,90 +255,88 @@
         monitor.src = finalUri;
     }
 
-    // Realtime Cloud Data Stream Handler (Syncs directly with your Node backend pushes)
-    function initWorkersRealtimeSync() {
+    // Autonomous Client-Side 100-Worker Engine (Infinite Loop Simulation)
+    function initializeWorkerSimulation() {
+      window.simulationRunning = true;
       const container = document.getElementById('worker-list-container');
       const counter = document.getElementById('worker-count');
-      if (!container || !window.FirebaseGateway) return;
+      if (!container) return;
 
-      window.databaseConnected = true;
-      const { db, ref, onChildAdded, onChildChanged } = window.FirebaseGateway;
-      const workersRef = ref(db, 'workers');
-      let nodeMap = new Map();
+      let totalActiveNodes = 0;
+      const nodesIndex = ['NEXUS', 'CORE', 'MESH', 'ZAEEM', 'ALPHA', 'HYDRA', 'VECTOR', 'MATRIX'];
+      const structuralTasks = ['Syncing Shards', 'Compiling Blocks', 'Parsing Memory', 'Routing Packets', 'Optimizing Core'];
 
-      onChildAdded(workersRef, (snapshot) => {
-        const data = snapshot.val();
-        const key = snapshot.key;
+      function spawnNodeElement() {
+        if (totalActiveNodes >= 100) return;
 
-        // Capped layout memory at exactly 100 entries for your dashboard profile criteria
-        if (nodeMap.size >= 100) {
-          const oldestKey = nodeMap.keys().next().value;
-          const oldestRow = document.getElementById(`node-${oldestKey}`);
-          if (oldestRow) oldestRow.remove();
-          nodeMap.delete(oldestKey);
-        }
+        totalActiveNodes++;
+        const uniqueId = Math.floor(Math.random() * 899999 + 100000);
+        const generatedHash = `${nodesIndex[Math.floor(Math.random() * nodesIndex.length)]}_NODE_${Math.floor(Math.random() * 89 + 10)}`;
+        const baseStatus = Math.random() > 0.25 ? 'Active' : 'Processing';
+        const colorClass = baseStatus === 'Active' ? 'text-green-400' : 'text-amber-400';
 
         const row = document.createElement('div');
-        row.className = "grid grid-cols-4 p-3 hover:bg-white/5 transition items-center text-white/80 border-b border-white/5 font-mono text-xs";
-        row.id = `node-${key}`;
+        row.className = "grid grid-cols-4 p-3 hover:bg-white/5 transition items-center text-white/80 border-b border-white/5 font-mono text-xs animate-fadeIn";
+        row.id = `node-sim-${uniqueId}`;
         
-        row.setAttribute('data-name', (data.name || '').toLowerCase());
-        row.setAttribute('data-status', data.status || 'Active');
-
-        const statusColor = data.status === 'Active' ? 'text-green-400' : 'text-amber-400';
-        const formattedTime = data.timestamp ? new Date(data.timestamp).toLocaleTimeString() : 'LIVE';
+        // Inject search tags cleanly as elements parameters
+        row.setAttribute('data-name', generatedHash.toLowerCase());
+        row.setAttribute('data-status', baseStatus);
 
         row.innerHTML = `
-          <div class="font-bold text-teal-500 node-id-string">#${key.substring(0, 6)}</div>
-          <div class="text-white/50 truncate pr-4">${data.name || 'External Node'}</div>
-          <div class="status-cell"><span class="inline-block h-1.5 w-1.5 rounded-full bg-current ${statusColor} mr-1.5 animate-pulse"></span>${data.status || 'Active'}</div>
-          <div class="text-right text-white/40 clock-cell">${formattedTime}</div>
+          <div class="font-bold text-teal-500">#${uniqueId}</div>
+          <div class="text-white/50 truncate pr-4">${generatedHash}</div>
+          <div class="status-cell"><span class="inline-block h-1.5 w-1.5 rounded-full bg-current ${colorClass} mr-1.5 animate-pulse"></span>${baseStatus}</div>
+          <div class="text-right text-white/40 clock-cell">${new Date().toLocaleTimeString()}</div>
         `;
 
         container.prepend(row);
-        nodeMap.set(key, row);
-        counter.innerText = nodeMap.size;
-        
-        executeClientFilters();
-      });
+        counter.innerText = totalActiveNodes;
 
-      onChildChanged(workersRef, (snapshot) => {
-        const key = snapshot.key;
-        const data = snapshot.val();
-        const rowNode = document.getElementById(`node-${key}`);
-        if (rowNode) {
-          rowNode.setAttribute('data-status', data.status || 'Active');
-          const statusCell = rowNode.querySelector('.status-cell');
-          const clockCell = rowNode.querySelector('.clock-cell');
-          if (statusCell) {
-            const statusColor = data.status === 'Active' ? 'text-green-400' : 'text-amber-400';
-            statusCell.innerHTML = `<span class="inline-block h-1.5 w-1.5 rounded-full bg-current ${statusColor} mr-1.5 animate-pulse"></span>${data.status || 'Active'}</div>`;
+        // Run randomized loop alterations to change system profiles locally
+        setInterval(() => {
+          const statusCell = row.querySelector('.status-cell');
+          const clockCell = row.querySelector('.clock-cell');
+          if (statusCell && clockCell) {
+            const toggleState = Math.random() > 0.4;
+            const chosenString = toggleState ? 'Active' : structuralTasks[Math.floor(Math.random() * structuralTasks.length)];
+            const dynamicColor = toggleState ? 'text-green-400' : 'text-amber-400';
+            
+            row.setAttribute('data-status', toggleState ? 'Active' : 'Processing');
+            statusCell.innerHTML = `<span class="inline-block h-1.5 w-1.5 rounded-full bg-current ${dynamicColor} mr-1.5 animate-pulse"></span>${chosenString}`;
+            clockCell.innerText = new Date().toLocaleTimeString();
           }
-          if (clockCell && data.timestamp) {
-            clockCell.innerText = new Date(data.timestamp).toLocaleTimeString();
-          }
-          executeClientFilters();
+        }, Math.floor(Math.random() * 5000 + 3000));
+      }
+
+      // Initial deployment burst array configuration
+      for (let i = 0; i < 25; i++) { spawnNodeElement(); }
+      const continuousGenerationLoop = setInterval(() => {
+        if (totalActiveNodes >= 100) {
+          clearInterval(continuousGenerationLoop);
+          return;
         }
-      });
+        spawnNodeElement();
+        executeClientFilters();
+      }, 60);
     }
 
-    // Client-Side Dashboard Matrix Sorting & Filtering Engine
+    // Client Filters Sorting Module Matrix
     function executeClientFilters() {
-      const searchInput = document.getElementById('worker-search').value.toLowerCase().trim();
-      const filterSelect = document.getElementById('worker-filter').value;
-      const container = document.getElementById('worker-list-container');
-      const rows = container.children;
+      const searchVal = document.getElementById('worker-search').value.toLowerCase().trim();
+      const selectedFilter = document.getElementById('worker-filter').value;
+      const rows = document.getElementById('worker-list-container').children;
 
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        const nodeName = row.getAttribute('data-name') || '';
-        const nodeId = row.id.toLowerCase();
-        const nodeStatus = row.getAttribute('data-status') || '';
+        const nameVal = row.getAttribute('data-name') || '';
+        const idVal = row.id.toLowerCase();
+        const statusVal = row.getAttribute('data-status') || '';
 
-        const matchesSearch = !searchInput || nodeName.includes(searchInput) || nodeId.includes(searchInput);
-        const matchesFilter = filterSelect === 'all' || nodeStatus === filterSelect;
+        const filterMatchesSearch = !searchVal || nameVal.includes(searchVal) || idVal.includes(searchVal);
+        const filterMatchesSelect = selectedFilter === 'all' || statusVal === selectedFilter;
 
-        if (matchesSearch && matchesFilter) {
+        if (filterMatchesSearch && filterMatchesSelect) {
           row.style.setProperty('display', 'grid', 'important');
         } else {
           row.style.setProperty('display', 'none', 'important');
@@ -348,11 +344,11 @@
       }
     }
 
-    // Keyboard bindings
+    // Interactive element handling hooks
     document.getElementById('chat-in').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
     document.getElementById('img-in').addEventListener('keypress', (e) => { if (e.key === 'Enter') genImg(); });
 
-    // Local Storage Data Management Matrix
+    // Local Storage Profile Operations
     function loadVault() {
       const input = document.getElementById('vault-in');
       if(input) input.value = localStorage.getItem('vault') || '';
