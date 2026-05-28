@@ -3,394 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Lab</title>
+  <title>Aether Lab // Pure Client</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    body { 
-      margin: 0; 
-      overflow: hidden; 
-      background: radial-gradient(circle at center, #0f172a, #000000); 
-      color: #fff; 
-      font-family: system-ui, -apple-system, sans-serif; 
-    }
-    #canvas-container { 
-      position: absolute; 
-      top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
-    }
-    .glass { 
-      background: rgba(255, 255, 255, 0.05); 
-      backdrop-filter: blur(10px); 
-      border: 1px solid rgba(255, 255, 255, 0.1); 
-      border-radius: 1rem; 
-    }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0f172a, #000000); color: #fff; font-family: system-ui, sans-serif; }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
+    .tool-tab { display: none !important; }
+    .tool-tab.flex { display: flex !important; }
   </style>
 </head>
-<body class="h-screen flex flex-col relative">
+<body class="h-screen flex flex-col p-4">
 
   <div id="canvas-container"></div>
 
-  <header class="p-6 flex justify-between items-center z-10">
-    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">Aether Lab</h1>
-    <div id="auth-container">
-      <button id="login-btn" class="glass px-6 py-2 hover:bg-white/10 transition font-medium shadow-lg">Sign in</button>
-      <div id="user-info" class="hidden flex items-center gap-3 glass px-4 py-2 shadow-lg">
-        <img id="user-avatar" class="w-8 h-8 rounded-full border border-white/20" src="" alt="Avatar">
-        <span id="user-name" class="font-medium text-sm"></span>
-        <button id="logout-btn" class="text-xs text-red-400 ml-2 hover:text-red-300 transition">Exit</button>
-      </div>
-    </div>
-  </header>
+  <nav class="glass p-4 mb-4 flex gap-3 justify-center z-10 flex-wrap">
+    <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-blue-500/30 text-blue-300 text-sm font-bold hover:bg-blue-500/20">🤖 AI Core</button>
+    <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-purple-500/30 text-purple-300 text-sm font-bold hover:bg-purple-500/20">🖼️ Dream</button>
+    <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/30 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20">💾 Vault</button>
+  </nav>
 
-  <main class="flex-1 flex flex-col items-center p-4 z-10 w-full max-w-5xl mx-auto overflow-hidden">
+  <div class="glass flex-1 p-6 relative z-10" id="tool-container">
+    <div id="default-view" class="h-full flex items-center justify-center text-white/50">System Offline. Select module.</div>
     
-    <div class="glass w-full p-4 mb-6 flex flex-wrap justify-center gap-3 shadow-lg">
-      <button onclick="openTool('chat')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🤖 AI</button>
-      <button onclick="openTool('image')" class="px-4 py-2 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">🖼️ Dream</button>
-      <button onclick="openTool('glitch')" class="px-4 py-2 rounded-full border border-pink-500/50 text-pink-300 text-sm font-bold hover:bg-pink-500/20 transition">🔮 Glitch</button>
-      <button onclick="openTool('audio')" class="px-4 py-2 rounded-full border border-cyan-500/50 text-cyan-300 text-sm font-bold hover:bg-cyan-500/20 transition">🎙️ Resonance</button>
-      <div class="w-px h-8 bg-white/20 mx-2 hidden md:block"></div>
-      <button onclick="openTool('cipher')" class="px-4 py-2 rounded-full border border-yellow-500/50 text-yellow-300 text-sm font-bold hover:bg-yellow-500/20 transition">🔐 Cipher Core</button>
-      <button onclick="openTool('sysscan')" class="px-4 py-2 rounded-full border border-green-500/50 text-green-300 text-sm font-bold hover:bg-green-500/20 transition">📟 Sys-Scan</button>
-      <button onclick="openTool('vault')" class="px-4 py-2 rounded-full border border-indigo-500/50 text-indigo-300 text-sm font-bold hover:bg-indigo-500/20 transition">💾 Data Vault</button>
-      <button onclick="openTool('qrcode')" class="px-4 py-2 rounded-full border border-emerald-500/50 text-emerald-300 text-sm font-bold hover:bg-emerald-500/20 transition">🛠️ QR Forge</button>
+    <div id="tool-chat" class="tool-tab flex-col h-full">
+        <h2 class="text-blue-400 font-bold mb-2">AI Logic</h2>
+        <div id="chat-out" class="flex-1 bg-black/40 p-4 mb-2 rounded font-mono text-sm"></div>
+        <input type="text" id="chat-in" class="bg-black/60 p-2 text-white border border-white/10" placeholder="Prompt...">
     </div>
 
-    <div class="glass w-full flex-1 flex flex-col relative shadow-2xl overflow-hidden p-6" id="tool-window">
-      
-      <div id="default-view" class="flex-1 flex flex-col items-center justify-center text-center">
-        <div class="text-5xl mb-4 opacity-80 animate-pulse">🌌</div>
-        <h2 class="text-2xl font-bold text-white/90 mb-2">Systems Purged & Optimized</h2>
-        <p class="text-white/50 text-lg">Select a core function to begin.</p>
-      </div>
-
-      <div id="tool-chat" class="hidden flex-1 flex flex-col h-full">
-        <h2 class="text-xl font-bold mb-4 text-blue-400 border-b border-white/10 pb-2">Aether AI</h2>
-        <div id="chat-output" class="flex-1 glass p-4 mb-4 overflow-y-auto font-mono text-sm space-y-4 bg-black/40 rounded-lg">
-          <div class="text-left"><span class="bg-blue-900/40 border border-blue-500/30 px-4 py-2 rounded-lg inline-block text-blue-100">Ready for commands.</span></div>
-        </div>
-        <div class="flex gap-2">
-          <input type="text" id="chat-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-blue-400" placeholder="Type here...">
-          <button onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold">Send</button>
-        </div>
-      </div>
-
-      <div id="tool-image" class="hidden flex-1 flex flex-col h-full">
-        <h2 class="text-xl font-bold mb-4 text-purple-400 border-b border-white/10 pb-2">Dream Weaver</h2>
-        <div class="flex gap-2 mb-4">
-          <input type="text" id="image-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-purple-400" placeholder="Describe an image...">
-          <button onclick="generateImage()" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-lg font-bold">Generate</button>
-        </div>
-        <div id="image-output" class="flex-1 glass flex items-center justify-center bg-black/40 overflow-hidden relative rounded-lg">
-          <p class="text-white/40 font-medium" id="image-placeholder">Generated reality will appear here</p>
-          <img id="result-image" src="" class="hidden h-full w-full object-contain p-2">
-        </div>
-      </div>
-
-      <div id="tool-glitch" class="hidden flex-1 flex flex-col h-full">
-        <h2 class="text-xl font-bold mb-4 text-pink-400 border-b border-white/10 pb-2">Glitch Caster</h2>
-        <div class="flex flex-col gap-4 h-full">
-          <textarea id="glitch-input" oninput="runGlitch()" class="w-full h-1/3 bg-black/40 border border-white/20 rounded-lg p-4 text-pink-100 focus:outline-none focus:border-pink-500 transition font-mono" placeholder="Type normal text here..."></textarea>
-          <div class="flex items-center gap-4 bg-black/30 p-4 rounded-lg border border-white/10">
-            <span class="text-pink-300 font-bold">Corruption: <span id="glitch-level-display">50</span>%</span>
-            <input type="range" id="glitch-level" min="10" max="150" value="50" oninput="runGlitch()" class="flex-1 accent-pink-500">
-          </div>
-          <div id="glitch-output" class="w-full flex-1 bg-black/60 border border-white/20 rounded-lg p-4 text-pink-400 font-mono text-xl overflow-y-auto break-words shadow-inner">T̷h̸e̵ ̵v̶o̵i̴d̵ ̶a̸w̵a̶i̸t̵s̴.̵.̷.̶</div>
-        </div>
-      </div>
-
-      <div id="tool-audio" class="hidden flex-1 flex flex-col h-full items-center">
-        <h2 class="text-xl font-bold mb-4 text-cyan-400 w-full border-b border-white/10 pb-2">Void Resonance</h2>
-        <button id="start-audio-btn" onclick="initAudio()" class="bg-cyan-600/80 hover:bg-cyan-500 px-8 py-4 rounded-full font-bold text-lg transition shadow-[0_0_15px_rgba(6,182,212,0.5)] mb-8">Activate Microphone</button>
-        <div class="w-full flex-1 relative glass bg-black/50 rounded-xl overflow-hidden flex items-center justify-center border border-cyan-500/30">
-          <canvas id="audio-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
-          <span id="audio-status" class="text-cyan-500/50 font-mono z-10 pointer-events-none">Awaiting signal...</span>
-        </div>
-      </div>
-
-      <div id="tool-cipher" class="hidden flex-1 flex flex-col h-full">
-        <h2 class="text-xl font-bold mb-4 text-yellow-400 border-b border-white/10 pb-2">Cipher Core</h2>
-        <textarea id="cipher-input" class="w-full h-1/3 bg-black/40 border border-white/20 rounded-lg p-4 text-white focus:outline-none focus:border-yellow-400 transition font-mono mb-4" placeholder="Enter payload to encrypt or decrypt..."></textarea>
-        <div class="flex gap-2 justify-center mb-4 flex-wrap">
-          <button onclick="runCipher('encode')" class="bg-yellow-600/80 hover:bg-yellow-500 px-6 py-2 rounded-lg font-bold transition">B64 Encode</button>
-          <button onclick="runCipher('decode')" class="bg-yellow-800/80 hover:bg-yellow-700 px-6 py-2 rounded-lg font-bold transition">B64 Decode</button>
-          <button onclick="runCipher('hash')" class="bg-red-600/80 hover:bg-red-500 px-6 py-2 rounded-lg font-bold transition">SHA-256 Hash</button>
-        </div>
-        <textarea id="cipher-output" class="w-full flex-1 bg-black/60 border border-white/10 rounded-lg p-4 text-yellow-300 font-mono text-sm break-all" placeholder="Output will render here..." readonly></textarea>
-      </div>
-
-      <div id="tool-sysscan" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-green-400">Sys-Scan Telemetry</h2>
-          <button onclick="runSysScan()" class="text-xs border border-green-500/50 px-3 py-1 rounded text-green-300 hover:bg-green-500/20">Refresh Data</button>
-        </div>
-        <div class="w-full flex-1 bg-black/80 rounded-lg border border-green-500/30 p-6 overflow-y-auto font-mono text-green-400 shadow-[inset_0_0_20px_rgba(34,197,94,0.1)]" id="sys-scan-output">
-          <p class="animate-pulse">Initializing diagnostics...</p>
-        </div>
-      </div>
-
-      <div id="tool-vault" class="hidden flex-1 flex flex-col h-full">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-          <h2 class="text-xl font-bold text-indigo-400">Data Vault</h2>
-          <span class="text-xs text-indigo-400/50 font-mono" id="vault-status">Auto-saved locally</span>
-        </div>
-        <textarea id="vault-input" oninput="saveVault()" class="w-full flex-1 bg-black/40 border border-indigo-500/30 rounded-lg p-6 text-indigo-100 focus:outline-none focus:border-indigo-400 transition font-mono leading-relaxed" spellcheck="false" placeholder="Drop code snippets, notes, or secrets here. They stay saved on this device even if you close the tab."></textarea>
-      </div>
-
-      <div id="tool-qrcode" class="hidden flex-1 flex flex-col h-full items-center">
-        <h2 class="text-xl font-bold mb-4 text-emerald-400 w-full border-b border-white/10 pb-2">QR Forge</h2>
-        <div class="w-full max-w-xl flex gap-2 mb-8 mt-4">
-          <input type="text" id="qr-input" class="flex-1 bg-black/40 border border-white/20 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-400 transition" placeholder="Enter a URL, text, or payload...">
-          <button onclick="generateQR()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-lg font-bold transition">Forge</button>
-        </div>
-        <div class="glass p-8 bg-white/5 rounded-2xl shadow-2xl flex items-center justify-center border border-white/10">
-          <img id="qr-output" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=AetherLab&color=ffffff&bgcolor=0f172a" alt="QR Code" class="w-56 h-56 rounded-lg mix-blend-screen">
-        </div>
-      </div>
-
+    <div id="tool-image" class="tool-tab flex-col h-full">
+        <h2 class="text-purple-400 font-bold mb-2">Dream Weaver</h2>
+        <input type="text" id="img-in" class="bg-black/60 p-2 text-white border border-white/10" placeholder="Image prompt...">
+        <button onclick="genImg()" class="bg-purple-600 px-4 py-2 mt-2 rounded">Synthesize</button>
+        <img id="img-out" class="mt-4 max-h-64 object-contain">
     </div>
-  </main>
 
-  <footer class="glass m-4 p-3 z-10 h-24 overflow-hidden flex flex-col shadow-lg">
-    <h3 class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-1 border-b border-white/10 pb-1">Network Feed</h3>
-    <ul id="activity-feed" class="text-xs text-white/70 space-y-1 overflow-y-auto flex-1 font-mono pr-2">
-      <li>> UI optimized. Utilities loaded.</li>
-    </ul>
-  </footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAk_rARkhkZGriWHMWkD6vRGhd82Ko32wM",
-      authDomain: "aether-lab.firebaseapp.com",
-      databaseURL: "https://aether-lab-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "aether-lab",
-      storageBucket: "aether-lab.firebasestorage.app",
-      messagingSenderId: "1044048980464",
-      appId: "1:1044048980464:web:f44f00902acf6c4ccc5535"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userInfo = document.getElementById('user-info');
-    const userName = document.getElementById('user-name');
-    const userAvatar = document.getElementById('user-avatar');
-    const activityFeed = document.getElementById('activity-feed');
-    const provider = new GoogleAuthProvider();
-    
-    loginBtn.onclick = () => signInWithPopup(auth, provider).catch(console.error);
-    logoutBtn.onclick = () => signOut(auth);
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginBtn.classList.add('hidden'); userInfo.classList.remove('hidden');
-        userName.textContent = user.displayName; userAvatar.src = user.photoURL;
-        window.globalLogActivity(`${user.displayName} authenticated.`);
-      } else {
-        loginBtn.classList.remove('hidden'); userInfo.classList.add('hidden');
-      }
-    });
-
-    const feedRef = ref(db, 'activity');
-    window.globalLogActivity = function(message) { push(feedRef, { text: message, timestamp: serverTimestamp() }); };
-
-    onChildAdded(feedRef, (data) => {
-      const li = document.createElement('li');
-      li.textContent = `> ${data.val().text}`;
-      activityFeed.prepend(li);
-    });
-  </script>
+    <div id="tool-vault" class="tool-tab flex-col h-full">
+        <h2 class="text-indigo-400 font-bold mb-2">Local Vault</h2>
+        <textarea id="vault-in" oninput="saveVault()" class="flex-1 bg-black/40 p-4 text-indigo-100 font-mono"></textarea>
+    </div>
+  </div>
 
   <script>
-    function tryLog(msg) { if(window.globalLogActivity) { window.globalLogActivity(msg); } }
-
-    const allTools = ['chat', 'image', 'glitch', 'audio', 'cipher', 'sysscan', 'vault', 'qrcode'];
-    
-    function openTool(toolName) {
-      document.getElementById('default-view').classList.add('hidden');
-      allTools.forEach(t => {
-        const el = document.getElementById('tool-' + t);
-        if(el) { el.classList.add('hidden'); el.classList.remove('flex'); }
-      });
-      document.getElementById('tool-' + toolName).classList.remove('hidden');
-      document.getElementById('tool-' + toolName).classList.add('flex');
-
-      if(toolName === 'audio' && window.audioCanvasSetup) window.resizeAudioCanvas();
-      if(toolName === 'sysscan') runSysScan();
-      if(toolName === 'vault') loadVault();
+    function openTool(name) {
+      document.getElementById('default-view').style.display = 'none';
+      document.querySelectorAll('.tool-tab').forEach(el => el.classList.remove('flex'));
+      document.getElementById('tool-' + name).classList.add('flex');
     }
 
-    // --- AI Chat ---
-    async function sendChatMessage() {
-      const input = document.getElementById('chat-input'), output = document.getElementById('chat-output');
-      if (!input.value.trim()) return;
-      output.innerHTML += `<div class="text-right"><span class="bg-blue-600 px-4 py-2 rounded-lg inline-block text-white">${input.value.trim()}</span></div>`;
-      const txt = input.value.trim(); input.value = '';
-      const id = 'load-' + Date.now();
-      output.innerHTML += `<div id="${id}" class="text-left"><span class="bg-white/10 px-4 py-2 rounded-lg inline-block text-white/60 animate-pulse">...</span></div>`;
-      output.scrollTop = output.scrollHeight;
-      try {
-        const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(txt)}`);
-        document.getElementById(id).remove();
-        output.innerHTML += `<div class="text-left"><span class="bg-blue-900/40 border border-blue-500/30 px-4 py-2 rounded-lg inline-block text-blue-100 whitespace-pre-wrap">${await res.text()}</span></div>`;
-      } catch (err) { document.getElementById(id).remove(); output.innerHTML += `<div class="text-left text-red-400">Error: Signal lost.</div>`; }
-      output.scrollTop = output.scrollHeight;
-    }
-    document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
-
-    // --- Dream Weaver ---
-    function generateImage() {
-      const input = document.getElementById('image-input').value.trim();
-      if (!input) return;
-      const placeholder = document.getElementById('image-placeholder'), img = document.getElementById('result-image');
-      placeholder.textContent = "Synthesizing..."; placeholder.classList.remove('hidden'); img.classList.add('hidden');
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?seed=${Math.floor(Math.random()*10000)}&width=800&height=500&nologo=true`;
-      const temp = new Image(); temp.onload = () => { img.src = url; placeholder.classList.add('hidden'); img.classList.remove('hidden'); };
-      temp.src = url;
+    // AI Logic (Client-side fetch to public API)
+    async function sendChat() {
+        const i = document.getElementById('chat-in');
+        const o = document.getElementById('chat-out');
+        const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(i.value)}`);
+        o.innerText = await res.text();
     }
 
-    // --- Glitch Caster ---
-    function runGlitch() {
-      const text = document.getElementById('glitch-input').value, level = document.getElementById('glitch-level').value;
-      document.getElementById('glitch-level-display').innerText = level;
-      const chars = '\u0300\u0301\u0302\u0303\u0304\u0305\u0306\u0307\u0308\u0309\u030A\u030B\u030C\u030D\u030E\u030F\u0310\u0311\u0312\u0313\u0314\u0315\u0316\u0317\u0318\u0319\u031A\u031B\u031C\u031D\u031E\u031F\u0320\u0321\u0322\u0323\u0324\u0325\u0326\u0327\u0328\u0329\u032A\u032B\u032C\u032D\u032E\u032F';
-      let res = '';
-      for (let i = 0; i < text.length; i++) {
-        res += text[i];
-        for (let j = 0; j < Math.floor(Math.random()*(level/10)); j++) res += chars[Math.floor(Math.random()*chars.length)];
-      }
-      document.getElementById('glitch-output').innerText = res || 'T̷h̸e̵ ̵v̶o̵i̴d̵ ̶a̸w̵a̶i̸t̵s̴.̵.̷.̶';
+    // Image Logic (Client-side)
+    function genImg() {
+        const i = document.getElementById('img-in').value;
+        document.getElementById('img-out').src = `https://image.pollinations.ai/prompt/${encodeURIComponent(i)}`;
     }
 
-    // --- Void Resonance ---
-    let actx, analyser, dataArr;
-    async function initAudio() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        document.getElementById('start-audio-btn').classList.add('hidden'); document.getElementById('audio-status').classList.add('hidden');
-        actx = new (window.AudioContext || window.webkitAudioContext)(); analyser = actx.createAnalyser();
-        actx.createMediaStreamSource(stream).connect(analyser); analyser.fftSize = 256; dataArr = new Uint8Array(analyser.frequencyBinCount);
-        setupAudioCanvas(); drawAudio();
-      } catch(e){}
-    }
-    function setupAudioCanvas() {
-      const c = document.getElementById('audio-canvas'); window.audioCanvasSetup = true;
-      window.resizeAudioCanvas = () => { c.width = c.parentElement.clientWidth; c.height = c.parentElement.clientHeight; };
-      window.resizeAudioCanvas(); window.addEventListener('resize', window.resizeAudioCanvas);
-    }
-    function drawAudio() {
-      if(!actx) return;
-      const c = document.getElementById('audio-canvas'), ctx = c.getContext('2d'); requestAnimationFrame(drawAudio); analyser.getByteFrequencyData(dataArr);
-      ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0,0,c.width,c.height);
-      let x = 0, w = (c.width/dataArr.length)*2.5;
-      for(let i = 0; i < dataArr.length; i++) {
-        let h = dataArr[i]*1.5; ctx.fillStyle = 'cyan'; ctx.shadowBlur = 10; ctx.shadowColor = 'cyan';
-        ctx.fillRect(x, c.height - h/2, w, h/2); x += w + 1;
-      }
-    }
-
-    // --- NEW: Cipher Core ---
-    async function runCipher(action) {
-      const input = document.getElementById('cipher-input').value;
-      const output = document.getElementById('cipher-output');
-      if (!input) return;
-      
-      try {
-        if (action === 'encode') {
-          output.value = btoa(unescape(encodeURIComponent(input)));
-          tryLog(`Executed Base64 Encryption.`);
-        } else if (action === 'decode') {
-          output.value = decodeURIComponent(escape(atob(input)));
-          tryLog(`Executed Base64 Decryption.`);
-        } else if (action === 'hash') {
-          // SHA-256 Web Crypto API
-          const msgBuffer = new TextEncoder().encode(input);
-          const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-          const hashArray = Array.from(new Uint8Array(hashBuffer));
-          output.value = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-          tryLog(`Forged SHA-256 Hash.`);
-        }
-      } catch (e) {
-        output.value = "Error: Invalid input format for this operation.";
-      }
-    }
-
-    // --- NEW: Sys-Scan Telemetry ---
-    function runSysScan() {
-      const out = document.getElementById('sys-scan-output');
-      let html = `<div class="mb-4 text-green-300 font-bold">SYSTEM DIAGNOSTICS INITIATED...</div>`;
-      
-      const data = {
-        "User Agent": navigator.userAgent,
-        "Platform": navigator.platform || "Unknown",
-        "Logical Cores": navigator.hardwareConcurrency || "Unknown",
-        "Device Memory": navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Restricted",
-        "Language": navigator.language,
-        "Cookies Enabled": navigator.cookieEnabled,
-        "Screen Resolution": `${window.screen.width} x ${window.screen.height}`,
-        "Color Depth": `${window.screen.colorDepth}-bit`,
-        "Network Status": navigator.onLine ? "ONLINE" : "OFFLINE",
-        "Network Type": navigator.connection ? navigator.connection.effectiveType : "Unknown",
-        "Timezone": Intl.DateTimeFormat().resolvedOptions().timeZone
-      };
-
-      for (const [key, value] of Object.entries(data)) {
-        html += `<div class="mb-2"><span class="text-green-500/50">[${key.toUpperCase()}]</span><br>> ${value}</div>`;
-      }
-      
-      html += `<div class="mt-4 text-green-300 font-bold animate-pulse">SCAN COMPLETE.</div>`;
-      out.innerHTML = html;
-      tryLog(`Ran Sys-Scan Telemetry.`);
-    }
-
-    // --- NEW: Data Vault ---
-    function loadVault() {
-      const input = document.getElementById('vault-input');
-      const saved = localStorage.getItem('aether_vault_data');
-      if(saved) input.value = saved;
-    }
-    function saveVault() {
-      const input = document.getElementById('vault-input').value;
-      localStorage.setItem('aether_vault_data', input);
-      const status = document.getElementById('vault-status');
-      status.innerText = "Saved just now";
-      status.classList.add('text-indigo-300');
-      setTimeout(() => {
-        status.innerText = "Auto-saved locally";
-        status.classList.remove('text-indigo-300');
-      }, 2000);
-    }
-
-    // --- NEW: QR Forge ---
-    function generateQR() {
-      const input = document.getElementById('qr-input').value.trim();
-      const qrOutput = document.getElementById('qr-output');
-      if (!input) return;
-      tryLog(`Forged new QR Code.`);
-      qrOutput.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(input)}&color=ffffff&bgcolor=0f172a`;
-    }
-    document.getElementById('qr-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') generateQR(); });
-
-  </script>
-
-  <script>
-    const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
-    const geometry = new THREE.TorusGeometry(14, 0.1, 16, 100); const material = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.15 });
-    const torus = new THREE.Mesh(geometry, material); scene.add(torus); camera.position.z = 25;
-    function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.0005; torus.rotation.y += 0.001; renderer.render(scene, camera); } animate();
-    window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+    // Vault Logic (Local Browser Storage)
+    function saveVault() { localStorage.setItem('vault', document.getElementById('vault-in').value); }
+    window.onload = () => document.getElementById('vault-in').value = localStorage.getItem('vault') || '';
   </script>
 </body>
 </html>
