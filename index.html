@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Aether Lab // Infinite Visual Core</title>
+  <title>Aether Lab // Core Experiment Array</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
@@ -21,7 +21,7 @@
       -webkit-user-select: none;
     }
 
-    /* Fixed Layout Canvas Stack Layers */
+    /* Fixed Layout Background Canvas Stack Layers */
     #canvas-3d { 
       position: fixed; 
       top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; 
@@ -31,15 +31,10 @@
       position: fixed; 
       top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2; 
       pointer-events: none;
-      opacity: 0.15;
-    }
-    #canvas-ripple {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh; z-index: 3;
-      pointer-events: none;
+      opacity: 0.12;
     }
 
-    /* Global Interactive Main Context Window */
+    /* Global Interactive Main Context Grid Layout */
     .interface-master {
       position: relative;
       width: 100%;
@@ -47,7 +42,9 @@
       z-index: 10;
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      box-sizing: border-box;
       pointer-events: none;
     }
 
@@ -57,20 +54,20 @@
 
     /* Glassmorphic Cyber-Panel Framework */
     .cyber-glass { 
-      background: rgba(6, 10, 22, 0.82); 
+      background: rgba(6, 10, 22, 0.85); 
       backdrop-filter: blur(16px); 
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(0, 255, 240, 0.15); 
       box-shadow: 0 0 25px rgba(0, 255, 240, 0.05), inset 0 0 15px rgba(0, 255, 240, 0.05);
     }
 
-    /* togglable CRT Monitor Scanline Emulator Overlay */
+    /* Togglable CRT Monitor Scanline Emulator Overlay */
     .crt-monitor::after {
       content: " ";
       display: block;
       position: fixed;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
       z-index: 999;
       background-size: 100% 4px, 6px 100%;
       pointer-events: none;
@@ -115,7 +112,6 @@
       animation: textSubGlitch-2 3s infinite linear alternate-reverse;
     }
 
-    /* High-End Matrix Transformation Keyframes */
     @keyframes textMainGlitch {
       0%, 100% { transform: skew(0deg); }
       2% { transform: skew(4deg); }
@@ -131,21 +127,14 @@
       50% { clip: rect(55px, 9999px, 84px, 0); }
       60% { clip: rect(5px, 9999px, 32px, 0); }
       70% { clip: rect(92px, 9999px, 55px, 0); }
-      80% { clip: rect(34px, 9999px, 12px, 0); }
-      90% { clip: rect(67px, 9999px, 73px, 0); }
       100% { clip: rect(18px, 9999px, 92px, 0); }
     }
     @keyframes textSubGlitch-2 {
       0% { clip: rect(76px, 9999px, 5px, 0); }
-      10% { clip: rect(22px, 9999px, 94px, 0); }
       20% { clip: rect(55px, 9999px, 12px, 0); }
-      30% { clip: rect(5px, 9999px, 76px, 0); }
       40% { clip: rect(89px, 9999px, 43px, 0); }
-      50% { clip: rect(12px, 9999px, 90px, 0); }
       60% { clip: rect(64px, 9999px, 5px, 0); }
-      70% { clip: rect(31px, 9999px, 66px, 0); }
       80% { clip: rect(95px, 9999px, 18px, 0); }
-      90% { clip: rect(4px, 9999px, 50px, 0); }
       100% { clip: rect(43px, 9999px, 81px, 0); }
     }
 
@@ -174,24 +163,11 @@
     .hud-vector-ring {
       position: absolute;
       top: 50%; left: 50%;
-      border: 1px dashed rgba(0, 255, 240, 0.08);
+      border: 1px dashed rgba(0, 255, 240, 0.06);
       border-radius: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      animation: hudRotate 30s linear infinite;
-    }
-
-    /* Frame Wrapper Locking game view parameters cleanly on iPadOS grid */
-    .game-viewport-frame {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 82%;
-      height: 76%;
-      z-index: 50;
-      background: #000;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
-      pointer-events: auto;
+      animation: hudRotate 40s linear infinite;
     }
 
     ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -203,40 +179,18 @@
 
   <canvas id="canvas-3d"></canvas>
   <canvas id="canvas-matrix"></canvas>
-  <canvas id="canvas-ripple"></canvas>
   <div class="crt-vignette"></div>
 
   <div class="hud-vector-ring w-[600px] h-[600px]"></div>
-  <div class="hud-vector-ring w-[900px] h-[900px]" style="animation-direction: reverse; animation-duration: 45s;"></div>
-  <div class="hud-vector-ring w-[300px] h-[300px]" style="border-style: dotted; animation-duration: 15s;"></div>
+  <div class="hud-vector-ring w-[900px] h-[900px]" style="animation-direction: reverse; animation-duration: 60s;"></div>
 
-  <div class="game-viewport-frame border border-teal-500/30 rounded-xl overflow-hidden shadow-2xl transition-all duration-300 hover:border-teal-400/50">
-    <div class="w-full bg-black/60 border-b border-white/5 px-4 py-2 flex justify-between items-center select-none">
-      <div class="flex items-center gap-2 text-[10px] font-mono tracking-widest text-teal-400/70">
-        <span class="h-1.5 w-1.5 bg-green-400 rounded-full animate-ping"></span>
-        <span>AETHER_LAB_LINK // EXEC_DEADSHOT.EXE</span>
-      </div>
-      <div class="flex gap-1">
-        <span class="w-2 h-2 rounded-full bg-amber-500/30 border border-amber-500/50 cursor-pointer hover:bg-amber-500/60 transition"></span>
-        <span class="w-2 h-2 rounded-full bg-red-500/30 border border-red-500/50 cursor-pointer hover:bg-red-500/60 transition" onclick="triggerSystemMatrixCrash()"></span>
-      </div>
-    </div>
-    <iframe 
-      src="https://deadshot.io/" 
-      id="game-viewport"
-      class="w-full h-full border-none bg-black"
-      allow="autoplay; fullscreen; gamepad; keyboard"
-      loading="lazy">
-    </iframe>
-  </div>
-
-  <div class="interface-master p-4 h-full w-full select-none">
+  <div class="interface-master select-none">
     
     <div class="interactive-element cyber-glass cyber-border-pulse w-72 h-full rounded-xl p-4 flex flex-col justify-between overflow-hidden">
       <div class="flex flex-col gap-4 h-full">
         <div class="border-b border-teal-500/20 pb-3">
           <h1 class="text-xl font-black tracking-wider text-teal-400 glitch-text" data-text="AETHER LAB" onclick="executeAudioUIExplosion()">AETHER LAB</h1>
-          <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest block mt-0.5">> Technical Animation Matrix</span>
+          <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest block mt-0.5">> Quantum Command Array</span>
         </div>
 
         <div class="flex flex-col gap-2">
@@ -251,12 +205,12 @@
             [03] ENGAGE WARP GEOMETRY
           </button>
           <button onclick="toggleMatrixRainOverlay()" class="w-full bg-teal-950/20 border border-teal-500/20 text-[10px] font-mono p-2 rounded text-left text-teal-300 tracking-wide hover:bg-teal-500/10 active:bg-teal-500/20 transition">
-            [04] TOGGLE MATRIX CYPHER
+            [04] TOGGLE LAYER CYPHER
           </button>
         </div>
 
         <div class="flex flex-col gap-2 bg-black/30 border border-white/5 p-3 rounded-lg">
-          <span class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">// Wave Synthesizer</span>
+          <span class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">// Acoustic Wave Synthesizer</span>
           <div class="grid grid-cols-3 gap-1">
             <button onclick="triggerHapticWave(150, 'sawtooth')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SAW</button>
             <button onclick="triggerHapticWave(440, 'sine')" class="bg-purple-950/20 border border-purple-500/20 text-[9px] p-1.5 rounded font-mono text-center text-purple-300 hover:bg-purple-500/20 active:bg-purple-500/40 transition">SINE</button>
@@ -268,17 +222,33 @@
         </div>
 
         <div class="flex-1 flex flex-col min-h-0 bg-black/40 border border-white/5 rounded-xl p-3 font-mono text-[9px] overflow-hidden">
-          <span class="text-teal-400/60 block border-b border-white/5 pb-1 mb-1.5 font-bold uppercase tracking-wider">// System Telemetry</span>
+          <span class="text-teal-400/60 block border-b border-white/5 pb-1 mb-1.5 font-bold uppercase tracking-wider">// Lab Instance Telemetry</span>
           <div id="telemetry-log-output" class="flex-1 overflow-y-auto space-y-1 text-white/50 leading-normal pr-1 select-text">
-            <div>[INIT] Core Engine frame compiled.</div>
-            <div>[LOG] iPad tracking vectors anchored.</div>
-            <div>[SYS] Glitch processing matrix standard.</div>
+            <div>[INIT] WebGL spatial particle cloud compiled.</div>
+            <div>[LOG] Touch event coordinates synchronized.</div>
+            <div>[SYS] Laboratory system running nominal status.</div>
           </div>
         </div>
       </div>
 
       <div class="text-[9px] font-mono text-white/20 tracking-wider pt-2 border-t border-white/5 mt-2">
-        AETHER LAB // V-1.12.06
+        AETHER HUB // SECURE CORE
+      </div>
+    </div>
+
+    <div class="interactive-element flex-1 h-full cyber-glass cyber-border-pulse rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
+      <div class="flex justify-between items-center border-b border-white/5 pb-2 font-mono text-xs select-none">
+        <div class="flex items-center gap-2 text-teal-400 font-bold tracking-wider">
+          <span class="h-1.5 w-1.5 bg-green-400 rounded-full animate-pulse"></span>
+          <span>CORE_WORKSPACE // QUANTUM_PARTICLE_MATRIX.SYS</span>
+        </div>
+        <div class="text-white/40 text-[10px] uppercase tracking-widest">
+          Interactions: Active on Tap/Swipe
+        </div>
+      </div>
+      
+      <div class="flex-1 w-full h-full bg-black/50 rounded-lg border border-white/5 relative overflow-hidden">
+        <canvas id="lab-interactive-canvas" class="absolute top-0 left-0 w-full h-full cursor-crosshair"></canvas>
       </div>
     </div>
 
@@ -287,23 +257,23 @@
         
         <div class="border-b border-teal-500/20 pb-3 flex justify-between items-center">
           <div>
-            <h2 class="text-xs font-mono font-bold tracking-widest text-teal-400 uppercase">> INSTANCE HUD</h2>
-            <span class="text-[9px] text-white/30 font-mono block mt-0.5">Execution parameters</span>
+            <h2 class="text-xs font-mono font-bold tracking-widest text-teal-400 uppercase">> DIAGNOSTICS</h2>
+            <span class="text-[9px] text-white/30 font-mono block mt-0.5">Performance tracking</span>
           </div>
-          <div class="h-1.5 w-1.5 bg-teal-400 rounded-full shadow-[0_0_8px_currentColor] animate-ping"></div>
+          <button onclick="triggerSystemMatrixCrash()" class="text-[9px] font-bold border border-red-500/30 bg-red-950/20 text-red-400 px-2 py-0.5 rounded tracking-wider uppercase hover:bg-red-500/20 transition">Crash Test</button>
         </div>
 
         <div class="flex flex-col gap-1 bg-black/40 border border-white/5 p-3 rounded-lg font-mono">
-          <span class="text-[9px] text-white/30 uppercase tracking-wider">Session Runtime</span>
+          <span class="text-[9px] text-white/30 uppercase tracking-wider">System Operational Uptime</span>
           <div id="hud-runtime-clock" class="text-xl font-bold tracking-widest text-teal-300">00:00:00</div>
         </div>
 
         <div class="flex flex-col gap-3 bg-black/30 border border-white/5 p-3 rounded-lg font-mono text-[10px]">
-          <span class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">// Vector FX Adjusters</span>
+          <span class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">// Environmental Parameters</span>
           
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-[9px]">
-              <span class="text-white/50 uppercase">Matrix Decay:</span>
+              <span class="text-white/50 uppercase">Matrix Fade Decay:</span>
               <span id="lbl-lbl-1" class="text-teal-300 font-bold">0.96</span>
             </div>
             <input type="range" id="sl-matrix-decay" min="85" max="99" value="96" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-lbl-1').innerText=(this.value/100).toFixed(2)">
@@ -311,7 +281,7 @@
 
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-[9px]">
-              <span class="text-white/50 uppercase">Warp Velocity:</span>
+              <span class="text-white/50 uppercase">3D Space Velocity:</span>
               <span id="lbl-lbl-2" class="text-teal-300 font-bold">1.5</span>
             </div>
             <input type="range" id="sl-warp-velocity" min="1" max="50" value="15" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-lbl-2').innerText=(this.value/10).toFixed(1)">
@@ -319,26 +289,27 @@
 
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-[9px]">
-              <span class="text-white/50 uppercase">Visual Bloom:</span>
+              <span class="text-white/50 uppercase">Particle Bloom Size:</span>
               <span id="lbl-lbl-3" class="text-teal-300 font-bold">0.12</span>
             </div>
             <input type="range" id="sl-visual-bloom" min="2" max="40" value="12" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-lbl-3').innerText=(this.value/100).toFixed(2); modifyBloomOpacity()">
           </div>
         </div>
 
-        <div class="inner-panel p-3 rounded-lg border border-white/5 font-mono text-[9px] flex flex-col gap-1.5 bg-black/20">
-          <div class="text-teal-400/50 uppercase font-bold tracking-wider">// Engine Parameters Map</div>
-          <div class="flex justify-between text-white/60"><span>Alpha Transp:</span><span class="text-white font-bold">WebGL Core v3</span></div>
-          <div class="flex justify-between text-white/60"><span>Compositor:</span><span class="text-white font-bold text-green-400">Stable</span></div>
-          <div class="flex justify-between text-white/60"><span>Render Context:</span><span class="text-white font-bold select-all">Hardware Accel</span></div>
+        <div class="flex flex-col gap-2 bg-black/30 border border-white/5 p-3 rounded-lg font-mono">
+          <div class="flex justify-between items-center text-[9px]">
+            <span class="text-indigo-400 font-bold uppercase tracking-wider">// Persistent Memory Vault</span>
+            <button onclick="downloadVaultData()" class="text-[8px] bg-indigo-950/40 border border-indigo-500/30 px-1.5 py-0.5 rounded text-indigo-300 uppercase font-bold hover:bg-indigo-500/20 transition">Export</button>
+          </div>
+          <textarea id="vault-in" oninput="saveVault()" class="w-full h-16 bg-black/50 border border-white/10 rounded p-2 text-[10px] focus:outline-none text-indigo-200 resize-none font-mono" placeholder="Drop encryption codes or data manifests here..."></textarea>
         </div>
 
       </div>
 
       <div class="flex flex-col gap-1 border-t border-white/5 pt-2 mt-2">
         <div class="flex justify-between font-mono text-[9px] text-white/30 uppercase tracking-widest">
-          <span>Client Terminal</span>
-          <span class="text-teal-400/50 font-bold">Online</span>
+          <span>Workspace Terminal</span>
+          <span class="text-teal-400/50 font-bold">Client Pure</span>
         </div>
       </div>
     </div>
@@ -360,7 +331,7 @@
         oscillatorNode.type = shapeForm;
         oscillatorNode.frequency.setValueAtTime(frequency, ctx.currentTime);
         
-        gainControlNode.gain.setValueAtTime(0.015, ctx.currentTime);
+        gainControlNode.gain.setValueAtTime(0.012, ctx.currentTime);
         gainControlNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + specificLength);
         
         oscillatorNode.connect(gainControlNode);
@@ -368,7 +339,7 @@
         
         oscillatorNode.start();
         oscillatorNode.stop(ctx.currentTime + specificLength);
-        writeTelemetryLogLine(`Audio signal emission: ${frequency}Hz [${shapeForm.toUpperCase()}]`);
+        writeTelemetryLogLine(`Wave frequency emission: ${frequency}Hz [${shapeForm.toUpperCase()}]`);
       } catch (err) {}
     }
 
@@ -382,7 +353,7 @@
           baselineAmbientHumNode.stop();
           baselineAmbientHumNode = null;
           toggleBtn.innerText = "Start Ambient Hum";
-          writeTelemetryLogLine("Ambient synth hum terminated.");
+          writeTelemetryLogLine("Ambient synthetic drone halted.");
         } else {
           const osc1 = ctx.createOscillator();
           const osc2 = ctx.createOscillator();
@@ -392,12 +363,12 @@
           osc1.type = 'sawtooth';
           osc1.frequency.value = 55; 
           osc2.type = 'sine';
-          osc2.frequency.value = 55.5; 
+          osc2.frequency.value = 55.4; 
 
           lowpassFilter.type = 'lowpass';
-          lowpassFilter.frequency.value = 180; 
+          lowpassFilter.frequency.value = 140; 
 
-          masterGain.gain.value = 0.025;
+          masterGain.gain.value = 0.03;
 
           osc1.connect(lowpassFilter);
           osc2.connect(lowpassFilter);
@@ -407,24 +378,17 @@
           osc1.start();
           osc2.start();
           
-          baselineAmbientHumNode = {
-            stop: function() {
-              osc1.stop();
-              osc2.stop();
-            }
-          };
-
+          baselineAmbientHumNode = { stop: function() { osc1.stop(); osc2.stop(); } };
           toggleBtn.innerText = "Halt Ambient Hum";
-          writeTelemetryLogLine("Neural background sub-bass drone initialized.");
+          writeTelemetryLogLine("Sub-bass environment acoustics active.");
         }
-        triggerHapticWave(800, 'sine', 0.05);
+        triggerHapticWave(800, 'sine', 0.04);
       } catch (e) {}
     }
 
     function executeAudioUIExplosion() {
-      triggerHapticWave(120, 'sawtooth', 0.6);
-      setTimeout(() => triggerHapticWave(350, 'square', 0.2), 100);
-      writeTelemetryLogLine("Visual core title interaction registered.");
+      triggerHapticWave(130, 'sawtooth', 0.5);
+      setTimeout(() => triggerHapticWave(320, 'square', 0.15), 80);
     }
   </script>
 
@@ -434,12 +398,11 @@
     
     let activeMatrixColumns = [];
     let isMatrixRainActive = true;
-    const cypherCharactersPool = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZMODULE_GLITCH_CORE_AETHER_LAB_HEX_0x7F_XYZ_89".split("");
+    const cypherCharactersPool = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZCORE_AETHER_LAB_HEX_0x8C_ALPHA_VECTORS".split("");
 
     function setupMatrixCanvasDimensions() {
       matrixCanvasRef.width = window.innerWidth;
       matrixCanvasRef.height = window.innerHeight;
-      
       const columnCount = Math.floor(matrixCanvasRef.width / 14);
       activeMatrixColumns = [];
       for (let i = 0; i < columnCount; i++) {
@@ -467,11 +430,8 @@
         const coordinateX = i * 14;
         const coordinateY = activeMatrixColumns[i] * 14;
 
-        if(Math.random() > 0.98) {
-          matrixCanvasCtx.fillStyle = "#ffffff";
-        } else {
-          matrixCanvasCtx.fillStyle = "#00fff0";
-        }
+        if(Math.random() > 0.98) matrixCanvasCtx.fillStyle = "#ffffff";
+        else matrixCanvasCtx.fillStyle = "#00fff0";
 
         matrixCanvasCtx.fillText(textSymbol, coordinateX, coordinateY);
 
@@ -484,14 +444,141 @@
 
     function toggleMatrixRainOverlay() {
       isMatrixRainActive = !isMatrixRainActive;
-      writeTelemetryLogLine(`Matrix data layer toggled: ${isMatrixRainActive ? "ENABLED" : "DISABLED"}`);
-      triggerHapticWave(500, 'sine', 0.03);
+      writeTelemetryLogLine(`Matrix streaming overlay: ${isMatrixRainActive ? "ENGAGED" : "SHUTDOWN"}`);
+      triggerHapticWave(540, 'sine', 0.03);
     }
   </script>
 
   <script>
-    const container3DElement = document.getElementById('canvas-3d');
+    const labCanvas = document.getElementById('lab-interactive-canvas');
+    const labCtx = labCanvas.getContext('2d');
     
+    let labParticlesArray = [];
+    let mouseVector = { x: null, y: null, radius: 100 };
+
+    function resizeLabCanvas() {
+      labCanvas.width = labCanvas.parentElement.clientWidth;
+      labCanvas.height = labCanvas.parentElement.clientHeight;
+    }
+    resizeLabCanvas();
+    window.addEventListener('resize', resizeLabCanvas);
+
+    class LabParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.baseX = x;
+        this.baseY = y;
+        this.size = Math.random() * 2 + 1;
+        this.density = (Math.random() * 30) + 12;
+      }
+      draw() {
+        labCtx.fillStyle = 'rgba(0, 255, 240, 0.75)';
+        labCtx.beginPath();
+        labCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        labCtx.closePath();
+        labCtx.fill();
+      }
+      update() {
+        let dx = mouseVector.x - this.x;
+        let dy = mouseVector.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < mouseVector.radius) {
+          let forceDirectionX = dx / distance;
+          let forceDirectionY = dy / distance;
+          let maxDistance = mouseVector.radius;
+          let force = (maxDistance - distance) / maxDistance;
+          let directionX = forceDirectionX * force * this.density;
+          let directionY = forceDirectionY * force * this.density;
+          this.x -= directionX;
+          this.y -= directionY;
+        } else {
+          if (this.x !== this.baseX) {
+            let dx = this.x - this.baseX;
+            this.x -= dx / 10;
+          }
+          if (this.y !== this.baseY) {
+            let dy = this.y - this.baseY;
+            this.y -= dy / 10;
+          }
+        }
+      }
+    }
+
+    function initLabParticleGrid() {
+      labParticlesArray = [];
+      const densityStep = 22; 
+      for (let y = densityStep; y < labCanvas.height; y += densityStep) {
+        for (let x = densityStep; x < labCanvas.width; x += densityStep) {
+          labParticlesArray.push(new LabParticle(x, y));
+        }
+      }
+    }
+    initLabParticleGrid();
+    window.addEventListener('resize', initLabParticleGrid);
+
+    function connectLabParticles() {
+      for (let a = 0; a < labParticlesArray.length; a++) {
+        for (let b = a; b < labParticlesArray.length; b++) {
+          let dx = labParticlesArray[a].x - labParticlesArray[b].x;
+          let dy = labParticlesArray[a].y - labParticlesArray[b].y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 28) {
+            labCtx.strokeStyle = `rgba(0, 255, 240, ${0.25 - (distance / 28)})`;
+            labCtx.lineWidth = 0.8;
+            labCtx.beginPath();
+            labCtx.moveTo(labParticlesArray[a].x, labParticlesArray[a].y);
+            labCtx.lineTo(labParticlesArray[b].x, labParticlesArray[b].y);
+            labCtx.stroke();
+          }
+        }
+      }
+    }
+
+    function animateLabCanvasLoop() {
+      labCtx.clearRect(0, 0, labCanvas.width, labCanvas.height);
+      for (let i = 0; i < labParticlesArray.length; i++) {
+        labParticlesArray[i].update();
+        labParticlesArray[i].draw();
+      }
+      connectLabParticles();
+      requestAnimationFrame(animateLabCanvasLoop);
+    }
+    animateLabCanvasLoop();
+
+    // Unified Mobile Tablet Event Observers
+    function getCanvasCoordinates(e) {
+      const rect = labCanvas.getBoundingClientRect();
+      if(e.touches && e.touches[0]) {
+        return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+      }
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    function handleInteractionMove(e) {
+      const coords = getCanvasCoordinates(e);
+      mouseVector.x = coords.x;
+      mouseVector.y = coords.y;
+    }
+    function handleInteractionLeave() {
+      mouseVector.x = null;
+      mouseVector.y = null;
+    }
+
+    labCanvas.addEventListener('mousemove', handleInteractionMove);
+    labCanvas.addEventListener('mouseleave', handleInteractionLeave);
+    labCanvas.addEventListener('touchmove', handleInteractionMove);
+    labCanvas.addEventListener('touchend', handleInteractionLeave);
+    labCanvas.addEventListener('touchstart', (e) => {
+      handleInteractionMove(e);
+      triggerHapticWave(300, 'sine', 0.02);
+    });
+  </script>
+
+  <script>
+    const container3DElement = document.getElementById('canvas-3d');
     const threeSceneInstance = new THREE.Scene();
     const camera3DInstance = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const webGlRendererInstance = new THREE.WebGLRenderer({ canvas: container3DElement, alpha: true, antialias: true });
@@ -537,7 +624,7 @@
     threeSceneInstance.add(starPoints);
     camera3DInstance.position.z = 35;
 
-    // Vector Modulator Core Configurations
+    // Vector Modulator Core Parameters
     let particleVelocity = 0.02;
     let targetVelocity = 0.02;
     let colorWavelengthShift = 0;
@@ -548,13 +635,13 @@
       triggerHapticWave(600, 'sine', 0.03);
       if (vectorType === 'speed') {
         targetVelocity = targetVelocity === 0.02 ? 0.15 : 0.02;
-        writeTelemetryLogLine(`Vector Velocity modulation shifted to: ${targetVelocity === 0.02 ? 'STANDARD' : 'HYPER'}`);
+        writeTelemetryLogLine(`Space particle acceleration: ${targetVelocity === 0.02 ? 'STANDARD' : 'MAX_BURST'}`);
       } else if (vectorType === 'color') {
         colorWavelengthShift = (colorWavelengthShift + 1) % 4;
-        writeTelemetryLogLine(`Color wavelength phase incremented to sequence: 0x0${colorWavelengthShift}`);
+        writeTelemetryLogLine(`Wavelength color spectrum index: 0x0${colorWavelengthShift}`);
       } else if (vectorType === 'warp') {
         warpTrajectoryActive = !warpTrajectoryActive;
-        writeTelemetryLogLine(`Warp geometry dimension matrices: ${warpTrajectoryActive ? 'ENGAGED' : 'STABLE'}`);
+        writeTelemetryLogLine(`Z-axis dimensional trajectory: ${warpTrajectoryActive ? 'WARP_ENGAGED' : 'STABLE'}`);
       }
     }
 
@@ -570,23 +657,18 @@
       const logDiv = document.createElement('div');
       logDiv.innerText = `[LOG] ${logMessage}`;
       logContainer.appendChild(logDiv);
-      if (logContainer.children.length > 30) {
-        logContainer.removeChild(logContainer.firstChild);
-      }
+      if (logContainer.children.length > 25) logContainer.removeChild(logContainer.firstChild);
       logContainer.scrollTop = logContainer.scrollHeight;
     }
 
     function triggerSystemMatrixCrash() {
-      triggerHapticWave(90, 'sawtooth', 0.8);
-      writeTelemetryLogLine("CRITICAL FAILURE: Purging graphic compositor loops.");
-      document.body.style.filter = "invert(1) hue-rotate(180deg) contrast(2)";
-      setTimeout(() => {
-        document.body.style.filter = "none";
-        writeTelemetryLogLine("Compositor safely re-initialized via fail-safe node link.");
-      }, 500);
+      triggerHapticWave(90, 'sawtooth', 0.7);
+      writeTelemetryLogLine("CRITICAL FAULT TEST: Simulating compositor pipeline drop.");
+      document.body.style.filter = "invert(1) hue-rotate(180deg) contrast(1.5)";
+      setTimeout(() => { document.body.style.filter = "none"; }, 400);
     }
 
-    // Live Telemetry Runtime Clock Tracker
+    // Live State Runtime Clock
     let startTimeReference = Date.now();
     setInterval(() => {
       const timerDisplay = document.getElementById('hud-runtime-clock');
@@ -598,36 +680,32 @@
       timerDisplay.innerText = `${hours}:${minutes}:${seconds}`;
     }, 1000);
 
-    // Master Unified Render Animation Ticker
+    // Master Render Loop Orchestrator
     let operationalFrameTicker = 0;
     function masterRenderLoopOrchestrator() {
       requestAnimationFrame(masterRenderLoopOrchestrator);
       operationalFrameTicker += 0.01;
 
-      // Update Digital Matrix Overlays
       renderMatrixFrameTick();
 
-      // Dynamic Particle Vectors Translations
+      // Adjust particle flow variables based on slider references
+      const dynamicVelocityFactor = parseFloat(document.getElementById('sl-warp-velocity').value / 10);
       particleVelocity += (targetVelocity - particleVelocity) * 0.1;
-      starPoints.rotation.y += particleVelocity * 0.2;
-      starPoints.rotation.x += particleVelocity * 0.1;
+      starPoints.rotation.y += particleVelocity * 0.2 * dynamicVelocityFactor;
+      starPoints.rotation.x += particleVelocity * 0.1 * dynamicVelocityFactor;
 
-      // Color Cycle Modulations
+      // Color Spectrum Shifting Maps
       if (colorWavelengthShift > 0) {
         const colors = starGeometry.attributes.color.array;
         for (let i = 0; i < starCloudParticlesCount * 3; i += 3) {
-          if (colorWavelengthShift === 1) {
-            colors[i] = Math.sin(operationalFrameTicker + i) * 0.5 + 0.5;
-          } else if (colorWavelengthShift === 2) {
-            colors[i + 1] = Math.cos(operationalFrameTicker + i) * 0.5 + 0.5;
-          } else {
-            colors[i + 2] = Math.sin(operationalFrameTicker * 2) * 0.5 + 0.5;
-          }
+          if (colorWavelengthShift === 1) colors[i] = Math.sin(operationalFrameTicker + i) * 0.5 + 0.5;
+          else if (colorWavelengthShift === 2) colors[i + 1] = Math.cos(operationalFrameTicker + i) * 0.5 + 0.5;
+          else colors[i + 2] = Math.sin(operationalFrameTicker * 2) * 0.5 + 0.5;
         }
         starGeometry.attributes.color.needsUpdate = true;
       }
 
-      // Matrix Warp Trajectory Mechanics
+      // Deep Space Warp FOV Adjustments
       const targetWarp = warpTrajectoryActive ? 2.5 : 0;
       warpFactor += (targetWarp - warpFactor) * 0.05;
       if (warpFactor > 0.01) {
@@ -642,16 +720,32 @@
 
       webGlRendererInstance.render(threeSceneInstance, camera3DInstance);
     }
-
-    // Initialize Global Loop
     masterRenderLoopOrchestrator();
 
-    // Viewport Resizing Listeners
+    // Resize Observer
     window.addEventListener('resize', () => {
       camera3DInstance.aspect = window.innerWidth / window.innerHeight;
       camera3DInstance.updateProjectionMatrix();
       webGlRendererInstance.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // Vault Device File Persistences
+    function loadVault() { document.getElementById('vault-in').value = localStorage.getItem('vault') || ''; }
+    function saveVault() { localStorage.setItem('vault', document.getElementById('vault-in').value); }
+    function downloadVaultData() {
+      triggerHapticWave(650, 'sine', 0.06);
+      const data = document.getElementById('vault-in').value;
+      if(!data.trim()) return;
+      const textBlob = new Blob([data], { type: 'text/plain' });
+      const dl = document.createElement('a');
+      dl.download = 'aether_lab_manifest.txt';
+      dl.href = window.URL.createObjectURL(textBlob);
+      dl.style.display = 'none';
+      document.body.appendChild(dl);
+      dl.click();
+      dl.remove();
+    }
+    loadVault();
   </script>
 </body>
 </html>
