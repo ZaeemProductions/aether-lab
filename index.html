@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
+    /* Absolute Cyberpunk Visual Architecture Configuration */
     body, html { 
       margin: 0; 
       padding: 0;
@@ -19,6 +20,7 @@
       -webkit-user-select: none;
     }
 
+    /* Fixed Layout Background Canvas Stack Layers */
     #canvas-3d { 
       position: fixed; 
       top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; 
@@ -43,6 +45,7 @@
       pointer-events: auto;
     }
 
+    /* Glassmorphic Cyber-Panel Framework */
     .cyber-glass { 
       background: rgba(4, 8, 20, 0.9); 
       backdrop-filter: blur(16px); 
@@ -51,6 +54,7 @@
       box-shadow: 0 0 25px rgba(0, 255, 204, 0.03), inset 0 0 15px rgba(0, 255, 204, 0.03);
     }
 
+    /* Togglable CRT Monitor Scanline Emulator Overlay */
     .crt-monitor::after {
       content: " ";
       display: block;
@@ -62,6 +66,7 @@
       pointer-events: none;
     }
 
+    /* Screen Vignette Shadow Overlay */
     .crt-vignette {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -70,6 +75,7 @@
       pointer-events: none;
     }
 
+    /* CSS Text Glitch Configurations */
     .glitch-text {
       position: relative;
       animation: textMainGlitch 4s infinite;
@@ -246,7 +252,7 @@
               <span class="text-white/50 uppercase">Text Matrix Bloom Opacity:</span>
               <span id="lbl-sl-3" class="text-teal-300 font-bold">0.12</span>
             </div>
-            <input type="range" id="sl-led-pwm" min="2" max="50" value="12" class="w-full accent-teal-500 cursor-pointer" oninput="document.getElementById('lbl-sl-3').innerText=(this.value/100).toFixed(2); playAudioTickTone(); modifyBloomOpacity()">
+            <input type="range" id="sl-led-pwm" min="2" max="50" value="12" class="w-full accent-teal-400 cursor-pointer" oninput="document.getElementById('lbl-sl-3').innerText=(this.value/100).toFixed(2); playAudioTickTone(); modifyBloomOpacity()">
           </div>
         </div>
 
@@ -347,7 +353,7 @@
     let isBotPollingActive = false;
     let fallbackOffsetPointerId = 0;
     let runtimeThreadTrackerId = null;
-    let backoffMultiplierCooldown = 1; // Defensive back-off layout tracker
+    let backoffMultiplierCooldown = 1;
 
     function saveTelegramToken() {
       triggerAudioWaveSignal(900, 'sine', 0.04);
@@ -377,7 +383,7 @@
       document.getElementById('tg-token-input').value = "";
       activeTelegramBotToken = "";
       if(isBotPollingActive) toggleBotExecutionState();
-      writeTelemetryLogLine("SECURITY: Purged configuration tokens from internal storage matrix.");
+      writeTelemetryLogLine("SECURITY: Dropped configuration tokens. Local register clean.");
       serializeConfigurationToVault();
     }
 
@@ -418,7 +424,7 @@
       }
     }
 
-    // INTERCEPT ENGINE: Hardened parser screening error pages before execution
+    // FIXED: Upgraded network intercept layout shifting to edge-optimized corsproxy.io
     async function executeSovereignTelegramLongPoll() {
       if(!isBotPollingActive) return;
 
@@ -427,23 +433,16 @@
       let calculatedNextDelay = baseDelay * backoffMultiplierCooldown;
       
       try {
-        const targetUrl = `https://api.telegram.org/bot${activeTelegramBotToken}/getUpdates?offset=${fallbackOffsetPointerId + 1}&timeout=0&_=${Date.now()}`;
-        const proxyUri = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        const targetUrl = `https://api.telegram.org/bot${activeTelegramBotToken}/getUpdates?offset=${fallbackOffsetPointerId + 1}&timeout=0`;
+        const proxyUri = `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`;
         
         const initialFetchResponse = await fetch(proxyUri);
         if (!initialFetchResponse.ok) throw new Error(`HTTP Core Drop Status: ${initialFetchResponse.status}`);
         
-        const rawStringData = await initialFetchResponse.text();
-        
-        // GATING PROTOCOL: Screen and drop if proxy returns HTML instead of a clean JSON bracket validation
-        if(!rawStringData.trim().startsWith('{')) {
-          throw new Error("Proxy node data throttled or returned unparsable content blocks.");
-        }
-
-        const jsonPayloadPack = JSON.parse(rawStringData);
+        const jsonPayloadPack = await initialFetchResponse.json();
         
         if(jsonPayloadPack && jsonPayloadPack.ok) {
-          // Reset cooldown back-off upon clean transaction receipt confirmation
+          // Reset throttling delays on a verified return payload
           backoffMultiplierCooldown = 1;
 
           if(jsonPayloadPack.result.length === 0) {
@@ -471,7 +470,7 @@
       } catch(exceptionErr) {
         console.warn("[CRITICAL] Protective bypass triggered:", exceptionErr.message);
         
-        // Back off exponentially up to a maximum interval limit to cool down connection loops
+        // Scale delays exponentially on failure to clear endpoint bottlenecks safely
         backoffMultiplierCooldown = Math.min(backoffMultiplierCooldown * 1.5, 8);
         calculatedNextDelay = baseDelay * backoffMultiplierCooldown;
         
@@ -481,6 +480,7 @@
       runtimeThreadTrackerId = setTimeout(executeSovereignTelegramLongPoll, calculatedNextDelay * 1000);
     }
 
+    // FIXED: Upgraded sendMessage delivery maps to clean edge-proxied POST executions
     async function processAndTransmitAiResponsePayload(chatId, userNameString, messageTextString) {
       const customIdentityName = document.getElementById('cfg-bot-name').value.trim();
       const customSystemPrompt = document.getElementById('cfg-system-prompt').value.trim();
@@ -496,15 +496,23 @@
 
         logCapturedUpdateToLedger(customIdentityName, parsedAiResponseText, "OUTBOUND_TRANSMISSION");
 
-        const targetTelegramUrl = `https://api.telegram.org/bot${activeTelegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(parsedAiResponseText)}&_=${Date.now()}`;
-        const wrappedProxyUri = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetTelegramUrl)}`;
+        const targetTelegramUrl = `https://api.telegram.org/bot${activeTelegramBotToken}/sendMessage`;
+        const proxyUri = `https://corsproxy.io/?url=${encodeURIComponent(targetTelegramUrl)}`;
         
-        await fetch(wrappedProxyUri);
-        writeTelemetryLogLine(`TRANSMIT: Outbound packet response dispatched over wire proxy links.`);
+        await fetch(proxyUri, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: parsedAiResponseText
+          })
+        });
+
+        writeTelemetryLogLine("TRANSMIT: Outbound packet response dispatched over wire proxy links.");
         triggerAudioWaveSignal(1100, 'sine', 0.04);
 
       } catch(aiErr) {
-        writeTelemetryLogLine("ERROR: Text generation sequence failed to parse parameter values.");
+        writeTelemetryLogLine("ERROR: Response tracking matrix failed during query execution.");
       }
     }
 
@@ -577,16 +585,6 @@
     const nodePoints = new THREE.Points(clusterGeometry, clusterMaterial);
     threeSceneInstance.add(nodePoints);
     camera3DInstance.position.z = 32;
-
-    function writeTelemetryLogLine(logMessage) {
-      const logContainer = document.getElementById('telemetry-log-output');
-      if (!logContainer) return;
-      const logDiv = document.createElement('div');
-      logDiv.innerText = `[LOG] ${logMessage}`;
-      logContainer.appendChild(logDiv);
-      if (logContainer.children.length > 25) logContainer.removeChild(logContainer.firstChild);
-      logContainer.scrollTop = logContainer.scrollHeight;
-    }
 
     function modifyBloomOpacity() {
       const bloomVal = parseFloat(document.getElementById('sl-led-pwm').value / 100);
