@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central Hub</title>
+    <title>Dev Lab Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #0f172a; color: #f8fafc; display: flex; min-height: 100vh; }
         
-        /* Sidebar Dashboard Navigation */
+        /* Sidebar Navigation */
         nav { width: 260px; background: #1e293b; padding: 2rem; border-right: 1px solid #334155; }
         nav h1 { font-size: 1.5rem; margin-bottom: 2rem; color: #38bdf8; }
-        nav ul { list-list-type: none; }
+        nav ul { list-style-type: none; }
         nav li { padding: 0.75rem 1rem; margin-bottom: 0.5rem; background: #334155; border-radius: 6px; cursor: pointer; }
         nav li.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
 
-        /* Main Content Area */
+        /* Dashboard Main Grid */
         main { flex: 1; padding: 3rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         
-        /* App Launcher Card */
         .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; transition: transform 0.2s, border-color 0.2s; text-decoration: none; color: inherit; display: block; }
         .card:hover { transform: translateY(-5px); border-color: #38bdf8; }
         .card h3 { color: #38bdf8; margin-bottom: 0.5rem; }
@@ -29,23 +28,27 @@
 <body>
 
     <nav>
-        <h1>Dashboard</h1>
+        <h1>My Lab</h1>
         <ul>
-            <li class="active">Overview</li>
-            <li>Projects</li>
-            <li>Settings</li>
+            <li class="active">Tools & Projects</li>
+            <li>System Status</li>
         </ul>
     </nav>
 
     <main>
-        <h2>Welcome Back</h2>
-        <p style="color: #94a3b8;">Select an application platform below to boot initialization.</p>
+        <h2>Tools Registry</h2>
+        <p style="color: #94a3b8;">Click any active tool card to boot the environment directly from the /tools/ directory.</p>
 
         <div class="grid">
-            <a href="aether-os/os.html" class="card">
-                <h3>Aether OS v1.0</h3>
-                <p>Launch the virtual web environment with full boot sequencing and window management.</p>
+            <a href="tools/aether-os.html" class="card">
+                <h3>Aether OS</h3>
+                <p>Run the single-file virtual operating system experiment directly from the tools folder.</p>
             </a>
+            
+            <div class="card" style="opacity: 0.5; cursor: not-allowed;">
+                <h3>[ Future Tool ]</h3>
+                <p>Drop a new file into the /tools/ directory to expand your setup later.</p>
+            </div>
         </div>
     </main>
 
