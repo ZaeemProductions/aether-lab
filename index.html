@@ -1,56 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Lab Dashboard</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #0f172a; color: #f8fafc; display: flex; min-height: 100vh; }
-        
-        /* Sidebar Navigation */
-        nav { width: 260px; background: #1e293b; padding: 2rem; border-right: 1px solid #334155; }
-        nav h1 { font-size: 1.5rem; margin-bottom: 2rem; color: #38bdf8; }
-        nav ul { list-style-type: none; }
-        nav li { padding: 0.75rem 1rem; margin-bottom: 0.5rem; background: #334155; border-radius: 6px; cursor: pointer; }
-        nav li.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
-
-        /* Dashboard Main Grid */
-        main { flex: 1; padding: 3rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; transition: transform 0.2s, border-color 0.2s; text-decoration: none; color: inherit; display: block; }
-        .card:hover { transform: translateY(-5px); border-color: #38bdf8; }
-        .card h3 { color: #38bdf8; margin-bottom: 0.5rem; }
-        .card p { color: #94a3b8; font-size: 0.9rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Aether Lab // System Index</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #09090b; color: #e4e4e7; font-family: monospace; overflow: hidden; }
+    .glass-panel {
+      background: rgba(18, 18, 24, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  </style>
 </head>
-<body>
+<body class="h-screen w-screen flex flex-col items-center justify-center p-4 antialiased select-none">
 
-    <nav>
-        <h1>My Lab</h1>
-        <ul>
-            <li class="active">Tools & Projects</li>
-            <li>System Status</li>
-        </ul>
-    </nav>
+  <canvas id="aether-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-10 opacity-30"></canvas>
 
-    <main>
-        <h2>Tools Registry</h2>
-        <p style="color: #94a3b8;">Click any active tool card to boot the environment directly from the /tools/ directory.</p>
+  <div class="w-full max-w-md glass-panel rounded-2xl p-6 flex flex-col gap-6 z-20 relative shadow-2xl text-center">
+    
+    <div class="flex items-center justify-center gap-2 border-b border-zinc-800 pb-4">
+      <span class="h-1.5 w-1.5 rounded-full bg-zinc-500 animate-pulse"></span>
+      <span class="text-[10px] tracking-widest text-zinc-500 uppercase font-bold">System Status // Standby</span>
+    </div>
 
-        <div class="grid">
-            <a href="tools/aether-os.html" class="card">
-                <h3>Aether OS</h3>
-                <p>Run the single-file virtual operating system experiment directly from the tools folder.</p>
-            </a>
-            
-            <div class="card" style="opacity: 0.5; cursor: not-allowed;">
-                <h3>[ Future Tool ]</h3>
-                <p>Drop a new file into the /tools/ directory to expand your setup later.</p>
-            </div>
-        </div>
-    </main>
+    <div class="space-y-2 py-4">
+      <h1 class="text-2xl font-light tracking-[0.4em] text-zinc-100 uppercase pl-[0.4em]">ÆTHER LAB</h1>
+      <p class="text-[11px] leading-relaxed text-zinc-500 max-w-xs mx-auto font-sans font-light">
+        A serverless sandbox executing high-velocity, client-side data modules directly inside local browser memory.
+      </p>
+    </div>
 
+    <div class="bg-zinc-950/50 border border-zinc-900 rounded-xl p-3 font-mono text-[10px] text-left flex justify-between items-center">
+      <div class="flex flex-col gap-0.5">
+        <span class="text-zinc-600 uppercase font-bold">Registry Uplink:</span>
+        <span class="text-zinc-400">./aether/index.html</span>
+      </div>
+      <a href="./aether/index.html" onclick="playAudioHapticTick(800, 0.03)" class="border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-300 transition-all duration-200 px-3 py-1.5 rounded-md font-bold uppercase tracking-wider text-[9px]">
+        Enter OS
+      </a>
+    </div>
+
+    <div class="flex justify-between items-center text-[9px] text-zinc-600 tracking-widest pt-1 border-t border-zinc-900">
+      <span>CORE: ONLINE</span>
+      <span>COST: $0.00</span>
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('aether-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let w, h;
+    let particleClusterArray = [];
+    const maxTargetDistance = 110; // Connection line proximity gate threshold
+
+    // Simple mouse/touch input coordinate tracker object
+    const interfacePointer = { x: null, y: null, activeRadius: 150 };
+
+    function resizeViewport() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      generateAetherStructure();
+    }
+
+    function generateAetherStructure() {
+      particleClusterArray = [];
+      // Scale dot density fluidly based on viewport screen space surface dimensions
+      const totalNodesCount = Math.floor((w * h) / 14000) + 15;
+
+      for (let i = 0; i < totalNodesCount; i++) {
+        particleClusterArray.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.35, // Low speed drift parameters
+          vy: (Math.random() - 0.5) * 0.35,
+          radiusSize: 1 + Math.random() * 1.5
+        });
+      }
+    }
+
+    function renderAetherFrameLoop() {
+      requestAnimationFrame(renderAetherFrameLoop);
+      ctx.clearRect(0, 0, w, h);
+
+      // Loop through nodes to update coordinate vectors
+      particleClusterArray.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounding framework loop checks to wrap nodes smoothly around borders
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+
+        // Interact with tracking cursor coordinates
+        if (interfacePointer.x !== null) {
+          const dx = p.x - interfacePointer.x;
+          const dy = p.y - interfacePointer.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < interfacePointer.activeRadius) {
+            // Push points away smoothly when proximity bounds break
+            const force = (interfacePointer.activeRadius - dist) / interfacePointer.activeRadius;
+            p.x += (dx / dist) * force * 0.6;
+            p.y += (dy / dist) * force * 0.6;
+          }
+        }
+
+        // Render point node markers
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radiusSize, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(228, 228, 231, 0.4)';
+        ctx.fill();
+      });
+
+      // Compute linking thread tracks line connections
+      for (let i = 0; i < particleClusterArray.length; i++) {
+        for (let j = i + 1; j < particleClusterArray.length; j++) {
+          const n1 = particleClusterArray[i];
+          const n2 = particleClusterArray[j];
+
+          const dx = n1.x - n2.x;
+          const dy = n1.y - n2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < maxTargetDistance) {
+            // Dynamic alpha visibility scaling based on link length closeness metrics
+            const alphaWeight = (1 - (distance / maxTargetDistance)) * 0.12;
+            ctx.strokeStyle = `rgba(228, 228, 231, ${alphaWeight})`;
+            ctx.lineWidth = 0.75;
+            ctx.beginPath();
+            ctx.moveTo(n1.x, n1.y);
+            ctx.lineTo(n2.x, n2.y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Capture touch points and mouse tracks
+    window.addEventListener('mousemove', (e) => {
+      interfacePointer.x = e.clientX;
+      interfacePointer.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      interfacePointer.x = null;
+      interfacePointer.y = null;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches[0]) {
+        interfacePointer.x = e.touches[0].clientX;
+        interfacePointer.y = e.touches[0].clientY;
+      }
+    });
+
+    window.addEventListener('touchend', () => {
+      interfacePointer.x = null;
+      interfacePointer.y = null;
+    });
+
+    // Ripple effect on window tap/click triggers
+    window.addEventListener('click', (e) => {
+      playAudioHapticTick(300, 0.01);
+      particleClusterArray.forEach(p => {
+        const dx = p.x - e.clientX;
+        const dy = p.y - e.clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 200) {
+          p.vx += (dx / dist) * 1.5;
+          p.vy += (dy / dist) * 1.5;
+        }
+      });
+    });
+
+    // Standard local audio synthesizer node handles
+    let audioCtxRef = null;
+    function playAudioHapticTick(frequency, duration) {
+      try {
+        const ctx = audioCtxRef || new (window.AudioContext || window.webkitAudioContext)();
+        if(!audioCtxRef) audioCtxRef = ctx;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+        gain.gain.setValueAtTime(0.003, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    window.addEventListener('resize', resizeViewport);
+    resizeViewport();
+    renderAetherFrameLoop();
+  </script>
 </body>
 </html>
