@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether OS Emulator</title>
+    <style>
+        /* CSS INTERFACE GRAPHICS */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+        .screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            z-index: 10;
+        }
+        .screen.active { display: flex; }
+
+        /* Step 1: Booting Sequence Graphics */
+        #boot-screen { background: #07070f; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
+        .logo { font-size: 4rem; font-weight: bold; margin-bottom: 1.5rem; color: #00d2ff; text-shadow: 0 0 20px rgba(0,210,255,0.4); }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: #00d2ff; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Step 2: Authentication Window Styles */
+        #login-screen {
+            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
+            justify-content: center; align-items: center;
+        }
+        .login-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); text-align: center; width: 320px; color: white; }
+        .avatar { width: 80px; height: 80px; background: #00d2ff; border-radius: 50%; margin: 0 auto 1rem; }
+        #password-input { width: 100%; padding: 0.75rem; border-radius: 8px; border: none; background: rgba(255,255,255,0.15); color: #fff; text-align: center; margin-top: 1rem; outline: none; }
+        .login-card button { width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: none; border-radius: 8px; background: #00d2ff; color: #000; font-weight: bold; cursor: pointer; }
+
+        /* Step 3: Desktop Environment Workspace */
+        #desktop-screen {
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
+            flex-direction: column; justify-content: space-between;
+        }
+        .desktop-icons { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px 4px #000; }
+        .icon-img { font-size: 2.5rem; margin-bottom: 0.25rem; }
+        .icon span { font-size: 0.85rem; }
+
+        /* Bottom Fixed Dock/Taskbar */
+        .taskbar {
+            width: 100%; height: 50px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 1rem;
+            z-index: 100;
+        }
+        .start-btn { background: #00d2ff; border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .system-tray { color: #fff; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen" class="screen active">
+        <div class="boot-container">
+            <div class="logo">Æ</div>
+            <div class="spinner"></div>
+            <p id="boot-status">Reading /tools/ configuration data...</p>
+        </div>
+    </div>
+
+    <div id="login-screen" class="screen">
+        <div class="login-card">
+            <div class="avatar"></div>
+            <h2>Aether Desktop</h2>
+            <form id="login-form">
+                <input type="password" id="password-input" placeholder="Press Enter to Open" autofocus>
+                <button type="submit">Unlock System</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="desktop-screen" class="screen">
+        <div class="desktop-icons">
+            <div class="icon" onclick="alert('System operating smoothly from inside the /tools/ folder.')">
+                <div class="icon-img">⚙️</div>
+                <span>Tool Diagnostic</span>
+            </div>
+        </div>
+
+        <div class="taskbar">
+            <button class="start-btn" onclick="window.location.href='../index.html'">↩ Return to Lab</button>
+            <div class="system-tray" id="live-clock">00:00 PM</div>
+        </div>
+    </div>
+
+    <script>
+        // Use native browser oscillators to construct an elegant chord on boot
+        function playBootSound() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const notes = [261.63, 329.63, 392.00, 523.25]; // Synthesized chord sequence
+            
+            notes.forEach((freq, index) => {
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                
+                const startTime = ctx.currentTime + (index * 0.12);
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.12, startTime + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.0);
+                
+                osc.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 1.0);
+            });
+        }
+
+        // Initialize state tracking loops
+        window.addEventListener('DOMContentLoaded', () => {
+            const statusText = document.getElementById('boot-status');
+            
+            setTimeout(() => { statusText.innerText = "Allocating sandbox threads..."; }, 1200);
+            setTimeout(() => { statusText.innerText = "Mounting unified Aether workspace..."; }, 2400);
+            
+            setTimeout(() => {
+                playBootSound();
+                document.getElementById('boot-screen').classList.remove('active');
+                document.getElementById('login-screen').classList.add('active');
+            }, 3600);
+        });
+
+        // Handle successful screen authorization transitions
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('desktop-screen').classList.add('active');
+            initClock();
+        });
+
+        // Background loop engine tracking the status clock
+        function initClock() {
+            const clockElement = document.getElementById('live-clock');
+            setInterval(() => {
+                const now = new Date();
+                let hours = now.getHours();
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                clockElement.innerText = `${hours}:${minutes} ${ampm}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
