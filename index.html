@@ -1,275 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Aether Lab // Grand Core Directory</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    body, html { 
-      margin: 0; padding: 0; width: 100%; height: 100%;
-      background: #02040a; color: #00ffcc; 
-      font-family: 'Courier New', Courier, monospace;
-    }
-    #canvas-3d { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
-    .interface-master { position: relative; width: 100%; height: 100%; z-index: 10; box-sizing: border-box; }
-    .cyber-glass { 
-      background: rgba(4, 8, 20, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 255, 204, 0.15); 
-      box-shadow: 0 0 30px rgba(0, 255, 204, 0.02), inset 0 0 15px rgba(0, 255, 204, 0.02);
-    }
-    .project-card {
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .project-card:hover {
-      border-color: rgba(0, 255, 204, 0.45);
-      background: rgba(0, 255, 204, 0.04);
-      transform: scale(1.01) translateY(-2px);
-    }
-    .crt-monitor::after {
-      content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      z-index: 999; background-size: 100% 4px; pointer-events: none; opacity: 0.3;
-    }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(0, 255, 204, 0.3); border-radius: 4px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; display: flex; min-height: 100vh; }
+        
+        /* Sidebar Dashboard Navigation */
+        nav { width: 260px; background: #1e293b; padding: 2rem; border-right: 1px solid #334155; }
+        nav h1 { font-size: 1.5rem; margin-bottom: 2rem; color: #38bdf8; }
+        nav ul { list-list-type: none; }
+        nav li { padding: 0.75rem 1rem; margin-bottom: 0.5rem; background: #334155; border-radius: 6px; cursor: pointer; }
+        nav li.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
+
+        /* Main Content Area */
+        main { flex: 1; padding: 3rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        
+        /* App Launcher Card */
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; transition: transform 0.2s, border-color 0.2s; text-decoration: none; color: inherit; display: block; }
+        .card:hover { transform: translateY(-5px); border-color: #38bdf8; }
+        .card h3 { color: #38bdf8; margin-bottom: 0.5rem; }
+        .card p { color: #94a3b8; font-size: 0.9rem; }
+    </style>
 </head>
-<body class="crt-monitor min-h-screen w-screen overflow-y-auto overflow-x-hidden p-3 sm:p-4 select-none">
+<body>
 
-  <!-- Core Background Graphics Layer -->
-  <canvas id="canvas-3d"></canvas>
+    <nav>
+        <h1>Dashboard</h1>
+        <ul>
+            <li class="active">Overview</li>
+            <li>Projects</li>
+            <li>Settings</li>
+        </ul>
+    </nav>
 
-  <!-- Master Interface Shell -->
-  <div class="interface-master max-w-7xl mx-auto flex flex-col gap-4 pb-8">
-    
-    <!-- GRAND HEADER: IDENTITY MATRIX -->
-    <header class="cyber-glass rounded-xl p-4 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pointer-events-auto">
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-black tracking-widest text-teal-400">AETHER LAB</h1>
-        <p class="text-[10px] sm:text-xs text-white/40 tracking-widest uppercase mt-1">> Decentralized Deployment Hub // Grand Project Directory</p>
-      </div>
-      <div class="flex flex-wrap gap-2 font-mono text-[10px]">
-        <div class="bg-black/40 border border-white/5 px-3 py-1.5 rounded">
-          <span class="text-white/30">CORE NODE:</span> <span class="text-teal-300 font-bold">MYMENSINGH // BD</span>
-        </div>
-        <div class="bg-black/40 border border-white/5 px-3 py-1.5 rounded">
-          <span class="text-white/30">HOSTING:</span> <span class="text-emerald-400 font-bold">FIREBASE LIVE</span>
-        </div>
-        <div class="bg-black/40 border border-white/5 px-3 py-1.5 rounded">
-          <span class="text-white/30">UPTIME:</span> <span id="hud-runtime-clock" class="text-purple-400 font-bold">00:00:00</span>
-        </div>
-      </div>
-    </header>
+    <main>
+        <h2>Welcome Back</h2>
+        <p style="color: #94a3b8;">Select an application platform below to boot initialization.</p>
 
-    <!-- GRID MATRIX: ALL LINKED PROJECTS & LAB MODULES -->
-    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pointer-events-auto">
-      
-      <!-- CARD 1: SERVERLESS TELEGRAM AI BOT COMMAND MODULE -->
-      <section class="project-card cyber-glass rounded-xl p-4 flex flex-col justify-between gap-4">
-        <div class="space-y-2">
-          <div class="flex justify-between items-center border-b border-white/5 pb-2">
-            <span class="text-[9px] font-bold text-teal-400 tracking-wider bg-teal-500/5 border border-teal-500/20 px-2 py-0.5 rounded">ACTIVE LAB MODULE</span>
-            <span class="text-[10px] font-mono text-white/30">t.me/aether_lab_bot</span>
-          </div>
-          <h2 class="text-base font-bold text-white tracking-wide">Sovereign AI Bot Engine</h2>
-          <p class="text-xs text-white/50 leading-relaxed font-mono">
-            A 100% backendless, free client-side long-polling manager. Intercepts incoming strings via proxy channels and routes automated multi-turn context payload scripts out to Telegram.
-          </p>
+        <div class="grid">
+            <a href="aether-os/os.html" class="card">
+                <h3>Aether OS v1.0</h3>
+                <p>Launch the virtual web environment with full boot sequencing and window management.</p>
+            </a>
         </div>
-        <div class="flex gap-2 font-mono text-[10px] mt-2">
-          <div class="flex-1 bg-black/40 border border-teal-500/20 px-2 py-1.5 rounded text-[9px] text-teal-300 truncate">Token: 8610031632...EDvs</div>
-          <a href="https://t.me/aether_lab_bot" target="_blank" onclick="playAudioHapticTick(900, 'sine', 0.04)" class="bg-teal-950/40 border border-teal-500/50 text-teal-300 px-4 py-1.5 rounded font-bold uppercase tracking-wider hover:bg-teal-500/20 transition shrink-0 flex items-center">LAUNCH</a>
-        </div>
-      </section>
-
-      <!-- CARD 2: THE SOVEREIGN FORGE (LINKED TO NEW SUB-PATH) -->
-      <section class="project-card cyber-glass rounded-xl p-4 flex flex-col justify-between gap-4">
-        <div class="space-y-2">
-          <div class="flex justify-between items-center border-b border-white/5 pb-2">
-            <span class="text-[9px] font-bold text-purple-400 tracking-wider bg-purple-500/5 border border-purple-500/20 px-2 py-0.5 rounded">UTILITY REPOSITORY</span>
-            <span class="text-[10px] font-mono text-white/30">105 Tools Encoded</span>
-          </div>
-          <h2 class="text-base font-bold text-white tracking-wide">Sovereign Utility Forge</h2>
-          <p class="text-xs text-white/50 leading-relaxed font-mono">
-            A sandboxed developer ecosystem executing high-velocity data masking, native cryptographic string algorithms, text tokenization filters, and local Shannon-Entropy analysis directly inside the client engine.
-          </p>
-        </div>
-        <div class="flex gap-2 font-mono text-[10px] mt-2">
-          <div class="flex-1 flex items-center text-white/30 text-[9px]">TARGET ROUTE: <span class="text-purple-400 font-bold ml-1">/forge.html</span></div>
-          <a href="./forge.html" onclick="playAudioHapticTick(1100, 'sine', 0.04)" class="bg-purple-950/40 border border-purple-500/50 text-purple-300 px-4 py-1.5 rounded font-bold uppercase tracking-wider hover:bg-purple-500/20 transition shrink-0 flex items-center">OPEN MATRIX</a>
-        </div>
-      </section>
-
-      <!-- CARD 3: PRISM CREATIVE LABS ARCHITECTURE -->
-      <section class="project-card cyber-glass rounded-xl p-4 flex flex-col justify-between gap-4">
-        <div class="space-y-2">
-          <div class="flex justify-between items-center border-b border-white/5 pb-2">
-            <span class="text-[9px] font-bold text-emerald-400 tracking-wider bg-emerald-500/5 border border-emerald-500/20 px-2 py-0.5 rounded">CI/CD REPOSITORY</span>
-            <span class="text-[10px] font-mono text-white/30">Render Pipeline</span>
-          </div>
-          <h2 class="text-base font-bold text-white tracking-wide">prism-creative-labs</h2>
-          <p class="text-xs text-white/50 leading-relaxed font-mono">
-            Automated repository architecture tracking web infrastructure, repository code deployments, and digital layouts synchronization streams compiled across custom development modules.
-          </p>
-        </div>
-        <div class="flex gap-2 font-mono text-[10px] mt-2">
-          <div class="flex-1 flex items-center text-white/30 text-[9px]">UPLINK: <span class="text-emerald-400 font-bold ml-1">GitHub Action Sync</span></div>
-          <a href="https://github.com/prism-creative-labs" target="_blank" onclick="playAudioHapticTick(800, 'sine', 0.04)" class="bg-emerald-950/40 border border-emerald-500/50 text-emerald-300 px-4 py-1.5 rounded font-bold uppercase tracking-wider hover:bg-emerald-500/20 transition shrink-0 flex items-center">VIEW CODE</a>
-        </div>
-      </section>
-
-      <!-- CARD 4: CADET MISSION SOFTWARE PLATFORM -->
-      <section class="project-card cyber-glass rounded-xl p-4 flex flex-col justify-between gap-4">
-        <div class="space-y-2">
-          <div class="flex justify-between items-center border-b border-white/5 pb-2">
-            <span class="text-[9px] font-bold text-emerald-400 tracking-wider bg-emerald-500/5 border border-emerald-500/20 px-2 py-0.5 rounded">APPLICATION DEPLOYMENT</span>
-            <span class="text-[10px] font-mono text-white/30">cadetmissionclass5boys</span>
-          </div>
-          <h2 class="text-base font-bold text-white tracking-wide">Cadet Mission Platform</h2>
-          <p class="text-xs text-white/50 leading-relaxed font-mono">
-            Dedicated multi-tier deployment platform routing educational parameters, web layouts, and file storage vectors across automated high-velocity serverless endpoints.
-          </p>
-        </div>
-        <div class="flex gap-2 font-mono text-[10px] mt-2">
-          <div class="flex-1 flex items-center text-white/30 text-[9px]">SERVER STATUS: <span class="text-emerald-400 font-bold ml-1">Render Build Live</span></div>
-          <a href="https://github.com/cadetmissionclass5boys" target="_blank" onclick="playAudioHapticTick(800, 'sine', 0.04)" class="bg-emerald-950/40 border border-emerald-500/50 text-emerald-300 px-4 py-1.5 rounded font-bold uppercase tracking-wider hover:bg-emerald-500/20 transition shrink-0 flex items-center">OPEN PLATFORM</a>
-        </div>
-      </section>
-
-      <!-- CARD 5: MULTI-SPECTRAL 32-BIT MEDIA RECONSTRUCTOR -->
-      <section class="project-card cyber-glass rounded-xl p-4 flex flex-col justify-between gap-4">
-        <div class="space-y-2">
-          <div class="flex justify-between items-center border-b border-white/5 pb-2">
-            <span class="text-[9px] font-bold text-amber-400 tracking-wider bg-amber-500/5 border border-amber-500/20 px-2 py-0.5 rounded">MEDIA SHADER SHOWCASE</span>
-            <span class="text-[10px] font-mono text-white/30">185 MB Matrix Asset</span>
-          </div>
-          <h2 class="text-base font-bold text-white tracking-wide">32-Bit HDR Media Dissector</h2>
-          <p class="text-xs text-white/50 leading-relaxed font-mono">
-            High-capacity client-side imagery showcase engine. Emulates manual RAW bracketing structures, blending and processing massive camera sensor uncompressed exposures natively in canvas buffers.
-          </p>
-        </div>
-        <div class="flex gap-2 font-mono text-[10px] mt-2">
-          <div class="flex-1 flex items-center text-white/30 text-[9px]">TARGET ROUTE: <span class="text-amber-400 font-bold ml-1">/dissector.html</span></div>
-          <a href="./dissector.html" onclick="playAudioHapticTick(1000, 'sine', 0.04)" class="bg-amber-950/40 border border-amber-500/50 text-amber-300 px-4 py-1.5 rounded font-bold uppercase tracking-wider hover:bg-amber-500/20 transition shrink-0 flex items-center">OPEN SHADER</a>
-        </div>
-      </section>
-
-      <!-- CARD 6: HARDWARE FIRMWARE MODDING BAY -->
-      <section class="project-card cyber-glass rounded-xl p-4 flex flex-col justify-between gap-4">
-        <div class="space-y-2">
-          <div class="flex justify-between items-center border-b border-white/5 pb-2">
-            <span class="text-[9px] font-bold text-blue-400 tracking-wider bg-blue-500/5 border border-blue-500/20 px-2 py-0.5 rounded">SYSTEM MODDING BAY</span>
-            <span class="text-[10px] font-mono text-white/30">Haylou Watch 4S Layer</span>
-          </div>
-          <h2 class="text-base font-bold text-white tracking-wide">Firmware & Modding Lab</h2>
-          <p class="text-xs text-white/50 leading-relaxed font-mono">
-            Technical debugging portal tracking raw firmware decoding payload maps, device link optimizations, Bluetooth payload testing string captures, and wearable hardware layer architectures.
-          </p>
-        </div>
-        <div class="flex gap-2 font-mono text-[10px] mt-2">
-          <div class="flex-1 flex items-center text-white/30 text-[9px]">PROTOCOLS: <span class="text-blue-400 font-bold ml-1">Reqable / ZArchiver</span></div>
-          <a href="./modding.html" onclick="playAudioHapticTick(700, 'sine', 0.04)" class="bg-blue-950/40 border border-blue-500/50 text-blue-400 px-4 py-1.5 rounded font-bold uppercase tracking-wider hover:bg-blue-500/20 transition shrink-0 flex items-center">ENTER BAY</a>
-        </div>
-      </section>
-
     </main>
 
-    <!-- LIVE TERMINAL EVENT LOG COMPONENT -->
-    <footer class="cyber-glass rounded-xl p-4 pointer-events-auto font-mono text-xs flex flex-col gap-2">
-      <div class="text-teal-400 font-bold tracking-wider">// GLOBAL REPOSITORY EVENT MONITOR STREAM</div>
-      <div id="system-terminal-feed" class="h-24 overflow-y-auto space-y-1 text-white/40 text-[10px] leading-relaxed bg-black/50 p-2 rounded border border-white/5 select-text">
-        <div>[GRAND_CORE] Global landing page dashboard mounted cleanly over Firebase infrastructure definitions.</div>
-        <div>[GRAND_CORE] Monitoring live endpoints across GitHub Actions pipelines. System status green.</div>
-      </div>
-    </footer>
-
-  </div>
-
-  <!-- BACKGROUND THREE.JS ANIMATED SPACE COGNITION WIRE CORES -->
-  <script>
-    const container3DElement = document.getElementById('canvas-3d');
-    const threeSceneInstance = new THREE.Scene();
-    const camera3DInstance = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const webGlRendererInstance = new THREE.WebGLRenderer({ canvas: container3DElement, alpha: true, antialias: true });
-    
-    webGlRendererInstance.setSize(window.innerWidth, window.innerHeight);
-    webGlRendererInstance.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const particleSystemNodeCount = 450;
-    const arrayParticlePositions = new Float32Array(particleSystemNodeCount * 3);
-    const arrayParticleColors = new Float32Array(particleSystemNodeCount * 3);
-
-    const basePrimaryThemeColor = new THREE.Color('#00ffcc');
-    const accentSecondaryThemeColor = new THREE.Color('#a855f7');
-
-    for (let i = 0; i < particleSystemNodeCount * 3; i += 3) {
-      arrayParticlePositions[i] = (Math.random() - 0.5) * 50;
-      arrayParticlePositions[i + 1] = (Math.random() - 0.5) * 50;
-      arrayParticlePositions[i + 2] = (Math.random() - 0.5) * 50;
-
-      const blendColor = basePrimaryThemeColor.clone().lerp(accentSecondaryThemeColor, Math.random());
-      arrayParticleColors[i] = blendColor.r;
-      arrayParticleColors[i + 1] = blendColor.g;
-      arrayParticleColors[i + 2] = blendColor.b;
-    }
-
-    const clusterGeometry = new THREE.BufferGeometry();
-    clusterGeometry.setAttribute('position', new THREE.BufferAttribute(arrayParticlePositions, 3));
-    clusterGeometry.setAttribute('color', new THREE.BufferAttribute(arrayParticleColors, 3));
-
-    const clusterMaterial = new THREE.PointsMaterial({
-      size: 0.16, vertexColors: true, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending
-    });
-
-    const nodePoints = new THREE.Points(clusterGeometry, clusterMaterial);
-    threeSceneInstance.add(nodePoints);
-    camera3DInstance.position.z = 28;
-
-    function masterThreeGeoRenderLoop() {
-      requestAnimationFrame(masterThreeGeoRenderLoop);
-      nodePoints.rotation.y += 0.0004;
-      nodePoints.rotation.x += 0.0001;
-      webGlRendererInstance.render(threeSceneInstance, camera3DInstance);
-    }
-    masterThreeGeoRenderLoop();
-
-    window.addEventListener('resize', () => {
-      camera3DInstance.aspect = window.innerWidth / window.innerHeight;
-      camera3DInstance.updateProjectionMatrix();
-      webGlRendererInstance.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // Uptime Stopwatch Clock
-    let startTimeReference = Date.now();
-    setInterval(() => {
-      const timerDisplay = document.getElementById('hud-runtime-clock');
-      if (!timerDisplay) return;
-      const distance = Date.now() - startTimeReference;
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
-      timerDisplay.innerText = `${hours}:${minutes}:${seconds}`;
-    }, 1000);
-
-    // Audio Haptic Feed Indicator
-    let audioCtxRef = null;
-    function playAudioHapticTick(freq, wave, length = 0.05) {
-      try {
-        const ctx = audioCtxRef || new (window.AudioContext || window.webkitAudioContext)();
-        if(!audioCtxRef) audioCtxRef = ctx;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = wave;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(0.008, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + length);
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start(); osc.stop(ctx.currentTime + length);
-      } catch(e) {}
-    }
-  </script>
 </body>
 </html>
