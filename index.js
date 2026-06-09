@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes iPad Chrome/Safari to stream data cross-site with zero blocks
+// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes iPad Chrome/Safari to communicate cross-site with zero blocks
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v4";
+const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v5";
 
 // Root diagnostic link
 app.get('/', (req, res) => {
