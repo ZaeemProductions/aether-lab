@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +73,7 @@
     <div class="lg:col-span-1 space-y-6">
       <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl border border-zinc-800">
         <div class="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-circle-check"></i> Tunnel Gateway Active
+          <i class="fa-solid fa-circle-check"></i> Gateway Handshake Resolved
         </div>
         <div class="text-[11px] text-zinc-400 leading-relaxed space-y-2 font-sans">
           <p>Your iPad browser now talks straight to your secure Vercel core endpoints. All third-party database CORS and tracking blockades are completely dismantled.</p>
@@ -199,7 +200,8 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
           badge.className = "text-emerald-400 font-bold";
           setTimeout(pullCloudScriptWorkspaceToEditor, 800);
         } else {
-          alert("Tunnel gateway rejected transaction payload block.");
+          const errText = await action.text();
+          alert(`Injection Failed (${action.status}): ${errText}`);
           pullCloudScriptWorkspaceToEditor();
         }
       } catch (err) {
@@ -212,3 +214,5 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
   </script>
 </body>
 </html>
+
+```
