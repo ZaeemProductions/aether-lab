@@ -61,7 +61,7 @@ app.get('/api/get-code', async (req, res) => {
 app.post('/api/webhook', async (req, res) => {
   const update = req.body;
   
-  // Guard clause: immediately dismiss empty updates or non-text messages to preserve execution quotas
+  // Guard clause: immediately dismiss empty updates or non-text messages to preserve execution parameters
   if (!update || !update.message || !update.message.text) {
     return res.sendStatus(200);
   }
@@ -106,7 +106,7 @@ app.post('/api/webhook', async (req, res) => {
 
       finalResponsePayloadText = await aiPayloadResponse.text();
     } catch (aiError) {
-      finalResponsePayloadText = `দুঃখিত, এই মুহূর্তে আমার এআই কোর নেটওয়ার্ক পোর্টে সাময়িক সমস্যা হচ্ছে। অনুগ্রহ করে কিছুক্ষণ পর আবার প্রশ্ন করুন।`;
+      finalResponsePayloadText = `দুঃখিত, এই মুহূর্তে আমার এআই কোর network পোর্টে সাময়িক সমস্যা হচ্ছে। অনুগ্রহ করে কিছুক্ষণ পর আবার প্রশ্ন করুন।`;
     }
   }
 
@@ -131,7 +131,5 @@ app.post('/api/webhook', async (req, res) => {
   res.sendStatus(200);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Aether Lab Serverless Engine active on port: " + PORT));
-
+// ⚡ FIXED FOR VERCEL SERVERLESS: app.listen() is removed to prevent port compilation crashes.
 module.exports = app;
