@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes iPad Chrome/Safari to communicate cross-site with zero blocks
+// 🛡️ UNIVERSAL CORS MIDDLEWARE: Authorizes your iPad layout elements to communicate cross-site with zero blocks
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
@@ -15,15 +15,15 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-// Self-initializing secure cloud sandbox endpoint
-const DB_CODE_ENDPOINT = "https://jsonbase.com/aether_lab_storage_8610031632/live_code";
+// Connected to your verified, permanent cloud JSON bin
+const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
 app.get('/', (req, res) => {
   res.status(200).send("Aether Lab Edge Secure Script Interpreter Node Active.");
 });
 
-// TUNNEL ROUTE A: Receives base64 string from your iPad panel and saves it cleanly to jsonbase
+// TUNNEL CHANNEL A: Receives base64 string from your iPad and saves it server-to-server into npoint
 app.post('/api/save-code', async (req, res) => {
   try {
     const { code } = req.body;
@@ -32,7 +32,7 @@ app.post('/api/save-code', async (req, res) => {
     const dbAction = await fetch(DB_CODE_ENDPOINT, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code: code })
     });
 
     if (dbAction.ok) {
@@ -45,7 +45,7 @@ app.post('/api/save-code', async (req, res) => {
   }
 });
 
-// TUNNEL ROUTE B: Pulls the encrypted string from jsonbase to populate your iPad editor text window
+// TUNNEL CHANNEL B: Pulls the encrypted string from npoint to populate your iPad code container view
 app.get('/api/get-code', async (req, res) => {
   try {
     const dbResponse = await fetch(DB_CODE_ENDPOINT);
@@ -57,7 +57,7 @@ app.get('/api/get-code', async (req, res) => {
   }
 });
 
-// Main Telegram Webhook Routing Channel
+// Main Webhook Routing Pipeline for incoming Telegram messages
 app.post('/api/webhook', async (req, res) => {
   res.sendStatus(200);
 
