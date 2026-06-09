@@ -8,8 +8,7 @@
       "index.js",
       "package.json",
       "package-lock.json",
-      "vercel.json",
-      "api/**"
+      "vercel.json"
     ],
     "cleanUrls": true,
     "trailingSlash": false,
