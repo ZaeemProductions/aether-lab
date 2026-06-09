@@ -13,7 +13,9 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
+
+// Use environment variable for npoint endpoint with fallback
+const DB_CODE_ENDPOINT = process.env.NPOINT_ENDPOINT || "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
 app.get('/', (req, res) => {
@@ -29,6 +31,7 @@ app.post('/api/save-code', async (req, res) => {
     }
 
     console.log(`📝 Attempting to save code (length: ${code.length}) to npoint...`);
+    console.log(`🔗 Using endpoint: ${DB_CODE_ENDPOINT}`);
     
     // npoint expects the full payload object structure
     const payload = { code };
@@ -100,6 +103,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Aether Lab Runtime Engine listening on port ${PORT}`);
   console.log(`📡 Webhook ready at http://localhost:${PORT}/api/webhook`);
+  console.log(`💾 Using npoint endpoint: ${DB_CODE_ENDPOINT}`);
 });
 
 module.exports = app;
