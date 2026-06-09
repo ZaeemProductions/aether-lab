@@ -27,7 +27,7 @@
 <body class="min-h-screen p-4 sm:p-8 antialiased selection:bg-purple-600/40">
 
   <div class="max-w-7xl mx-auto mb-4">
-    <a href="./index.html" class="inline-flex items-center gap-2 text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-widest bg-zinc-900/40 border border-zinc-800/80 px-3 py-1.5 rounded-lg">
+    <a href="./index.html" class="inline-flex items-center gap-2 text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-widest bg-zinc-900/40 border border-zinc-800 rounded-lg px-3 py-1.5">
       <i class="fa-solid fa-arrow-left-long"></i> Back to System Registry
     </a>
   </div>
@@ -55,7 +55,7 @@
         <div class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
           <i class="fa-solid fa-shield-halved text-purple-400"></i> Secure Core Workspace (Render Tunnel Active)
         </div>
-        <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center gap-2">
+        <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-lg">
           <i class="fa-solid fa-bolt animate-pulse"></i> Inject Script Live
         </button>
       </div>
@@ -65,7 +65,7 @@
           <span>Accessors: msg, originalText, lowerText, targetChatId, BOT_TOKEN</span>
           <span>Tunneling Mode: Base64 Armored Proxy</span>
         </div>
-        <textarea id="code-editor-field" class="w-full h-[520px] bg-transparent p-5 text-zinc-300 focus:outline-none code-workspace resize-none custom-scrollbar whitespace-pre" spellcheck="false" placeholder="Loading dynamic workspace matrix maps..."></textarea>
+        <textarea id="code-editor-field" class="w-full h-[520px] bg-transparent p-5 text-zinc-300 focus:outline-none code-workspace resize-none custom-scrollbar whitespace-pre" spellcheck="false" placeholder="// Your script will appear here..."></textarea>
       </div>
     </div>
 
@@ -82,7 +82,7 @@
   </main>
 
   <script>
-    const BACKEND_HOST = "https://aether-lab.onrender.com";
+    const BACKEND_HOST = "https://aether-lab-theta.vercel.app";
     
     const VERCEL_API_GET = BACKEND_HOST + "/api/get-code";
     const VERCEL_API_SAVE = BACKEND_HOST + "/api/save-code";
@@ -119,7 +119,7 @@ if (msg.photo && msg.photo.length > 0) {
       body: JSON.stringify({
         chat_id: targetChatId,
         photo: compressedMediaStreamURL,
-        caption: "📉 <b>Media Compression Matrix Executed</b>\\\\n\\\\n• Codec Output: <code>WebP High-Efficiency</code>\\\\n• Quality Threshold: <code>75% Optimized</code>\\\\n• Scaling Constrain: <code>1200px Max Bounds</code>",
+        caption: "📉 <b>Media Compression Matrix Executed</b>\\\\n\\\\n• Codec Output: <code>WebP High-Efficiency</code>\\\\n• Quality Threshold: <code>75% Optimized</code>\\\\n• Scaling Constant: <code>1200px Width</code>",
         parse_mode: 'HTML'
       })
     });
@@ -128,7 +128,7 @@ if (msg.photo && msg.photo.length > 0) {
 }
 
 if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.includes('hi')) {
-  const welcomeText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || 'শিক্ষার্থী') + "</b>!\\\\n\\\\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\\\\n• নোটিশ দেখতে টাইপ করুন: <b>notice</b>\\\\n\\\\n• <i>কম্প্রেস করতে যেকোনো ছবি সরাসরি এখানে সেন্ড করুন!</i>";
+  const welcomeText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || 'শিক্ষার্থী') + "</b>!\\\\n\\\\n• ফলাফল চেক করতে টাইপ করুন: /result";
   await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
