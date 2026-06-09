@@ -53,7 +53,7 @@
     <div class="lg:col-span-3 glass-panel p-5 rounded-2xl space-y-4 shadow-2xl border border-zinc-800">
       <div class="flex justify-between items-center border-b border-zinc-800/60 pb-3">
         <div class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-purple-400"></i> Secure Core Workspace (Vercel CORS Tunnel Active)
+          <i class="fa-solid fa-shield-halved text-purple-400"></i> Secure Core Workspace (Render Tunnel Active)
         </div>
         <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center gap-2">
           <i class="fa-solid fa-bolt animate-pulse"></i> Inject Script Live
@@ -72,18 +72,20 @@
     <div class="lg:col-span-1 space-y-6">
       <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl border border-zinc-800">
         <div class="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-circle-check"></i> Tunnel Gateway Active
+          <i class="fa-solid fa-circle-check"></i> Network Link Sync
         </div>
         <div class="text-[11px] text-zinc-400 leading-relaxed space-y-2 font-sans">
-          <p>Your iPad browser now talks straight to your secure Vercel core endpoints. All third-party database CORS and tracking blockades are completely dismantled.</p>
+          <p>Your dashboard directs requests through your absolute backend address to avoid browser security rejections completely.</p>
         </div>
       </div>
     </div>
   </main>
 
   <script>
-    const VERCEL_API_GET = "https://aether-lab-theta.vercel.app/api/get-code";
-    const VERCEL_API_SAVE = "https://aether-lab-theta.vercel.app/api/save-code";
+    const BACKEND_HOST = "https://aether-lab.onrender.com";
+    
+    const VERCEL_API_GET = BACKEND_HOST + "/api/get-code";
+    const VERCEL_API_SAVE = BACKEND_HOST + "/api/save-code";
 
     const baselineDevelopmentWorkspaceScript = `// =========================================================================
 // AETHER LAB LIVE AUTOMATION: EDGE-BASED MEDIA COMPRESSION CORE
@@ -117,7 +119,7 @@ if (msg.photo && msg.photo.length > 0) {
       body: JSON.stringify({
         chat_id: targetChatId,
         photo: compressedMediaStreamURL,
-        caption: "📉 <b>Media Compression Matrix Executed</b>\\n\\n• Codec Output: <code>WebP High-Efficiency</code>\\n• Quality Threshold: <code>75% Optimized</code>\\n• Scaling Constrain: <code>1200px Max Bounds</code>",
+        caption: "📉 <b>Media Compression Matrix Executed</b>\\\\n\\\\n• Codec Output: <code>WebP High-Efficiency</code>\\\\n• Quality Threshold: <code>75% Optimized</code>\\\\n• Scaling Constrain: <code>1200px Max Bounds</code>",
         parse_mode: 'HTML'
       })
     });
@@ -126,7 +128,7 @@ if (msg.photo && msg.photo.length > 0) {
 }
 
 if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.includes('hi')) {
-  const welcomeText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || 'শিক্ষার্থী') + "</b>!\\n\\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\\n• নোটিশ দেখতে টাইপ করুন: <b>notice</b>\\n\\n• <i>কম্প্রেস করতে যেকোনো ছবি সরাসরি এখানে সেন্ড করুন!</i>";
+  const welcomeText = "আসসালামু আলাইকুম <b>" + (msg.from.first_name || 'শিক্ষার্থী') + "</b>!\\\\n\\\\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\\\\n• নোটিশ দেখতে টাইপ করুন: <b>notice</b>\\\\n\\\\n• <i>কম্প্রেস করতে যেকোনো ছবি সরাসরি এখানে সেন্ড করুন!</i>";
   await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -136,7 +138,7 @@ if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.inc
 }
 
 if (lowerText.includes('result') || lowerText.includes('রেজাল্ট')) {
-  const resultText = "<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল:</b>\\n👉 https://aether-lab.web.app/class5.html";
+  const resultText = "<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল:</b>\\\\n👉 https://aether-lab.web.app/class5.html";
   await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -213,5 +215,3 @@ await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
   </script>
 </body>
 </html>
-
-```
