@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-// 🛠️ FIXED: Wired directly to your working, verified cloud JSON storage bin
+// Wired directly to your working, verified cloud JSON storage bin
 const DB_CODE_ENDPOINT = "https://api.npoint.io/e8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
@@ -40,10 +40,10 @@ app.post('/api/save-code', async (req, res) => {
       return res.status(200).send("OK");
     } else {
       const dbErrText = await dbAction.text();
-      return res.status(500).send(`Database rejected write: ${dbErrText}`);
+      return res.status(500).send("Database rejected write: " + dbErrText);
     }
   } catch (err) {
-    return res.status(500).send(`Tunnel execution error: ${err.message}`);
+    return res.status(500).send("Tunnel execution error: " + err.message);
   }
 });
 
@@ -95,12 +95,12 @@ app.post('/api/webhook', async (req, res) => {
   } catch (error) {
     console.error("Compilation execution dropout exception:", error);
     try {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: targetChatId,
-          text: `⚠️ <b>Aether Lab Compilation Core Fault Alert</b>\n\n<code>${error.message}</code>`,
+          text: "⚠️ <b>Aether Lab Compilation Core Fault Alert</b>\n\n<code>" + error.message + "</code>",
           parse_mode: 'HTML'
         })
       });
@@ -111,7 +111,7 @@ app.post('/api/webhook', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Aether Lab Runtime Engine listening on port context: ${PORT}`));
+app.listen(PORT, () => console.log("Aether Lab Runtime Engine listening on port context: " + PORT));
 
 module.exports = app;
 
