@@ -42,13 +42,13 @@
         <i class="fa-brands fa-telegram text-blue-500 text-xl"></i>
         Aether Lab <span class="text-zinc-700 font-normal">//</span> TG Command Core
       </h1>
-      <p class="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Stateless Browser Execution Environment Running Automated Update Loops</p>
+      <p class="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Stateless Browser Rules Engine Running Automated Update Loops</p>
     </div>
     
     <div class="flex items-center gap-3">
       <div class="bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center gap-2 text-zinc-400">
         <span class="text-zinc-600 uppercase">Engine:</span>
-        <span id="engine-mode-view" class="text-purple-400">IDLE_STANDBY</span>
+        <span id="engine-mode-view" class="text-emerald-400 font-bold">RULES_ENGINE_ACTIVE</span>
       </div>
       <div class="bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center gap-2">
         <span id="bot-status-indicator" class="text-zinc-500 uppercase font-black tracking-wider flex items-center gap-1.5">
@@ -102,7 +102,7 @@
           <textarea id="tx-message" rows="4" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-300 focus:outline-none focus:border-emerald-500 font-sans transition-all resize-none leading-relaxed placeholder:text-zinc-700" placeholder="Enter output text message sequence data..."></textarea>
         </div>
         
-        <button onclick="transmitManualPayloadOverrides()" class="w-full bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-800/40 hover:border-emerald-500 font-bold py-3 rounded-xl text-xs uppercase transition-all duration-200 tracking-widest shadow-md flex justify-center items-center gap-2">
+        <button onclick="transmitManualPayloadOverrides()" class="w-full bg-emerald-950/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-900/40 hover:border-emerald-500 font-bold py-3 rounded-xl text-xs uppercase transition-all duration-200 tracking-widest shadow-md flex justify-center items-center gap-2">
           <i class="fa-solid fa-paper-plane text-[10px]"></i> Transmit Override
         </button>
       </div>
@@ -110,7 +110,6 @@
     </div>
 
     <div class="lg:col-span-2 glass-panel rounded-2xl flex flex-col shadow-xl overflow-hidden border border-zinc-800/80">
-      
       <div class="bg-zinc-900/60 px-5 py-4 flex justify-between items-center border-b border-zinc-800 shrink-0">
         <div class="flex items-center gap-2 text-xs font-bold text-zinc-300 uppercase tracking-widest">
           <i class="fa-solid fa-radar text-purple-400 animate-pulse"></i> Active Radar Telemetry / Queue Log
@@ -126,7 +125,6 @@
           Awaiting Handshake Activation Node Sequence...
         </div>
       </div>
-
     </div>
   </main>
 
@@ -136,7 +134,6 @@
     let autoPilotExecutionTimerHandle = null;
     let lastIdentifiedRadarChatId = "";
 
-    // 1. Mask Input Value View Toggles Utility
     function toggleTokenMask() {
       const input = document.getElementById('tg-token');
       const icon = document.getElementById('mask-icon');
@@ -149,7 +146,6 @@
       }
     }
 
-    // 2. Main Authentication Entry Handshake System
     async function authenticateBotNetwork() {
       const tokenInput = document.getElementById('tg-token').value.trim();
       if (!tokenInput) return alert("Initialization Aborted: Token definition field null.");
@@ -165,16 +161,13 @@
         const data = await response.json();
         
         if (data.ok) {
-          activeBotTokenMatrix = tokenInput;
           indicator.innerHTML = `<span class="text-emerald-400 font-black"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400 inline-block mr-1 animate-pulse"></span> @${data.result.username}</span>`;
-          engineView.innerText = "AI_AUTOPILOT_ONLINE";
+          engineView.innerText = "AUTOPILOT_ACTIVE";
           engineView.className = "text-emerald-400 font-bold";
           if (lockoutOverlay) {
             lockoutOverlay.style.opacity = "0";
             setTimeout(() => lockoutOverlay.style.display = "none", 300);
           }
-          
-          // Ignite background polling listener loops
           igniteAutoPilotCoreEngine();
         } else {
           indicator.innerHTML = `<span class="text-brandCrimson font-bold"><i class="fa-solid fa-square-xmark mr-1"></i> Access Denied</span>`;
@@ -186,10 +179,8 @@
       }
     }
 
-    // 3. Auto-Pilot Dynamic Loop Control Architecture (3000ms Interval Sweep)
     function igniteAutoPilotCoreEngine() {
       if (autoPilotExecutionTimerHandle) clearInterval(autoPilotExecutionTimerHandle);
-      
       pollIncomingNetworkTraffic(); 
       
       autoPilotExecutionTimerHandle = setInterval(async () => {
@@ -214,7 +205,6 @@
       }, 3000); 
     }
 
-    // 4. Force/Manual Sweep Pipeline Evaluator execution node
     async function pollIncomingNetworkTraffic() {
       if (!activeBotTokenMatrix) return;
       try {
@@ -226,62 +216,33 @@
           systemLastLoggedUpdateId = highestOffsetItem.update_id;
         }
       } catch (e) {
-        console.error("Radar frame force scan execution error sequence:", e);
+        console.error("Radar frame force scan error sequence:", e);
       }
     }
 
-    // 5. HYBRID EVALUATOR ENGINE: STATIC COMMANDS + LIVE POLLINATIONS AI CONTEXT PIPELINE
+    // STRICT RULES-BASED ROUTER ENGINE (NO AI INTERPRETATION FALLBACK)
     async function evaluateTrafficKeywordsAndReply(msg) {
       const parsedCleanText = msg.text.trim();
       const lowerText = parsedCleanText.toLowerCase();
       const targetChatId = msg.chat.id;
       let finalResponsePayloadText = "";
 
-      // A. PRIORITY STATIC KEYWORD MATRIX (Instant Commands)
+      // 1. Core Command Matrices
       if (lowerText.includes('/start') || lowerText.includes('hello') || lowerText.includes('hi') || lowerText.includes('সালাম')) {
-        finalResponsePayloadText = `আসসালামু আলাইকুম <b>${msg.from.first_name || 'শিক্ষার্থী'}</b>! ক্যাডেট মিশন AI অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>\n• যেকোনো পড়ালেখার প্রশ্ন সরাসরি জিজ্ঞেস করুন! আমাদের AI তাৎক্ষণিক উত্তর দিয়ে দেবে।`;
+        finalResponsePayloadText = `আসসালামু আলাইকুম <b>${msg.from.first_name || 'শিক্ষার্থী'}</b>! ক্যাডেট মিশন ক্লাসরুম অটো-বট পোর্টালে আপনাকে স্বাগত।\n\n• ফলাফল চেক করতে টাইপ করুন: <b>result</b>\n• পরীক্ষা ও ক্লাসের রুটিন দেখতে টাইপ করুন: <b>notice</b>`;
       } 
       else if (lowerText.includes('result') || lowerText.includes('রেজাল্ট') || lowerText.includes('মার্কশিট')) {
         finalResponsePayloadText = `<b>ক্যাডেট মিশন পঞ্চম শ্রেণী ফলাফল জেনারেটর:</b>\n\nমডেল পরীক্ষার মেধা তালিকা ও ডিজিটাল মার্কশিট সিস্টেমে আপলোড করা হয়েছে। নিচের লিংকে গিয়ে রোল ইনপুট দিন:\n\n👉 https://aether-lab.web.app/class5.html`;
       } 
       else if (lowerText.includes('notice') || lowerText.includes('নোটিশ') || lowerText.includes('রুটিন')) {
-        finalResponsePayloadText = `<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হবে।\n• <b>প্রবেশপত্র:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে মডেল ফি (৩০০/- টাকা) পরিশোধ করে অফিস থেকে এডমিট কার্ড সংগ্রহ করতে হবে।`;
+        finalResponsePayloadText = `<b>ক্যাডেট মিশন অফিশিয়াল নোটিশ আপডেট:</b>\n\n• <b>মডেল টেস্ট:</b> আগামী ১৪ই জুন রবিবার থেকে স্কুলভিত্তিক চূড়ান্ত মডেল টেস্ট শুরু হবে।\n• <b>প্রবেশপত্র:</b> ১২ই জুন বৃহস্পতিবারের মধ্যে প্রবেশপত্র সংগ্রহ করতে হবে।\n• <b>ফি:</b> মডেল ফি ৩০০/- টাকা।`;
       } 
-      
-      // B. FALLBACK: LIVE CHAT VIA POLLINATIONS AI SYSTEM PROMPT PIPELINE
+      // 2. Strict Deterministic Fallback Node
       else {
-        try {
-          // Update status indicator to notify asset evaluation state
-          document.getElementById('engine-mode-view').innerText = "AI_THINKING...";
-          document.getElementById('engine-mode-view').className = "text-amber-400 font-bold animate-pulse";
-
-          const aiPayloadResponse = await fetch('https://text.pollinations.ai/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              messages: [
-                { 
-                  role: 'system', 
-                  content: 'You are the official Aether Lab AI Assistant deployed for Cadet Mission Coaching Center (Class 5 Boys group) in Mymensingh, Bangladesh. You help students understand primary school math (unitary method, averages, geometry), english grammar, and general knowledge. Keep answers highly accurate, polite, extremely short, clear, and easy for a Class 5 student to read. Respond beautifully in Bengali or English based on the language they use.' 
-                },
-                { role: 'user', content: parsedCleanText }
-              ],
-              model: 'openai'
-            })
-          });
-
-          finalResponsePayloadText = await aiPayloadResponse.text();
-          
-          // Reset operational metric flags
-          document.getElementById('engine-mode-view').innerText = "AI_AUTOPILOT_ONLINE";
-          document.getElementById('engine-mode-view').className = "text-emerald-400 font-bold";
-        } catch (aiError) {
-          console.error("AI Node failed to respond:", aiError);
-          finalResponsePayloadText = "দুঃখিত, এআই নেটওয়ার্ক পোর্টে সাময়িক সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার প্রশ্ন করুন।";
-        }
+        finalResponsePayloadText = `দুঃখিত <b>${msg.from.first_name || 'শিক্ষার্থী'}</b>, আপনার মেসেজটি বুঝতে পারিনি।\n\nসঠিক তথ্যের জন্য দয়া করে <b>result</b> অথবা <b>notice</b> টাইপ করুন।`;
       }
 
-      // Dispatch processed network packets back down to Telegram API
+      // Dispatch packet back to Telegram via native browser fetch
       try {
         await fetch(`https://api.telegram.org/bot${activeBotTokenMatrix}/sendMessage`, {
           method: 'POST',
@@ -297,7 +258,6 @@
       }
     }
 
-    // 6. UI Render Injection Engine Matrix
     function updateRadarDisplayPanelUI(updatesArray) {
       const radarScreenNode = document.getElementById('radar-screen');
       if(!radarScreenNode) return;
@@ -335,7 +295,6 @@
       });
     }
 
-    // 7. Manual Override Target Locks Controls
     function lockManualTargetSelectionId(chatIdString) {
       document.getElementById('tx-chat-id').value = chatIdString;
       const inputTargetField = document.getElementById('tx-chat-id');
@@ -347,7 +306,6 @@
       if(lastIdentifiedRadarChatId) lockManualTargetSelectionId(lastIdentifiedRadarChatId);
     }
 
-    // 8. Manual Override Outbound Broadcast Transmitter Request Shunt
     async function transmitManualPayloadOverrides() {
       if (!activeBotTokenMatrix) return;
       const targetIdFieldVal = document.getElementById('tx-chat-id').value.trim();
