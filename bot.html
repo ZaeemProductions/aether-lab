@@ -54,7 +54,7 @@
     <div class="lg:col-span-3 glass-panel p-5 rounded-2xl space-y-4 shadow-2xl border border-zinc-800">
       <div class="flex justify-between items-center border-b border-zinc-800/60 pb-3">
         <div class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
-          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (jsonbase Safari-Optimized Mode)
+          <i class="fa-solid fa-lock text-purple-400"></i> Secure Core Workspace (Vercel Secure Tunnel Active)
         </div>
         <button onclick="compileAndInjectCodeToCloud()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center gap-2">
           <i class="fa-solid fa-shield-halved animate-pulse"></i> Encrypt & Inject Live
@@ -64,7 +64,7 @@
       <div class="relative bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden focus-within:border-purple-500/80 transition-colors">
         <div class="bg-zinc-900/60 px-4 py-2 border-b border-zinc-900 text-[10px] font-mono text-zinc-500 flex justify-between uppercase font-bold tracking-wider">
           <span>Accessors: msg, originalText, lowerText, targetChatId, BOT_TOKEN</span>
-          <span>Tunneling Mode: Base64 Encapsulated Stream</span>
+          <span>Tunneling Mode: Vercel Proxy Pipeline</span>
         </div>
         <textarea id="code-editor-field" class="w-full h-[520px] bg-transparent p-5 text-zinc-300 focus:outline-none code-workspace resize-none custom-scrollbar whitespace-pre" spellcheck="false" placeholder="Loading dynamic workspace matrix maps..."></textarea>
       </div>
@@ -72,18 +72,20 @@
 
     <div class="lg:col-span-1 space-y-6">
       <div class="glass-panel p-5 rounded-2xl space-y-4 shadow-xl border border-zinc-800">
-        <div class="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
-          <i class="fa-solid fa-circle-check text-emerald-400"></i> iPad Safari Link Active
+        <div class="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-widest border-b border-zinc-800 pb-2">
+          <i class="fa-solid fa-circle-check"></i> Safari Fixed Natively
         </div>
         <div class="text-[11px] text-zinc-400 leading-relaxed space-y-2 font-sans">
-          <p>This layout routes code parameters through an open JSON sandbox endpoint. This removes standard iOS preflight hurdles.</p>
+          <p>Your iPad now communicates directly with your custom Vercel backend server, completely resolving all third-party CORS blocks.</p>
         </div>
       </div>
     </div>
   </main>
 
   <script>
-    const DB_CODE_ENDPOINT = "https://jsonbase.com/aether_lab_storage_8610031632/live_code";
+    // Pointing directly to your trusted backend serverless engine endpoints
+    const VERCEL_API_GET = "https://aether-lab-theta.vercel.app/api/get-code";
+    const VERCEL_API_SAVE = "https://aether-lab-theta.vercel.app/api/save-code";
 
     const baselineDevelopmentWorkspaceScript = `// =========================================================================
 // AETHER LAB LIVE AUTOMATION: EDGE-BASED MEDIA COMPRESSION CORE
@@ -161,11 +163,13 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
       badge.className = "text-amber-400 animate-pulse font-bold";
       
       try {
-        const response = await fetch(DB_CODE_ENDPOINT);
-        if (!response.ok) throw new Error("Empty storage instance");
-        const jsonOutput = await response.json();
+        const response = await fetch(VERCEL_API_GET);
+        if (!response.ok) throw new Error("Fetch fault");
+        const cloudBase64Payload = await response.text();
         
-        const decodedJavaScriptCode = decodeURIComponent(escape(atob(jsonOutput.data.trim())));
+        if(!cloudBase64Payload.trim()) throw new Error("Empty storage node");
+        
+        const decodedJavaScriptCode = decodeURIComponent(escape(atob(cloudBase64Payload.trim())));
         document.getElementById('code-editor-field').value = decodedJavaScriptCode;
         badge.innerText = "COMPILER ONLINE";
         badge.className = "text-emerald-400 font-bold";
@@ -178,7 +182,7 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
 
     async function compileAndInjectCodeToCloud() {
       const badge = document.getElementById('compiler-status-badge');
-      badge.innerText = "ENCRYPTING SHUNT...";
+      badge.innerText = "TUNNELING SHUNT...";
       badge.className = "text-amber-400 animate-pulse font-bold";
       
       const rawCodeTextStream = document.getElementById('code-editor-field').value;
@@ -186,10 +190,10 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
       try {
         const base64SecuredString = btoa(unescape(encodeURIComponent(rawCodeTextStream)));
         
-        const action = await fetch(DB_CODE_ENDPOINT, {
-          method: 'PUT',
+        const action = await fetch(VERCEL_API_SAVE, {
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: base64SecuredString })
+          body: JSON.stringify({ code: base64SecuredString })
         });
         
         if (action.ok) {
@@ -197,7 +201,7 @@ await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
           badge.className = "text-emerald-400 font-bold";
           setTimeout(pullCloudScriptWorkspaceToEditor, 800);
         } else {
-          alert("Handshake rejected by cloud gateway.");
+          alert("Tunnel gateway rejected transaction payload block.");
           pullCloudScriptWorkspaceToEditor();
         }
       } catch (err) {
