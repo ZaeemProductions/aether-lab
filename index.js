@@ -15,8 +15,8 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-// Wired directly to your working, verified cloud JSON storage bin
-const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
+// 🛠️ FIXED: Wired directly to your working, verified cloud JSON storage bin
+const DB_CODE_ENDPOINT = "https://api.npoint.io/e8d53f9c51e5b8d3b5ed";
 
 // Root diagnostic link
 app.get('/', (req, res) => {
