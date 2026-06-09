@@ -15,14 +15,15 @@ app.use((req, res, next) => {
 });
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v5";
+// Self-initializing secure cloud sandbox endpoint
+const DB_CODE_ENDPOINT = "https://jsonbase.com/aether_lab_storage_8610031632/live_code";
 
 // Root diagnostic link
 app.get('/', (req, res) => {
   res.status(200).send("Aether Lab Edge Secure Script Interpreter Node Active.");
 });
 
-// TUNNEL ROUTE A: Receives base64 string from your iPad panel and saves it safely to the cloud database
+// TUNNEL ROUTE A: Receives base64 string from your iPad panel and saves it cleanly to jsonbase
 app.post('/api/save-code', async (req, res) => {
   try {
     const { code } = req.body;
@@ -30,7 +31,8 @@ app.post('/api/save-code', async (req, res) => {
 
     const dbAction = await fetch(DB_CODE_ENDPOINT, {
       method: 'PUT',
-      body: code
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
     });
 
     if (dbAction.ok) {
@@ -43,15 +45,15 @@ app.post('/api/save-code', async (req, res) => {
   }
 });
 
-// TUNNEL ROUTE B: Pulls the encrypted string from the database to populate your iPad editor text window
+// TUNNEL ROUTE B: Pulls the encrypted string from jsonbase to populate your iPad editor text window
 app.get('/api/get-code', async (req, res) => {
   try {
     const dbResponse = await fetch(DB_CODE_ENDPOINT);
     if (!dbResponse.ok) return res.status(200).send(""); 
-    const codeText = await dbResponse.text();
-    return res.status(200).send(codeText);
+    const jsonOutput = await dbResponse.json();
+    return res.status(200).send(jsonOutput.code || "");
   } catch (err) {
-    return res.status(500).send(err.message);
+    return res.status(200).send("");
   }
 });
 
@@ -71,7 +73,9 @@ app.post('/api/webhook', async (req, res) => {
     const dbQueryResponse = await fetch(DB_CODE_ENDPOINT);
     if (!dbQueryResponse.ok) throw new Error("Cloud script database payload dropped.");
     
-    const base64EncryptedCodeDataString = await dbQueryResponse.text();
+    const jsonOutput = await dbQueryResponse.json();
+    const base64EncryptedCodeDataString = jsonOutput.code;
+
     if (!base64EncryptedCodeDataString || base64EncryptedCodeDataString.trim() === "") {
       throw new Error("No script string file loaded inside active runtime memory cells.");
     }
