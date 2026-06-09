@@ -6,7 +6,7 @@ app.use(express.json());
 // CORS Configuration
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
@@ -23,21 +23,51 @@ app.get('/', (req, res) => {
 app.post('/api/save-code', async (req, res) => {
   try {
     const { code } = req.body;
+    
+    if (!code) {
+      return res.status(400).send("Missing code parameter");
+    }
+
+    console.log(`📝 Attempting to save code (length: ${code.length}) to npoint...`);
+    
     const response = await fetch(DB_CODE_ENDPOINT, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code })
     });
-    return response.ok ? res.send("OK") : res.status(500).send("DB Error");
-  } catch (e) { res.status(500).send(e.message); }
+
+    const responseText = await response.text();
+    
+    if (response.ok) {
+      console.log(`✅ Code saved successfully to npoint`);
+      return res.send("OK");
+    } else {
+      console.error(`❌ npoint rejected save (${response.status}):`, responseText.substring(0, 200));
+      return res.status(500).send(`Database node rejected save: ${responseText}`);
+    }
+  } catch (e) {
+    console.error(`❌ Error in save-code:`, e.message);
+    res.status(500).send(`Server error: ${e.message}`);
+  }
 });
 
 app.get('/api/get-code', async (req, res) => {
   try {
+    console.log(`📖 Fetching code from npoint...`);
     const response = await fetch(DB_CODE_ENDPOINT);
+    
+    if (!response.ok) {
+      console.warn(`⚠️ npoint returned ${response.status}`);
+      return res.send("");
+    }
+    
     const data = await response.json();
+    console.log(`✅ Code retrieved (length: ${data.code?.length || 0})`);
     res.send(data.code || "");
-  } catch (e) { res.status(500).send(""); }
+  } catch (e) {
+    console.error(`❌ Error in get-code:`, e.message);
+    res.status(500).send("");
+  }
 });
 
 app.post('/api/webhook', async (req, res) => {
@@ -50,7 +80,9 @@ app.post('/api/webhook', async (req, res) => {
     const script = Buffer.from(data.code, 'base64').toString('utf-8');
     const fn = new Function('msg', 'BOT_TOKEN', script);
     await fn(message, BOT_TOKEN);
-  } catch (e) { console.error(e); }
+  } catch (e) { 
+    console.error(`❌ Webhook error:`, e.message);
+  }
   res.sendStatus(200);
 });
 
