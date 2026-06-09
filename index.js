@@ -15,6 +15,11 @@ app.use((req, res, next) => {
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
 const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
 
+// Root diagnostic link
+app.get('/', (req, res) => {
+  res.status(200).send("Aether Lab Edge Secure Script Interpreter Node Active.");
+});
+
 app.post('/api/save-code', async (req, res) => {
   try {
     const { code } = req.body;
@@ -47,6 +52,13 @@ app.post('/api/webhook', async (req, res) => {
     await fn(message, BOT_TOKEN);
   } catch (e) { console.error(e); }
   res.sendStatus(200);
+});
+
+// START SERVER
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Aether Lab Runtime Engine listening on port ${PORT}`);
+  console.log(`📡 Webhook ready at http://localhost:${PORT}/api/webhook`);
 });
 
 module.exports = app;
