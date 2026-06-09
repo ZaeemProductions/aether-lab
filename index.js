@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 
 const BOT_TOKEN = "8610031632:AAF9NwDwfgEokbz6cvg55jH7vFmL8_tEDvs";
-const DB_CODE_ENDPOINT = "https://api.npoint.io/E8d53f9c51e5b8d3b5ed";
+const DB_CODE_ENDPOINT = "https://kvdb.io/aether_lab_cfg_8610031632/bot_live_code_v4";
 
 app.get('/', (req, res) => {
   res.status(200).send("Aether Lab Edge Secure Script Interpreter Node Active.");
@@ -25,10 +25,8 @@ app.post('/api/webhook', async (req, res) => {
     const dbQueryResponse = await fetch(DB_CODE_ENDPOINT);
     if (!dbQueryResponse.ok) throw new Error("Cloud script database payload dropped.");
     
-    const jsonOutput = await dbQueryResponse.json();
-    const base64EncryptedCodeDataString = jsonOutput.code;
-
-    if (!base64EncryptedCodeDataString) throw new Error("JSON code structure missing.");
+    const base64EncryptedCodeDataString = await dbQueryResponse.text();
+    if (!base64EncryptedCodeDataString) throw new Error("String structure missing.");
 
     const customInjectedJavaScriptCodeString = Buffer.from(base64EncryptedCodeDataString.trim(), 'base64').toString('utf-8');
 
