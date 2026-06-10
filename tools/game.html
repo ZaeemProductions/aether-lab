@@ -148,6 +148,7 @@
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -176,7 +177,7 @@
 
     <script>
         let scene, camera, renderer;
-        let player, playerRing, playerCore; 
+        let player; 
         let enemies = [];
         let particles = [];
         let mapPillars = [];
@@ -214,30 +215,27 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // Dynamic Atmospheric Lights
-            const ambientLight = new THREE.AmbientLight(0x0a1128, 0.6);
+            // Bright clean studio lighting so the custom mesh textures pop
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
-            const neonLight1 = new THREE.PointLight(0x58a6ff, 2, 60);
-            neonLight1.position.set(-20, 5, -20);
-            scene.add(neonLight1);
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(10, 20, 10);
+            scene.add(mainLight);
 
-            const neonLight2 = new THREE.PointLight(0xff7b72, 2, 60);
-            neonLight2.position.set(20, 5, 20);
-            scene.add(neonLight2);
+            const fillLight = new THREE.DirectionalLight(0x58a6ff, 0.4);
+            fillLight.position.set(-10, 10, -10);
+            scene.add(fillLight);
 
-            // Sci-Fi Starfield Background
             createStarfield();
 
-            // Tech Grid Ground Layer
             const gridHelper = new THREE.GridHelper(arenaSize * 2, arenaSize, 0x58a6ff, 0x111625);
             gridHelper.position.y = 0;
             scene.add(gridHelper);
 
-            // Build Fantastic Map Structures
             buildCyberMap();
 
-            // Build Complex Sci-Fi Drone Character
+            // Run custom 3D Asset Loader
             buildPlayerCharacter();
 
             setupControls();
@@ -246,7 +244,6 @@
             animate();
         }
 
-        // --- ENVIRONMENT GENERATOR (MAP) ---
         function createStarfield() {
             const starGeo = new THREE.BufferGeometry();
             const starCount = 600;
@@ -265,7 +262,6 @@
         }
 
         function buildCyberMap() {
-            // Neon Boundary Fences
             const fenceGeo = new THREE.BoxGeometry(arenaSize * 2, 0.4, 0.4);
             const fenceMat = new THREE.MeshStandardMaterial({ color: 0x58a6ff, emissive: 0x1f6feb, roughness: 0.1 });
             
@@ -274,7 +270,6 @@
             const e = new THREE.Mesh(fenceGeo, fenceMat); e.rotation.y = Math.PI/2; e.position.set(arenaSize, 0.2, 0); scene.add(e);
             const w = new THREE.Mesh(fenceGeo, fenceMat); w.rotation.y = Math.PI/2; w.position.set(-arenaSize, 0.2, 0); scene.add(w);
 
-            // Giant Neon Corner Obelisks/Pillars
             const pillarPositions = [
                 [-arenaSize, -arenaSize], [arenaSize, -arenaSize],
                 [-arenaSize, arenaSize], [arenaSize, arenaSize],
@@ -285,14 +280,12 @@
                 const pillarGroup = new THREE.Group();
                 pillarGroup.position.set(px, 0, pz);
 
-                // Structural Pillar Base
                 const baseGeo = new THREE.CylinderGeometry(1.2, 1.8, 8, 4);
                 const baseMat = new THREE.MeshStandardMaterial({ color: 0x161b22, roughness: 0.5, metalness: 0.8 });
                 const base = new THREE.Mesh(baseGeo, baseMat);
                 base.position.y = 4;
                 pillarGroup.add(base);
 
-                // Emissive Neon Power Core inside pillar
                 const coreGeo = new THREE.CylinderGeometry(0.3, 0.3, 7.8, 8);
                 const coreMat = new THREE.MeshStandardMaterial({ color: 0x58a6ff, emissive: 0x58a6ff, roughness: 0.1 });
                 const core = new THREE.Mesh(coreGeo, coreMat);
@@ -300,46 +293,36 @@
                 pillarGroup.add(core);
 
                 scene.add(pillarGroup);
-                mapPillars.push(core); // Keep track to animate pulse
+                mapPillars.push(core);
             });
         }
 
-        // --- CHARACTER ARCHITECTURE (PLAYER) ---
+        // --- GLTF LOADING MATRIX ---
         function buildPlayerCharacter() {
             player = new THREE.Group();
-            player.position.set(0, 1.2, 0);
-
-            // 1. Central Glowing Core Sphere
-            const coreGeo = new THREE.SphereGeometry(0.4, 16, 16);
-            const coreMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x58a6ff, roughness: 0.1 });
-            playerCore = new THREE.Mesh(coreGeo, coreMat);
-            player.add(playerCore);
-
-            // 2. Translucent Tech Hull Shell
-            const hullGeo = new THREE.OctahedronGeometry(0.7, 1);
-            const hullMat = new THREE.MeshStandardMaterial({ color: 0x0d1117, roughness: 0.2, metalness: 0.9, transparent: true, opacity: 0.6 });
-            const hull = new THREE.Mesh(hullGeo, hullMat);
-            player.add(hull);
-
-            // 3. Floating Orbital Gyro-Ring
-            const ringGeo = new THREE.TorusGeometry(0.9, 0.08, 8, 24);
-            const ringMat = new THREE.MeshStandardMaterial({ color: 0x58a6ff, emissive: 0x1f6feb, roughness: 0.2, metalness: 0.9 });
-            playerRing = new THREE.Mesh(ringGeo, ringMat);
-            playerRing.rotation.x = Math.PI / 3;
-            player.add(playerRing);
-
-            // 4. Thruster Engine Engine Block
-            const engineGeo = new THREE.CylinderGeometry(0.2, 0.3, 0.5, 8);
-            engineGeo.rotateX(Math.PI / 2);
-            const engineMat = new THREE.MeshStandardMaterial({ color: 0x21262d, metalness: 0.9 });
-            const engine = new THREE.Mesh(engineGeo, engineMat);
-            engine.position.z = 0.6;
-            player.add(engine);
-
+            player.position.set(0, 0, 0);
             scene.add(player);
+
+            const loader = new THREE.GLTFLoader();
+            // Pointing directly to your uploaded filename in the same directory
+            loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
+                const model = gltf.scene;
+                
+                // Automatically handle standard scaling parameters for AI generations
+                model.scale.set(2.2, 2.2, 2.2); 
+                
+                // Center model pivot point cleanly
+                model.position.set(0, 0, 0);
+                
+                // Fix rotation facing directions
+                model.rotation.y = Math.PI;
+
+                player.add(model);
+            }, undefined, function(error) {
+                console.error("Error compilation sequence on custom 3D asset:", error);
+            });
         }
 
-        // --- CONTROLS LOOP ---
         function setupControls() {
             const bound = document.getElementById('joystick-bound');
             const thumb = document.getElementById('joystick-thumb');
@@ -375,7 +358,6 @@
                 triggerDash();
             });
 
-            // Keyboard support Fallback
             let keys = { w: false, a: false, s: false, d: false };
             window.addEventListener('keydown', (e) => {
                 if(e.key === ' ' || e.key === 'Spacebar') triggerDash();
@@ -418,25 +400,21 @@
             if(moveInput.lengthSq() > 0.05) {
                 dashVelocity.set(moveInput.x, 0, -moveInput.y).normalize();
             } else {
-                // If static, dash towards forward look vector orientation
                 dashVelocity.set(0, 0, -1).applyAxisAngle(new THREE.Vector3(0,1,0), player.rotation.y);
             }
         }
 
-        // --- ENEMY LIFECYCLE MECHANICS ---
         function spawnEnemy() {
             if(!gameActive || enemies.length > 12) return;
 
             const enemyGroup = new THREE.Group();
             const size = 0.5 + Math.random() * 0.6;
             
-            // Spike Core mesh architecture
             const geo = new THREE.IcosahedronGeometry(size, 0);
             const mat = new THREE.MeshStandardMaterial({ color: 0xff1e56, roughness: 0.3, metalness: 0.2 });
             const coreMesh = new THREE.Mesh(geo, mat);
             enemyGroup.add(coreMesh);
 
-            // External floating energy crystal shards
             const shieldGeo = new THREE.TorusGeometry(size * 1.3, 0.05, 4, 6);
             const shieldMat = new THREE.MeshStandardMaterial({ color: 0xff7b72, emissive: 0xff1e56, wireframe: true });
             const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
@@ -481,7 +459,6 @@
             }
         }
 
-        // --- ENGINE GAME TICK LOOP ---
         let lastTime = performance.now();
         function animate() {
             requestAnimationFrame(animate);
@@ -490,13 +467,6 @@
             const delta = (now - lastTime) / 1000;
             lastTime = now;
 
-            // Character Hover Animations
-            if (player) {
-                playerRing.rotation.z += 0.05;
-                playerCore.position.y = Math.sin(now * 0.005) * 0.1;
-            }
-
-            // Map Pillar Neon Pulse Animations
             mapPillars.forEach((p, i) => {
                 p.material.emissiveIntensity = 1 + Math.sin(now * 0.003 + i) * 0.5;
             });
@@ -521,8 +491,6 @@
                 dashTimer -= delta;
                 finalVel.copy(dashVelocity).multiplyScalar(baseSpeed * dashMultiplier);
                 if (dashTimer <= 0) isDashing = false;
-                
-                // Engine stream burst trail effects
                 createExplosion(player.position, 0x58a6ff, 2);
             } else {
                 finalVel.set(moveInput.x, 0, -moveInput.y).multiplyScalar(baseSpeed);
@@ -530,10 +498,8 @@
 
             player.position.add(finalVel);
 
-            // Angular tracking matrix updates
             if (moveInput.lengthSq() > 0.01 && !isDashing) {
                 const targetAngle = Math.atan2(moveInput.x, -moveInput.y);
-                // Soft lerp rotation transitions
                 let diff = targetAngle - player.rotation.y;
                 while (diff < -Math.PI) diff += Math.PI * 2;
                 while (diff > Math.PI) diff -= Math.PI * 2;
@@ -542,20 +508,16 @@
                 player.rotation.y = Math.atan2(dashVelocity.x, dashVelocity.z);
             }
 
-            // Map boundary locking
             player.position.x = Math.max(-arenaSize + 1.2, Math.min(arenaSize - 1.2, player.position.x));
             player.position.z = Math.max(-arenaSize + 1.2, Math.min(arenaSize - 1.2, player.position.z));
 
-            // Camera follow view matrix matrix
             camera.position.set(player.position.x, player.position.y + 15, player.position.z + 16);
-            camera.lookAt(player.position.x, player.position.y, player.position.z - 2);
+            camera.lookAt(player.position.x, player.position.y + 1, player.position.z - 2);
         }
 
         function updateEnemies() {
             for (let i = enemies.length - 1; i >= 0; i--) {
                 const enemy = enemies[i];
-                
-                // Enemy rotation loops
                 enemy.rotation.x += 0.02;
                 enemy.userData.shield.rotation.z -= 0.04;
 
@@ -564,9 +526,8 @@
                 dir.normalize();
                 enemy.position.add(dir.multiplyScalar(enemy.userData.speed));
 
-                // Collision algorithm limits
                 const dist = player.position.distanceTo(enemy.position);
-                const collisionThreshold = 0.8 + enemy.userData.radius;
+                const collisionThreshold = 0.9 + enemy.userData.radius;
 
                 if (dist < collisionThreshold) {
                     scene.remove(enemy);
@@ -620,7 +581,7 @@
             document.getElementById('score-val').innerText = "0";
             document.getElementById('game-over-screen').style.display = 'none';
             
-            player.position.set(0, 1.2, 0);
+            player.position.set(0, 0, 0);
             gameActive = true;
         }
 
