@@ -1,1 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nythera Labs // Cyber-Dash 3D</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background-color: #050508;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        /* UI Overlay */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .hud-element {
+            background: rgba(13, 17, 23, 0.75);
+            border: 1px solid #30363d;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #c9d1d9;
+            backdrop-filter: blur(4px);
+            pointer-events: auto;
+        }
+        #top-hud {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .stat-box {
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        #score-val { color: #58a6ff; }
+        #hp-val { color: #ff7b72; }
+        
+        /* Mobile Touch Controls */
+        #controls-layer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            padding-bottom: 20px;
+        }
+        .touch-zone {
+            pointer-events: auto;
+            border-radius: 50%;
+        }
+        #joystick-bound {
+            width: 140px;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #joystick-thumb {
+            width: 50px;
+            height: 50px;
+            background: #58a6ff;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 15px #58a6ff;
+            transition: transform 0.05s linear;
+        }
+        #action-btn {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 123, 114, 0.2);
+            border: 2px solid #ff7b72;
+            color: #ff7b72;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(255, 123, 114, 0.3);
+            active { background: #ff7b72; color: #000; }
+        }
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.9);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        #game-over-screen h1 {
+            font-size: 3rem;
+            color: #ff7b72;
+            margin-bottom: 10px;
+        }
+        .btn-restart {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #238636;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-layer">
+        <div id="top-hud">
+            <div class="hud-element stat-box">CORE INTEGRITY: <span id="hp-val">100%</span></div>
+            <div class="hud-element stat-box">DATA PURGED: <span id="score-val">0</span></div>
+        </div>
+
+        <div id="controls-layer">
+            <div id="joystick-bound" class="touch-zone">
+                <div id="joystick-thumb"></div>
+            </div>
+            <div id="action-btn" class="touch-zone">DASH</div>
+        </div>
+    </div>
+
+    <div id="game-over-screen">
+        <h1>SYSTEM COLLAPSE</h1>
+        <p>Your core integrity reached 0%.</p>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <button class="btn-restart" onclick="resetGame()">REBOOT SYSTEM</button>
+    </div>
+
+    <script>
+        // --- GAME STATE CONFIGURATION ---
+        let scene, camera, renderer;
+        let player, playerRadius = 0.8;
+        let enemies = [];
+        let particles = [];
+        let gameActive = true;
+        let score = 0;
+        let hp = 100;
+        
+        // Movement processing
+        let moveInput = new THREE.Vector2(0, 0);
+        let isDashing = false;
+        let dashTimer = 0;
+        let dashDuration = 0.15; // Speed burst duration window
+        let dashCooldown = 0;
+        let dashVelocity = new THREE.Vector3();
+        const baseSpeed = 0.18;
+        const dashMultiplier = 3.5;
+        
+        const arenaSize = 28;
+
+        // Joystick tracking variables
+        let joystickActive = false;
+        let joystickStart = new THREE.Vector2();
+        const maxJoystickDist = 50;
+
+        // --- INIT ENVIRONMENT ---
+        function init() {
+            const container = document.getElementById('canvas-container');
+            
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x050508, 0.025);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 14, 14);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Lighting setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0x58a6ff, 0.8);
+            dirLight.position.set(5, 20, 7);
+            scene.add(dirLight);
+
+            // Structural Grid Floor
+            const gridHelper = new THREE.GridHelper(arenaSize * 2, arenaSize, 0x58a6ff, 0x1f6feb);
+            gridHelper.position.y = 0;
+            scene.add(gridHelper);
+
+            // Structural Borders
+            createArenaBoundaries();
+
+            // Spawn Player Asset (Stylized Cone Object pointing forward)
+            const playerGeo = new THREE.ConeGeometry(playerRadius, 2, 5);
+            playerGeo.rotateX(Math.PI / 2); // Align orientation vector
+            const playerMat = new THREE.MeshStandardMaterial({ color: 0x58a6ff, roughness: 0.2, metalness: 0.8 });
+            player = new THREE.Mesh(playerGeo, playerMat);
+            player.position.set(0, 1, 0);
+            scene.add(player);
+
+            setupControls();
+            window.addEventListener('resize', onWindowResize);
+            
+            // Begin Game Ticks
+            animate();
+        }
+
+        function createArenaBoundaries() {
+            const borderGeo = new THREE.BoxGeometry(arenaSize * 2, 1, 0.5);
+            const borderMat = new THREE.MeshBasicMaterial({ color: 0x1f6feb, wireframe: true });
+            
+            const north = new THREE.Mesh(borderGeo, borderMat); north.position.set(0, 0.5, -arenaSize); scene.add(north);
+            const south = new THREE.Mesh(borderGeo, borderMat); south.position.set(0, 0.5, arenaSize); scene.add(south);
+            
+            const east = new THREE.Mesh(borderGeo, borderMat); east.rotation.y = Math.PI / 2; east.position.set(arenaSize, 0.5, 0); scene.add(east);
+            const west = new THREE.Mesh(borderGeo, borderMat); west.rotation.y = Math.PI / 2; west.position.set(-arenaSize, 0.5, 0); scene.add(west);
+        }
+
+        // --- INTERACTIVE TOUCH INPUT MECHANICS ---
+        function setupControls() {
+            const bound = document.getElementById('joystick-bound');
+            const thumb = document.getElementById('joystick-thumb');
+            const actionBtn = document.getElementById('action-btn');
+
+            // Virtual Joystick Logic
+            bound.addEventListener('touchstart', (e) => {
+                joystickActive = true;
+                const touch = e.touches[0];
+                const rect = bound.getBoundingClientRect();
+                joystickStart.set(rect.left + rect.width/2, rect.top + rect.height/2);
+            }, {passive: true});
+
+            window.addEventListener('touchmove', (e) => {
+                if (!joystickActive) return;
+                const touch = findTouchById(e.touches, e.targetTouches[0].identifier);
+                if(!touch) return;
+
+                let dir = new THREE.Vector2(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y);
+                const dist = dir.length();
+
+                if (dist > maxJoystickDist) {
+                    dir.normalize().multiplyScalar(maxJoystickDist);
+                }
+
+                thumb.style.transform = `translate(${dir.x}px, ${dir.y}px)`;
+                
+                // Pass normalized direction mapping directly to mechanics engine
+                moveInput.set(dir.x / maxJoystickDist, -(dir.y / maxJoystickDist));
+            }, {passive: false});
+
+            window.addEventListener('touchend', () => {
+                joystickActive = false;
+                thumb.style.transform = 'translate(0px, 0px)';
+                moveInput.set(0, 0);
+            });
+
+            // Action Button Event (Triggers High-Speed Dash Strike)
+            actionBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                triggerDash();
+            });
+
+            // Keyboard Fallback Configuration
+            let keys = { w: false, a: false, s: false, d: false };
+            window.addEventListener('keydown', (e) => {
+                if(e.key === ' ' || e.key === 'Spacebar') triggerDash();
+                if(e.key.toLowerCase() in keys) {
+                    keys[e.key.toLowerCase()] = true;
+                    updateKeyboardInput();
+                }
+            });
+            window.addEventListener('keyup', (e) => {
+                if(e.key.toLowerCase() in keys) {
+                    keys[e.key.toLowerCase()] = false;
+                    updateKeyboardInput();
+                }
+            });
+
+            function updateKeyboardInput() {
+                if (joystickActive) return; // Touch override
+                let x = 0, z = 0;
+                if (keys.w) z += 1;
+                if (keys.s) z -= 1;
+                if (keys.a) x -= 1;
+                if (keys.d) x += 1;
+                moveInput.set(x, z).normalize();
+            }
+        }
+
+        function findTouchById(touches, id) {
+            for(let i=0; i<touches.length; i++) {
+                if(touches[i].identifier === id) return touches[i];
+            }
+            return null;
+        }
+
+        function triggerDash() {
+            if (isDashing || dashCooldown > 0 || !gameActive) return;
+            isDashing = true;
+            dashTimer = dashDuration;
+            dashCooldown = 0.6; // Cooldown phase logic (seconds)
+            
+            // Lock direction relative to input vector, fallback to forward vector if static
+            if(moveInput.lengthSq() > 0.05) {
+                dashVelocity.set(moveInput.x, 0, -moveInput.y).normalize();
+            } else {
+                dashVelocity.set(0, 0, -1);
+            }
+        }
+
+        // --- ENEMY LIFECYCLE MANAGEMENT ---
+        function spawnEnemy() {
+            if(!gameActive || enemies.length > 15) return;
+
+            const size = 0.6 + Math.random() * 0.8;
+            const geo = new THREE.OctahedronGeometry(size, 0);
+            const mat = new THREE.MeshStandardMaterial({ color: 0xff7b72, wireframe: false, roughness: 0.5 });
+            const mesh = new THREE.Mesh(geo, mat);
+
+            // Dynamic distance spawn vector outside of instant player visual field
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 15 + Math.random() * 10;
+            mesh.position.set(
+                player.position.x + Math.cos(angle) * radius,
+                size,
+                player.position.z + Math.sin(angle) * radius
+            );
+            
+            mesh.userData = { speed: 0.04 + Math.random() * 0.04, radius: size };
+            scene.add(mesh);
+            enemies.push(mesh);
+        }
+
+        // --- EFFECTS ENGINE ---
+        function createExplosion(pos, colorHex) {
+            const particleCount = 20;
+            const geo = new THREE.BoxGeometry(0.15, 0.15, 0.15);
+            const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+
+            for(let i=0; i<particleCount; i++) {
+                const p = new THREE.Mesh(geo, mat);
+                p.position.copy(pos);
+                p.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.4,
+                        Math.random() * 0.3,
+                        (Math.random() - 0.5) * 0.4
+                    ),
+                    life: 1.0
+                };
+                scene.add(p);
+                particles.push(p);
+            }
+        }
+
+        // --- CORE TICK ENGINE (LOOP) ---
+        let lastTime = performance.now();
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const now = performance.now();
+            const delta = (now - lastTime) / 1000;
+            lastTime = now;
+
+            if (gameActive) {
+                updatePlayer(delta);
+                updateEnemies();
+                updateParticles(delta);
+                
+                // Procedural Spawn Engine Checks
+                if(Math.random() < 0.03) spawnEnemy();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function updatePlayer(delta) {
+            // Update Cooldown State
+            if (dashCooldown > 0) dashCooldown -= delta;
+
+            let finalVel = new THREE.Vector3();
+
+            if (isDashing) {
+                dashTimer -= delta;
+                finalVel.copy(dashVelocity).multiplyScalar(baseSpeed * dashMultiplier);
+                if (dashTimer <= 0) isDashing = false;
+                
+                // Emit trailing particle effects during high speed frame processing
+                if(Math.random() < 0.4) createExplosion(player.position, 0x58a6ff);
+            } else {
+                finalVel.set(moveInput.x, 0, -moveInput.y).multiplyScalar(baseSpeed);
+            }
+
+            player.position.add(finalVel);
+
+            // Compute Rotation matrix pointing to direction velocity vectors
+            if (moveInput.lengthSq() > 0.01 && !isDashing) {
+                const targetAngle = Math.atan2(moveInput.x, -moveInput.y);
+                player.rotation.y = targetAngle;
+            } else if (isDashing) {
+                player.rotation.y = Math.atan2(dashVelocity.x, dashVelocity.z);
+            }
+
+            // Boundary clamping processing
+            player.position.x = Math.max(-arenaSize + 1, Math.min(arenaSize - 1, player.position.x));
+            player.position.z = Math.max(-arenaSize + 1, Math.min(arenaSize - 1, player.position.z));
+
+            // Dynamic tracking camera offsets relative to player object
+            camera.position.set(player.position.x, player.position.y + 14, player.position.z + 14);
+            camera.lookAt(player.position);
+        }
+
+        function updateEnemies() {
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const enemy = enemies[i];
+                
+                // Rotation animations
+                enemy.rotation.x += 0.01;
+                enemy.rotation.y += 0.02;
+
+                // Move vector towards current tracking coordinates of player
+                const dir = new THREE.Vector3().subVectors(player.position, enemy.position);
+                dir.y = 0; // Ground plane clamp
+                dir.normalize();
+                enemy.position.add(dir.multiplyScalar(enemy.userData.speed));
+
+                // Process High Precision Collision Matrix
+                const dist = player.position.distanceTo(enemy.position);
+                const collisionThreshold = playerRadius + enemy.userData.radius;
+
+                if (dist < collisionThreshold) {
+                    scene.remove(enemy);
+                    enemies.splice(i, 1);
+
+                    if (isDashing) {
+                        // Success state: Striking through targets during active dash frame deletes enemies
+                        createExplosion(enemy.position, 0xff7b72);
+                        score += 100;
+                        document.getElementById('score-val').innerText = score;
+                    } else {
+                        // Penalty matrix: Contact outside of active attack loop breaks core structural points
+                        createExplosion(player.position, 0xff0000);
+                        hp -= 20;
+                        document.getElementById('hp-val').innerText = Math.max(0, hp) + "%";
+                        
+                        if (hp <= 0) triggerGameOver();
+                    }
+                }
+            }
+        }
+
+        function updateParticles(delta) {
+            for(let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.position.add(p.userData.velocity);
+                p.userData.life -= delta * 1.5;
+                p.scale.multiplyScalar(0.96); // Gradually scale down particle vectors
+
+                if(p.userData.life <= 0) {
+                    scene.remove(p);
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function triggerGameOver() {
+            gameActive = false;
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('game-over-screen').style.display = 'flex';
+        }
+
+        function resetGame() {
+            // Clean active map vectors
+            enemies.forEach(e => scene.remove(e));
+            particles.forEach(p => scene.remove(p));
+            enemies = [];
+            particles = [];
+            
+            // Re-calibrate baseline system integers
+            hp = 100;
+            score = 0;
+            isDashing = false;
+            document.getElementById('hp-val').innerText = "100%";
+            document.getElementById('score-val').innerText = "0";
+            document.getElementById('game-over-screen').style.display = 'none';
+            
+            player.position.set(0, 1, 0);
+            gameActive = true;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Initialize Module on Load Completion
+        window.onload = init;
+    </script>
+</body>
+</html>
 
