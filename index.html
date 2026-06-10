@@ -39,11 +39,13 @@
             padding: 2rem 1rem;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 700px;
         }
 
         header {
@@ -75,58 +77,53 @@
             font-size: 0.85rem;
             font-weight: 500;
             background-color: var(--panel-bg);
-            transition: background 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .theme-toggle:hover {
             border-color: var(--accent);
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.25rem;
+        .main-showcase {
+            display: block;
         }
 
         .card {
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 2rem;
             text-decoration: none;
             color: inherit;
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 1.5rem;
         }
 
         .card:hover {
             transform: translateY(-2px);
             border-color: var(--accent);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
         .card h3 {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            color: var(--accent);
             margin-bottom: 0.5rem;
-            color: var(--text-main);
         }
 
         .card p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
-            line-height: 1.4;
-            margin-bottom: 1.5rem;
+            line-height: 1.5;
         }
 
         .card .action-text {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
+            margin-top: auto;
         }
 
         footer {
@@ -147,34 +144,18 @@
             <button class="theme-toggle" id="themeBtn">Toggle Theme</button>
         </header>
 
-        <main class="grid">
-            <a href="tools/sha256.html" class="card">
+        <main class="main-showcase">
+            <a href="tools/game.html" class="card">
                 <div>
-                    <h3>SHA-256 Converter</h3>
-                    <p>Secure cryptographic hash generation tool for payloads and inputs.</p>
+                    <h3>Cyber-Dash 3D Arena</h3>
+                    <p>High-performance vector-movement physics simulation engine. Strike through hostile units using active dash mechanics to clear cache registries entirely inside a 3D canvas environment.</p>
                 </div>
-                <div class="action-text">Launch Tool →</div>
-            </a>
-
-            <a href="tools/calculator.html" class="card">
-                <div>
-                    <h3>Advanced Calculator</h3>
-                    <p>Clean utility interface designed for structural evaluations and rapid computing.</p>
-                </div>
-                <div class="action-text">Launch Tool →</div>
-            </a>
-
-            <a href="tools/analyzer.html" class="card">
-                <div>
-                    <h3>System Analyzer</h3>
-                    <p>Diagnostic module for parsing structural inputs, data streams, and raw assets.</p>
-                </div>
-                <div class="action-text">Launch Tool →</div>
+                <div class="action-text">Launch Simulation Arena →</div>
             </a>
         </main>
 
         <footer>
-            &copy; 2026 Nythera Labs. All systems functional.
+            &copy; 2026 Nythera Labs. All systems operational.
         </footer>
     </div>
 
