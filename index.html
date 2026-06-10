@@ -2,36 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aether Lab // Core</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Aether Lab // Web Core</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    body { background: #050505; color: #e4e4e7; font-family: 'Fira Code', monospace; }
+    body { background: #030305; color: #e4e4e7; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    .glass-panel {
+      background: rgba(9, 9, 12, 0.8);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .slot-card:hover {
+      border-color: rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.05);
+    }
   </style>
 </head>
-<body class="min-h-screen w-screen flex flex-col items-center justify-center p-6 antialiased selection:bg-emerald-500/30">
+<body class="min-h-screen w-screen flex flex-col items-center justify-start p-4 sm:p-8 antialiased select-none">
 
-  <div class="max-w-md w-full border border-zinc-900 bg-zinc-950/50 p-8 rounded-2xl shadow-2xl text-center space-y-6 relative overflow-hidden">
+  <canvas id="matrix-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-10 opacity-20"></canvas>
+
+  <div class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-8 flex flex-col gap-6 z-20 relative shadow-2xl my-auto border border-zinc-900">
     
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase tracking-widest font-bold">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      Aether_Core_Online
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-zinc-900 pb-5 gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="h-9 w-9 rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center text-sm font-mono font-bold text-emerald-400 shadow-inner">æ</div>
+        <div>
+          <h1 class="text-xs font-mono font-bold tracking-[0.25em] text-zinc-200 uppercase">AETHER LAB // WEB CORE</h1>
+          <p class="text-[10px] text-zinc-500 font-mono uppercase mt-0.5 tracking-wider">Static Global Content Delivery Network</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="bg-zinc-950 border border-zinc-900 px-3 py-1.5 rounded-lg text-[10px] font-mono text-zinc-400 font-bold flex items-center gap-2">
+          <span class="text-zinc-600 uppercase">Host:</span>
+          <span class="text-emerald-400 font-black">FIREBASE_LIVE</span>
+        </div>
+        <div class="bg-zinc-950 border border-zinc-900 px-3 py-1.5 rounded-lg text-[10px] font-mono text-emerald-400 font-bold flex items-center gap-1.5">
+          <span class="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]"></span>
+          SYS_ACTIVE
+        </div>
+      </div>
     </div>
 
-    <div class="space-y-2">
-      <h1 class="text-3xl font-black tracking-[0.15em] text-white uppercase">Aether Lab</h1>
-      <p class="text-xs text-zinc-500 uppercase tracking-widest">Serverless Bot Gateway</p>
+    <div class="space-y-1 font-mono">
+      <span class="text-[9px] text-emerald-400 uppercase font-black tracking-widest">// Central Interface System</span>
+      <p class="text-xs text-zinc-400 leading-relaxed font-sans font-light max-w-2xl">
+        Welcome to your rebuilt frontend sandbox environment. Legacy webhook listeners have been safely decommissioned. The architecture is now running entirely on isolated client-side browser frameworks.
+      </p>
     </div>
 
-    <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent my-4"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+      
+      <div class="slot-card p-5 rounded-2xl bg-zinc-950/40 border border-zinc-900 transition-all duration-300 flex flex-col justify-between gap-4">
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <div class="text-zinc-500 text-sm"><i class="fa-solid fa-terminal"></i></div>
+            <span class="text-[9px] font-mono text-zinc-600 tracking-wider uppercase font-bold">SLOT_01 // EMPTY</span>
+          </div>
+          <h3 class="text-xs font-bold text-zinc-300 font-mono tracking-wide">Utility Engine Expansion</h3>
+          <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">Awaiting custom client-side tools compilation parameters. Ready for cryptography matrix injections or developer layout modules.</p>
+        </div>
+      </div>
 
-    <p class="text-[11px] text-zinc-600 leading-relaxed uppercase">
-      Legacy modules terminated. <br>
-      Awaiting new system directives.
-    </p>
+      <div class="slot-card p-5 rounded-2xl bg-zinc-950/40 border border-zinc-900 transition-all duration-300 flex flex-col justify-between gap-4">
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <div class="text-zinc-500 text-sm"><i class="fa-solid fa-chart-simple"></i></div>
+            <span class="text-[9px] font-mono text-zinc-600 tracking-wider uppercase font-bold">SLOT_02 // EMPTY</span>
+          </div>
+          <h3 class="text-xs font-bold text-zinc-300 font-mono tracking-wide">Data Analysis Stream</h3>
+          <p class="text-[11px] text-zinc-500 font-sans font-light leading-relaxed">System ready for storage array parsing interfaces or custom game telemetry logging dashboards.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bg-zinc-950 border border-zinc-900 rounded-xl p-3.5 font-mono text-[10px] flex justify-between items-center text-zinc-500">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-folder-tree text-zinc-700"></i>
+        <span>ROOT: . / PUBLIC_STATIC_FILES</span>
+      </div>
+      <span>CACHE: REVALIDATE_OK</span>
+    </div>
 
   </div>
 
+  <script>
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, points = [];
+    const linkRange = 120;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      generatePoints();
+    }
+
+    function generatePoints() {
+      points = [];
+      const count = Math.floor((w * h) / 16000) + 10;
+      for (let i = 0; i < count; i++) {
+        points.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3
+        });
+      }
+    }
+
+    function draw() {
+      requestAnimationFrame(draw);
+      ctx.clearRect(0, 0, w, h);
+
+      points.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.3)'; ctx.fill();
+      });
+
+      for (let i = 0; i < points.length; i++) {
+        for (let j = i + 1; j < points.length; j++) {
+          const dx = points[i].x - points[j].x;
+          const dy = points[i].y - points[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < linkRange) {
+            ctx.strokeStyle = "rgba(16, 185, 129, " + ((1 - (dist / linkRange)) * 0.05) + ")";
+            ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke();
+          }
+        }
+      }
+    }
+
+    window.addEventListener('resize', resize);
+    resize(); draw();
+  </script>
 </body>
 </html>
