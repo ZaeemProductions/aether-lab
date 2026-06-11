@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mr. Kim's Mega-Growth Arena</title>
+    <title>Mr. Kim's Giga-Growth 2D Arena</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,10 +16,11 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #05070f;
+            background-color: #060814;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        #canvas-container {
+        #game-canvas {
+            display: block;
             width: 100%;
             height: 100%;
             position: absolute;
@@ -28,15 +29,15 @@
             z-index: 1;
         }
         
-        /* Audio Unlock Setup Overlay */
-        #audio-overlay {
+        /* Interactive Startup Overlay */
+        #setup-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 14, 26, 0.95);
-            z-index: 500;
+            background: #060814;
+            z-index: 100;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -44,17 +45,17 @@
             color: #ffffff;
             text-align: center;
         }
-        .btn-start-game {
-            margin-top: 20px;
+        .start-btn {
+            margin-top: 25px;
             padding: 16px 45px;
-            background: linear-gradient(135deg, #ffaa00 0%, #ff5500 100%);
+            background: linear-gradient(135deg, #00ffcc 0%, #00aaff 100%);
             border: none;
-            color: white;
-            font-weight: bold;
+            color: #060814;
+            font-weight: 900;
             font-size: 1.3rem;
             border-radius: 35px;
             cursor: pointer;
-            box-shadow: 0 0 25px rgba(255, 170, 0, 0.5);
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
         }
 
         #ui-layer {
@@ -71,7 +72,7 @@
             padding: 25px;
         }
         .hud-element {
-            background: rgba(10, 14, 26, 0.85);
+            background: rgba(10, 14, 28, 0.85);
             border: 2px solid #00ffcc;
             box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
             padding: 12px 25px;
@@ -87,10 +88,10 @@
             justify-content: space-between;
             width: 100%;
         }
-        #stat-growth { color: #ffaa00; text-shadow: 0 0 8px #ffaa00; }
-        #stat-count { color: #00ffcc; text-shadow: 0 0 8px #00ffcc; }
+        #stat-size { color: #ffaa00; text-shadow: 0 0 8px #ffaa00; }
+        #stat-score { color: #00ffcc; text-shadow: 0 0 8px #00ffcc; }
         
-        /* GUI Responsive Controls Layer */
+        /* iPad Controller Layers */
         #controls-layer {
             display: flex;
             justify-content: space-between;
@@ -101,544 +102,517 @@
         .touch-zone { pointer-events: auto; }
         
         #joystick-bound {
-            width: 140px;
-            height: 140px;
-            background: rgba(0, 255, 204, 0.03);
-            border: 3px dashed rgba(0, 255, 204, 0.4);
+            width: 130px;
+            height: 130px;
+            background: rgba(0, 255, 204, 0.02);
+            border: 3px dashed rgba(0, 255, 204, 0.3);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.05);
         }
         #joystick-thumb {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             background: radial-gradient(circle, #00ffcc 0%, #0088aa 100%);
             border-radius: 50%;
-            box-shadow: 0 0 25px #00ffcc;
+            box-shadow: 0 0 20px #00ffcc;
         }
         
         #ability-btn {
-            width: 105px;
-            height: 105px;
-            background: rgba(255, 170, 0, 0.15);
-            border: 3px solid #ffaa00;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 0, 127, 0.15);
+            border: 3px solid #ff007f;
             color: #ffffff;
             border-radius: 50%;
             font-weight: 900;
             font-size: 1.1rem;
-            letter-spacing: 1px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
-            transition: transform 0.05s ease, opacity 0.3s;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
+            transition: opacity 0.2s;
         }
         #ability-btn:disabled {
-            opacity: 0.4;
-            border-color: #555;
+            opacity: 0.35;
             box-shadow: none;
         }
-        .cooldown-text {
+        .cd-text {
             font-size: 0.75rem;
-            color: #ffcc00;
+            color: #ff007f;
             margin-top: 2px;
         }
-        
-        #error-log {
-            position: absolute;
-            top: 90px;
-            left: 20px;
-            background: rgba(255, 0, 0, 0.85);
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            max-width: 90%;
-            display: none;
-            z-index: 200;
-            pointer-events: auto;
-        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
-    <div id="audio-overlay">
-        <h1 style="font-size: 2.5rem; color: #ffaa00; text-shadow: 0 0 15px #ffaa00;">MR. KIM SIMULATOR</h1>
-        <p style="color: #8a99ad; margin-top: 10px; padding: 0 20px;">Loads Custom 3D Character Asset, Time-Delta Physics, and Web Audio Systems</p>
-        <button class="btn-start-game" onclick="startGameInterface()">INITIALIZE SYSTEM</button>
+    <div id="setup-overlay">
+        <h1 style="font-size: 2.3rem; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.3);">MR. KIM ARCADIA</h1>
+        <p style="color: #6a7b95; margin-top: 8px;">100% Vector Canvas Engine Engine • Zero External Models Asset Dependent</p>
+        <button class="start-btn" onclick="initSystemInterface()">LAUNCH SYSTEM</button>
     </div>
 
-    <div id="canvas-container"></div>
-    <div id="error-log"></div>
+    <canvas id="game-canvas"></canvas>
 
     <div id="ui-layer">
         <div id="top-hud">
-            <div class="hud-element">MR. KIM SIZE: <span id="stat-growth">1.0x</span></div>
-            <div class="hud-element">ABSORBED DUMMIES: <span id="stat-count">0</span></div>
+            <div class="hud-element">MR. KIM SCALE: <span id="stat-size">1.0x</span></div>
+            <div class="hud-element">ABSORBED BOTS: <span id="stat-score">0</span></div>
         </div>
 
         <div id="controls-layer">
             <div id="joystick-bound" class="touch-zone">
                 <div id="joystick-thumb"></div>
             </div>
-            <button id="ability-btn" class="touch-zone" onclick="triggerShadowTwinAbility()">
+            <button id="ability-btn" class="touch-zone" onclick="triggerTwinAbility()">
                 <span>TWIN</span>
-                <div id="cd-timer" class="cooldown-text">READY</div>
+                <div id="cd-timer" class="cd-text">READY</div>
             </button>
         </div>
     </div>
 
     <script>
-        class WebAudioSystem {
-            constructor() {
-                this.ctx = null;
-                this.bgmInterval = null;
-            }
+        // --- CHIPTUNE AUDIO PROCEDURAL ENGINE ---
+        class GameAudioContext {
+            constructor() { this.ctx = null; this.loop = null; }
             init() {
                 if (this.ctx) return;
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                this.startChiptuneBGM();
+                this.startBGMTrack();
             }
-            playPopSound() {
-                if (!this.ctx) return;
-                let osc = this.ctx.createOscillator();
-                let gain = this.ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.12);
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.12);
-            }
-            playTwinSound() {
-                if (!this.ctx) return;
-                let osc = this.ctx.createOscillator();
-                let gain = this.ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(200, this.ctx.currentTime + 0.4);
+            playPop() {
+                if(!this.ctx) return;
+                let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(700, this.ctx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.4);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.1);
             }
-            startChiptuneBGM() {
-                let noteSequence = [110, 130, 146, 130, 165, 146, 110, 165];
-                let index = 0;
-                this.bgmInterval = setInterval(() => {
-                    if (!gameActive || !this.ctx) return;
-                    let osc = this.ctx.createOscillator();
-                    let gain = this.ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(noteSequence[index], this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + 0.4);
-                    index = (index + 1) % noteSequence.length;
-                }, 400);
+            playTwin() {
+                if(!this.ctx) return;
+                let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(150, this.ctx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.35);
+            }
+            startBGMTrack() {
+                const mel = [130, 147, 165, 147, 196, 165, 220, 196]; let i = 0;
+                this.loop = setInterval(() => {
+                    if(!this.ctx) return;
+                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(mel[i], this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.35);
+                    i = (i + 1) % mel.length;
+                }, 350);
             }
         }
 
-        const audio = new WebAudioSystem();
+        const audio = new GameAudioContext();
 
-        function startGameInterface() {
-            document.getElementById('audio-overlay').style.display = 'none';
+        function initSystemInterface() {
+            document.getElementById('setup-overlay').style.display = 'none';
             audio.init();
-            initEngine();
+            setupGameEngine();
         }
 
-        let scene, camera, renderer, clock;
-        let player, playerMesh;
-        let twinClone = null;
-        let targets = [];
+        // --- 2D CANVAS GAME ENGINE MATRIX ---
+        let canvas, ctx;
+        let lastTime = performance.now();
+        
+        // Boundaries mapping
+        const worldSize = 1400; 
+        
+        // Entity containers
+        let player = { x: 0, y: 0, radius: 24, heading: 0, speed: 280 };
+        let twin = null;
+        let dummies = [];
         let particles = [];
         
-        let gameActive = true;
-        let devouredCount = 0;
-        let playerScaleModifier = 4.0; 
-        let cameraZoomFactor = 1.0;
+        // Gameplay tracking systems
+        let score = 0;
+        let sizeMultiplier = 1.0;
+        let targetViewportScale = 1.0;
+        let currentViewportScale = 1.0;
+
+        let twinActive = false;
+        let twinTimer = 0;
+        let twinCooldown = 0;
+        const maxCooldown = 10.0;
+
+        // Joystick indicators
+        let moveInput = new THREE.Vector2(0, 0); // Reusing vector file wrapper for basic indexing math
+        if (typeof THREE === 'undefined') {
+            // Precision fallback struct wrapper if cdn header parses slow
+            window.THREE = { Vector2: class { constructor(x,y){this.x=x;this.y=y;} set(x,y){this.x=x;this.y=y;} lengthSq(){return this.x*this.x+this.y*this.y;} normalize(){let l=Math.sqrt(this.x*this.x+this.y*this.y);if(l>0){this.x/=l;this.y/=l;}return this;} } };
+        }
         
-        const moveInput = new THREE.Vector2(0, 0);
-        const mapSize = 50;
-        const playerSpeedBase = 16.0;
+        let joyActive = false;
+        let joyStart = new THREE.Vector2(0,0);
+        const maxJoyDist = 50;
 
-        let twinAbilityActive = false;
-        let twinTimeRemaining = 0;
-        let twinCooldownTimer = 0;
-        const twinMaxCooldown = 12.0;
+        function setupGameEngine() {
+            canvas = document.getElementById('game-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
 
-        let joystickActive = false;
-        let joystickStart = new THREE.Vector2();
-        const maxJoystickDist = 50;
+            window.addEventListener('resize', resizeCanvas);
+            setupTouchListeners();
 
-        function initEngine() {
-            const container = document.getElementById('canvas-container');
-            clock = new THREE.Clock();
+            // Populate active arena dummies fields
+            for(let i=0; i<35; i++) spawnDummyRobot(true);
 
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x05070f);
-            scene.fog = new THREE.FogExp2(0x05070f, 0.012);
-
-            camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-            updateCameraPosition();
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.outputEncoding = THREE.sRGBEncoding;
-            container.appendChild(renderer.domElement);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            const skyLight = new THREE.DirectionalLight(0x00ffcc, 0.7);
-            skyLight.position.set(20, 45, 20);
-            scene.add(skyLight);
-
-            const backlight = new THREE.DirectionalLight(0xff00ff, 0.4);
-            backlight.position.set(-20, 20, -20);
-            scene.add(backlight);
-
-            buildPlaygroundMap();
-            buildPlayerCharacter();
-            setupJoystickControls();
-            
-            for(let i=0; i<18; i++) spawnCyberDummy();
-
-            window.addEventListener('resize', onWindowResize);
-            clock.getDelta(); 
-            animate();
+            // Trigger primary animation loop iteration
+            requestAnimationFrame(gameLoopUpdate);
         }
 
-        function buildPlaygroundMap() {
-            const floorGeo = new THREE.PlaneGeometry(mapSize * 2, mapSize * 2);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x0b0f19, roughness: 0.5 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            scene.add(floor);
-
-            const gridLines = new THREE.GridHelper(mapSize * 2, mapSize, 0x00ffcc, 0x161f33);
-            gridLines.position.y = 0.005;
-            scene.add(gridLines);
-
-            const wallGeo = new THREE.BoxGeometry(mapSize * 2, 0.6, 0.6);
-            const wallMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00aa88 });
-            
-            const n = new THREE.Mesh(wallGeo, wallMat); n.position.set(0, 0.3, -mapSize); scene.add(n);
-            const s = new THREE.Mesh(wallGeo, wallMat); s.position.set(0, 0.3, mapSize); scene.add(s);
-            const e = new THREE.Mesh(wallGeo, wallMat); e.rotation.y = Math.PI/2; e.position.set(mapSize, 0.3, 0); scene.add(e);
-            const w = new THREE.Mesh(wallGeo, wallMat); w.rotation.y = Math.PI/2; w.position.set(-mapSize, 0.3, 0); scene.add(w);
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
 
-        function buildPlayerCharacter() {
-            player = new THREE.Group();
-            player.position.set(0, 0, 0);
-            scene.add(player);
+        function spawnDummyRobot(scatterRandomly = false) {
+            let size = 10 + Math.random() * 22;
+            let rx, ry;
+            
+            if (scatterRandomly) {
+                rx = (Math.random() - 0.5) * (worldSize - 100);
+                ry = (Math.random() - 0.5) * (worldSize - 100);
+            } else {
+                // Spawn way out of frame view circles
+                let angle = Math.random() * Math.PI * 2;
+                rx = player.x + Math.cos(angle) * (canvas.width / currentViewportScale);
+                ry = player.y + Math.sin(angle) * (canvas.height / currentViewportScale);
+                // Clamp checks
+                rx = Math.max(-worldSize/2 + 50, Math.min(worldSize/2 - 50, rx));
+                ry = Math.max(-worldSize/2 + 50, Math.min(worldSize/2 - 50, ry));
+            }
 
-            const loader = new THREE.GLTFLoader();
-            loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
-                playerMesh = gltf.scene;
-                playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier); 
-                playerMesh.position.set(0, 0.28 * playerScaleModifier, 0); 
-                playerMesh.rotation.y = Math.PI; 
-                player.add(playerMesh);
-            }, undefined, function(error) {
-                const logBox = document.getElementById('error-log');
-                logBox.style.display = 'block';
-                logBox.innerText = "Asset verify fail. Confirm filename fits folder root layout.";
-                console.error(error);
+            dummies.push({
+                x: rx,
+                y: ry,
+                radius: size,
+                color: `hsl(${Math.random() * 360}, 95%, 65%)`,
+                angle: Math.random() * Math.PI * 2,
+                pulseSeed: Math.random() * 10
             });
         }
 
-        function setupJoystickControls() {
+        function triggerTwinAbility() {
+            if (twinCooldown > 0 || twinActive) return;
+            audio.playTwinSound();
+            twinActive = true;
+            twinTimer = 5.0; // Spawns for 5 seconds
+            
+            twin = {
+                x: player.x + Math.cos(player.heading) * 60,
+                y: player.y + Math.sin(player.heading) * 60,
+                radius: player.radius * 0.8
+            };
+            createSparks(twin.x, twin.y, '#00ffff', 25);
+        }
+
+        function createSparks(x, y, color, count) {
+            for(let i=0; i<count; i++) {
+                let ang = Math.random() * Math.PI * 2;
+                let spd = 50 + Math.random() * 200;
+                particles.push({
+                    x: x, y: y,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd,
+                    life: 1.0,
+                    decay: 1.5 + Math.random() * 2,
+                    color: color
+                });
+            }
+        }
+
+        // --- HARDWARE FLUID LOOP PROCESSING (dt BIND) ---
+        function gameLoopUpdate(now) {
+            requestAnimationFrame(gameLoopUpdate);
+
+            // Compute exact delta scale mapping windows to bypass 120Hz monitor multiplier glitches
+            let dt = (now - lastTime) / 1000;
+            lastTime = now;
+            if (dt > 0.1) dt = 0.1; // Limit spike thresholds
+
+            updateLogicEngine(dt);
+            renderGraphicsEngine();
+        }
+
+        function updateLogicEngine(dt) {
+            // 1. Cooldown timers
+            if (twinCooldown > 0) {
+                twinCooldown -= dt;
+                if (twinCooldown <= 0) {
+                    document.getElementById('ability-btn').disabled = false;
+                    document.getElementById('cd-timer').innerText = "READY";
+                } else {
+                    document.getElementById('ability-btn').disabled = true;
+                    document.getElementById('cd-timer').innerText = twinCooldown.toFixed(1) + "s";
+                }
+            }
+
+            // 2. Handle Shadow Twin Clone Automations
+            if (twinActive && twin) {
+                twinTimer -= dt;
+                
+                // Track nearest target item object
+                let nearest = null, closestDist = Infinity;
+                dummies.forEach(d => {
+                    let dist = Math.hypot(d.x - twin.x, d.y - twin.y);
+                    if (dist < closestDist) { closestDist = dist; nearest = d; }
+                });
+
+                if (nearest) {
+                    let ang = Math.atan2(nearest.y - twin.y, nearest.x - twin.x);
+                    twin.x += Math.cos(ang) * 450 * dt;
+                    twin.y += Math.sin(ang) * 450 * dt;
+                }
+
+                if (twinTimer <= 0) {
+                    createSparks(twin.x, twin.y, '#ff007f', 20);
+                    twin = null;
+                    twinActive = false;
+                    twinCooldown = maxCooldown;
+                }
+            }
+
+            // 3. Move Player Avatar Coordinates
+            if (moveInput.lengthSq() > 0.01) {
+                let currentSpeed = player.speed * (1 + (sizeMultiplier - 1) * 0.15);
+                player.x += moveInput.x * currentSpeed * dt;
+                player.y -= moveInput.y * currentSpeed * dt; // Inverted grid orientation translation
+                player.heading = Math.atan2(-moveInput.y, moveInput.x);
+            }
+
+            // Ground boundary clamping parameters
+            player.x = Math.max(-worldSize/2 + player.radius, Math.min(worldSize/2 - player.radius, player.x));
+            player.y = Math.max(-worldSize/2 + player.radius, Math.min(worldSize/2 - player.radius, player.y));
+
+            // 4. Update Dummies Flee Routing & Collision Checks
+            for (let i = dummies.length - 1; i >= 0; i--) {
+                const d = dummies[i];
+                
+                let distToPlayer = Math.hypot(player.x - d.x, player.y - d.y);
+                let distToTwin = twin ? Math.hypot(twin.x - d.x, twin.y - d.y) : Infinity;
+                
+                let threatDist = Math.min(distToPlayer, distToTwin);
+                let threatSource = distToPlayer < distToTwin ? player : twin;
+
+                // Flee Logic
+                if (threatDist < player.radius * 4.0) {
+                    let fleeAngle = Math.atan2(d.y - threatSource.y, d.x - threatSource.x);
+                    d.x += Math.cos(fleeAngle) * 260 * dt;
+                    d.y += Math.sin(fleeAngle) * 260 * dt;
+                    d.angle = fleeAngle;
+                    
+                    // Boundary bouncing lines inside map limits
+                    d.x = Math.max(-worldSize/2 + d.radius, Math.min(worldSize/2 - d.radius, d.x));
+                    d.y = Math.max(-worldSize/2 + d.radius, Math.min(worldSize/2 - d.radius, d.y));
+                }
+
+                // Consumption Intersect Processing (Player eats dummy)
+                if (distToPlayer < (player.radius + d.radius * 0.5)) {
+                    audio.playPop();
+                    createSparks(d.x, d.y, d.color, 15);
+                    
+                    // Increase metrics indices smoothly
+                    score++;
+                    let growthStep = d.radius * 0.35;
+                    player.radius += growthStep;
+                    sizeMultiplier = player.radius / 24.0;
+                    targetViewportScale = 1 / (1 + (sizeMultiplier - 1) * 0.45); // Scale camera back dynamically
+
+                    document.getElementById('stat-size').innerText = sizeMultiplier.toFixed(1) + "x";
+                    document.getElementById('stat-score').innerText = score;
+
+                    dummies.splice(i, 1);
+                    spawnDummyRobot(false);
+                    continue;
+                }
+
+                // Consumption Intersect Processing (Twin clone eats dummy)
+                if (twin && distToTwin < (twin.radius + d.radius * 0.5)) {
+                    audio.playPop();
+                    createSparks(d.x, d.y, '#00ffff', 15);
+                    
+                    score++;
+                    let growthStep = d.radius * 0.35;
+                    player.radius += growthStep;
+                    sizeMultiplier = player.radius / 24.0;
+                    targetViewportScale = 1 / (1 + (sizeMultiplier - 1) * 0.45);
+
+                    document.getElementById('stat-size').innerText = sizeMultiplier.toFixed(1) + "x";
+                    document.getElementById('stat-score').innerText = score;
+
+                    dummies.splice(i, 1);
+                    spawnDummyRobot(false);
+                }
+            }
+
+            // 5. Particle decay loop tracking
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.life -= p.decay * dt;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Smoothly ease viewport scaling factor (Lerp)
+            currentViewportScale += (targetViewportScale - currentViewportScale) * 4.0 * dt;
+        }
+
+        function renderGraphicsEngine() {
+            // Clean view array matrix fields
+            ctx.fillStyle = '#060814';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            // Center viewport on Mr. Kim's coordinates
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(currentViewportScale, currentViewportScale);
+            ctx.translate(-player.x, -player.y);
+
+            // 1. Draw Tech-Grid Playground Ground Plane
+            ctx.strokeStyle = '#121930';
+            ctx.lineWidth = 1.5;
+            const gridSpacing = 60;
+            
+            let startX = -worldSize / 2;
+            let endX = worldSize / 2;
+            
+            for (let x = startX; x <= endX; x += gridSpacing) {
+                ctx.beginPath(); ctx.moveTo(x, startX); ctx.lineTo(x, endX); ctx.stroke();
+            }
+            for (let y = startX; y <= endX; y += gridSpacing) {
+                ctx.beginPath(); ctx.moveTo(startX, y); ctx.lineTo(endX, y); ctx.stroke();
+            }
+
+            // Outer Boundary Glow Lines
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 6;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#00ffcc';
+            ctx.strokeRect(-worldSize/2, -worldSize/2, worldSize, worldSize);
+            ctx.shadowBlur = 0; // Clear performance costly shadow allocations instantly
+
+            // 2. Draw Target Dummies Vector Sprites
+            dummies.forEach(d => {
+                ctx.save();
+                ctx.translate(d.x, d.y);
+                ctx.rotate(d.angle);
+
+                let pulse = 1 + Math.sin(performance.now() * 0.008 + d.pulseSeed) * 0.08;
+
+                // Cyber Torso representation box circle setup
+                ctx.fillStyle = d.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, d.radius * pulse, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Front Glowing Visor line link indicator orientation mapping
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(d.radius * 0.3, -d.radius * 0.2, d.radius * 0.5, d.radius * 0.4);
+
+                ctx.restore();
+            });
+
+            // 3. Draw Holographic Shadow Twin Clone Component
+            if (twinActive && twin) {
+                ctx.save();
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#00ffff';
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([6, 4]); // Wireframe tech style look fields
+
+                ctx.beginPath();
+                ctx.arc(twin.x, twin.y, twin.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 4. Draw Particles Explosions
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+            });
+            ctx.globalAlpha = 1.0;
+
+            // 5. Procedurally Draw Mr. Kim Core Avatar
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.heading);
+
+            // Glowing Outer Tech Shield Ring Indicator
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 3 + (sizeMultiplier * 0.5);
+            ctx.shadowBlur = 15 + (sizeMultiplier * 2);
+            ctx.shadowColor = '#ffaa00';
+            ctx.beginPath();
+            ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Inner Vector Core Design representational identity layout block
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(0, 0, player.radius * 0.75, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Direction pointer lines mesh layout indicators
+            ctx.fillStyle = '#ffaa00';
+            ctx.beginPath();
+            ctx.moveTo(player.radius * 0.4, -player.radius * 0.25);
+            ctx.lineTo(player.radius * 0.8, 0);
+            ctx.lineTo(player.radius * 0.4, player.radius * 0.25);
+            ctx.fill();
+
+            ctx.restore();
+
+            ctx.restore(); // Restore base transform viewport matrix stacks
+        }
+
+        // --- IPAD MOBILE CONTROLS EVENT HANDLERS ---
+        function setupTouchListeners() {
             const bound = document.getElementById('joystick-bound');
             const thumb = document.getElementById('joystick-thumb');
 
             bound.addEventListener('touchstart', (e) => {
-                joystickActive = true;
+                joyActive = true;
                 const rect = bound.getBoundingClientRect();
-                joystickStart.set(rect.left + rect.width/2, rect.top + rect.height/2);
+                joyStart.set(rect.left + rect.width/2, rect.top + rect.height/2);
             }, {passive: true});
 
             window.addEventListener('touchmove', (e) => {
-                if (!joystickActive) return;
+                if (!joyActive) return;
                 const touch = e.touches[0];
-                let dir = new THREE.Vector2(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y);
+                let dir = new THREE.Vector2(touch.clientX - joyStart.x, touch.clientY - joyStart.y);
                 const dist = dir.length();
 
-                if (dist > maxJoystickDist) dir.normalize().multiplyScalar(maxJoystickDist);
+                if (dist > maxJoyDist) dir.normalize().multiplyScalar(maxJoyDist);
                 thumb.style.transform = `translate(${dir.x}px, ${dir.y}px)`;
-                moveInput.set(dir.x / maxJoystickDist, -(dir.y / maxJoystickDist));
+                
+                moveInput.set(dir.x / maxJoyDist, -(dir.y / maxJoyDist));
             }, {passive: false});
 
             window.addEventListener('touchend', () => {
-                joystickActive = false;
+                joyActive = false;
                 thumb.style.transform = 'translate(0px, 0px)';
                 moveInput.set(0, 0);
             });
-        }
-
-        function triggerShadowTwinAbility() {
-            if (twinCooldownTimer > 0 || twinAbilityActive || !playerMesh) return;
-            
-            audio.playTwinSound();
-            twinAbilityActive = true;
-            twinTimeRemaining = 5.0; 
-
-            twinClone = new THREE.Group();
-            
-            const cloneGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
-            const cloneMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.7 });
-            const holoMesh = new THREE.Mesh(cloneGeo, cloneMat);
-            
-            const currentScaleRatio = playerScaleModifier / 4.0;
-            holoMesh.scale.set(currentScaleRatio, currentScaleRatio, currentScaleRatio);
-            holoMesh.position.y = 0.9 * currentScaleRatio;
-            twinClone.add(holoMesh);
-
-            const forwardVector = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0,1,0), player.rotation.y);
-            twinClone.position.copy(player.position).add(forwardVector.multiplyScalar(3));
-            
-            scene.add(twinClone);
-            createSparksExplosion(twinClone.position, 0x00ffff, currentScaleRatio);
-        }
-
-        function spawnCyberDummy() {
-            const dummyGroup = new THREE.Group();
-            const scaleFactor = 0.5 + Math.random() * 1.5;
-
-            const torso = new THREE.Mesh(
-                new THREE.BoxGeometry(0.7, 0.8, 0.6),
-                new THREE.MeshStandardMaterial({ color: 0x1c2333, roughness: 0.3, metalness: 0.7 })
-            );
-            torso.position.y = 0.6;
-            dummyGroup.add(torso);
-
-            const visor = new THREE.Mesh(
-                new THREE.BoxGeometry(0.5, 0.15, 0.1),
-                new THREE.MeshBasicMaterial({ color: 0xff0055 })
-            );
-            visor.position.set(0, 0.7, 0.31);
-            dummyGroup.add(visor);
-
-            const wheel = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.2, 0.2, 0.3, 8),
-                new THREE.MeshStandardMaterial({ color: 0x050505 })
-            );
-            wheel.rotation.z = Math.PI/2;
-            wheel.position.y = 0.15;
-            dummyGroup.add(wheel);
-
-            dummyGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            
-            dummyGroup.position.set(
-                (Math.random() - 0.5) * (mapSize * 1.7),
-                0,
-                (Math.random() - 0.5) * (mapSize * 1.7)
-            );
-
-            dummyGroup.userData = { 
-                radius: scaleFactor * 0.7,
-                fleeSpeed: 6.5 + (Math.random() * 3.0),
-                seed: Math.random() * 5
-            };
-
-            scene.add(dummyGroup);
-            targets.push(dummyGroup);
-        }
-
-        function createSparksExplosion(pos, colorHex, currentScale) {
-            const geo = new THREE.BoxGeometry(0.15, 0.15, 0.15);
-            const mat = new THREE.MeshBasicMaterial({ color: colorHex });
-            const count = Math.floor(18 * currentScale);
-            
-            for(let i=0; i<count; i++) {
-                const p = new THREE.Mesh(geo, mat);
-                p.position.copy(pos);
-                p.position.y += 0.5 * currentScale;
-                p.userData = {
-                    velocity: new THREE.Vector3(
-                        (Math.random() - 0.5) * (9 * currentScale),
-                        Math.random() * (11 * currentScale),
-                        (Math.random() - 0.5) * (9 * currentScale)
-                    ),
-                    life: 0.65
-                };
-                scene.add(p);
-                particles.push(p);
-            }
-        }
-
-        function handleGrowthSequence(targetRadius) {
-            audio.playPopSound();
-            devouredCount++;
-            
-            const growthIncrement = targetRadius * 0.22;
-            playerScaleModifier += growthIncrement;
-            cameraZoomFactor += growthIncrement * 0.14;
-
-            if (playerMesh) {
-                playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier);
-                playerMesh.position.y = 0.28 * playerScaleModifier; 
-            }
-
-            document.getElementById('stat-growth').innerText = (playerScaleModifier / 4.0).toFixed(1) + "x";
-            document.getElementById('stat-count').innerText = devouredCount;
-        }
-
-        function updateCameraPosition() {
-            camera.position.set(
-                player ? player.position.x : 0, 
-                (player ? player.position.y : 0) + (14 * cameraZoomFactor), 
-                (player ? player.position.z : 0) + (18 * cameraZoomFactor)
-            );
-            if(player) camera.lookAt(player.position.x, player.position.y + (1.2 * cameraZoomFactor), player.position.z);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (!clock) return;
-            
-            const delta = clock.getDelta();
-
-            if (gameActive) {
-                if (twinCooldownTimer > 0) {
-                    twinCooldownTimer -= delta;
-                    if (twinCooldownTimer <= 0) {
-                        document.getElementById('ability-btn').disabled = false;
-                        document.getElementById('cd-timer').innerText = "READY";
-                    } else {
-                        document.getElementById('ability-btn').disabled = true;
-                        document.getElementById('cd-timer').innerText = twinCooldownTimer.toFixed(1) + "s";
-                    }
-                }
-
-                if (twinAbilityActive && twinClone) {
-                    twinTimeRemaining -= delta;
-                    
-                    let closestTarget = null;
-                    let recordDist = Infinity;
-                    
-                    targets.forEach(t => {
-                        let d = twinClone.position.distanceTo(t.position);
-                        if (d < recordDist) {
-                            recordDist = d;
-                            closestTarget = t;
-                        }
-                    });
-
-                    if (closestTarget) {
-                        let twinMoveDir = new THREE.Vector3().subVectors(closestTarget.position, twinClone.position);
-                        twinMoveDir.y = 0;
-                        twinMoveDir.normalize();
-                        twinClone.position.add(twinMoveDir.multiplyScalar(22.0 * delta)); 
-                    }
-
-                    if (twinTimeRemaining <= 0) {
-                        // FIXED: Changed #ff007f string error to standard hex integer syntax
-                        createSparksExplosion(twinClone.position, 0x00ffff, playerScaleModifier / 4.0);
-                        scene.remove(twinClone);
-                        twinClone = null;
-                        twinAbilityActive = false;
-                        twinCooldownTimer = twinMaxCooldown; 
-                    }
-                }
-
-                if (player) {
-                    const speedModifier = playerSpeedBase * (1 + (cameraZoomFactor - 1) * 0.35); 
-                    const moveVec = new THREE.Vector3(moveInput.x, 0, -moveInput.y).multiplyScalar(speedModifier * delta);
-                    player.position.add(moveVec);
-
-                    if (moveInput.lengthSq() > 0.01) {
-                        player.rotation.y = Math.atan2(moveInput.x, -moveInput.y);
-                    }
-
-                    player.position.x = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.x));
-                    player.position.z = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.z));
-
-                    updateCameraPosition();
-                }
-
-                const currentPlayerRadius = (playerScaleModifier / 4.0) * 1.5;
-                const time = performance.now() * 0.005;
-
-                for(let i = targets.length - 1; i >= 0; i--) {
-                    const target = targets[i];
-                    
-                    target.children[0].position.y = 0.6 + Math.sin(time + target.userData.seed) * 0.08;
-
-                    const distToPlayer = player.position.distanceTo(target.position);
-                    const distToTwin = twinClone ? twinClone.position.distanceTo(target.position) : Infinity;
-                    
-                    const combinedRadius = currentPlayerRadius + target.userData.radius;
-
-                    let dangerDist = Math.min(distToPlayer, distToTwin);
-                    let dangerSource = distToPlayer < distToTwin ? player : twinClone;
-
-                    if (dangerDist < combinedRadius * 4.0) {
-                        const fleeDir = new THREE.Vector3().subVectors(target.position, dangerSource.position);
-                        fleeDir.y = 0;
-                        fleeDir.normalize();
-                        target.position.add(fleeDir.multiplyScalar(target.userData.fleeSpeed * delta));
-                        target.rotation.y = Math.atan2(fleeDir.x, fleeDir.z);
-                        
-                        target.position.x = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.x));
-                        target.position.z = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.z));
-                    }
-
-                    if (distToPlayer < combinedRadius) {
-                        createSparksExplosion(target.position, 0xffaa00, target.scale.y);
-                        handleGrowthSequence(target.userData.radius);
-                        scene.remove(target);
-                        targets.splice(i, 1);
-                        spawnCyberDummy();
-                        continue;
-                    }
-
-                    if (distToTwin < (combinedRadius * 1.2)) {
-                        createSparksExplosion(target.position, 0x00ffff, target.scale.y);
-                        handleGrowthSequence(target.userData.radius);
-                        scene.remove(target);
-                        targets.splice(i, 1);
-                        spawnCyberDummy();
-                    }
-                }
-            }
-
-            for(let i = particles.length - 1; i >= 0; i--) {
-                const p = particles[i];
-                p.position.add(p.userData.velocity.clone().multiplyScalar(delta));
-                p.userData.velocity.y -= delta * 24.0; 
-                p.userData.life -= delta;
-                p.scale.multiplyScalar(0.95);
-
-                if(p.userData.life <= 0) {
-                    scene.remove(p);
-                    particles.splice(i, 1);
-                }
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
         }
     </script>
 </body>
