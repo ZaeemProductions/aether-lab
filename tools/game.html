@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mr. Kim's Cyber-Doom Core</title>
+    <title>Mr. Kim's Dark Core // dhewm3 Edition</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #020205;
+            background-color: #020204;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         #game-canvas {
@@ -29,14 +29,14 @@
             z-index: 1;
         }
         
-        /* Initialization System Menu Screen */
-        #menu-overlay {
+        /* Tactical System Startup Boot Overlay */
+        #boot-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #030308;
+            background: #020205;
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -45,17 +45,17 @@
             color: #ffffff;
             text-align: center;
         }
-        .launch-btn {
+        .boot-btn {
             margin-top: 25px;
             padding: 16px 50px;
-            background: linear-gradient(135deg, #ff3333 0%, #aa0000 100%);
-            border: none;
+            background: linear-gradient(135deg, #ff1111 0%, #770000 100%);
+            border: 2px solid #ff3333;
             color: #ffffff;
             font-weight: 900;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             border-radius: 35px;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 51, 51, 0.4);
+            box-shadow: 0 0 30px rgba(255, 17, 17, 0.4);
             letter-spacing: 1px;
         }
 
@@ -73,25 +73,27 @@
             padding: 25px;
         }
         .hud-element {
-            background: rgba(5, 5, 12, 0.85);
-            border: 2px solid #ff3333;
-            box-shadow: 0 0 15px rgba(255, 51, 51, 0.2);
+            background: rgba(4, 4, 8, 0.9);
+            border: 2px solid #ff1111;
+            box-shadow: 0 0 15px rgba(255, 17, 17, 0.3);
             padding: 12px 25px;
             border-radius: 20px;
             color: #ffffff;
             backdrop-filter: blur(8px);
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 1px;
+            font-family: monospace;
         }
         #top-hud {
             display: flex;
             justify-content: space-between;
             width: 100%;
         }
-        #stat-score { color: #ff3333; text-shadow: 0 0 8px #ff3333; }
+        #stat-hp { color: #ff3333; text-shadow: 0 0 6px #ff3333; }
+        #stat-score { color: #00ffcc; text-shadow: 0 0 6px #00ffcc; }
         
-        /* Tactical Mobile Dual Controls Layout */
+        /* iPad Mobile Dual-Stick Input Layer */
         #controls-layer {
             display: flex;
             justify-content: space-between;
@@ -105,7 +107,7 @@
             width: 135px;
             height: 135px;
             background: rgba(255, 255, 255, 0.01);
-            border: 3px dashed rgba(255, 51, 51, 0.3);
+            border: 3px dashed rgba(255, 17, 17, 0.3);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -114,16 +116,16 @@
         #joystick-thumb {
             width: 52px;
             height: 52px;
-            background: radial-gradient(circle, #ff3333 0%, #aa0000 100%);
+            background: radial-gradient(circle, #ff3333 0%, #880000 100%);
             border-radius: 50%;
-            box-shadow: 0 0 20px #ff3333;
+            box-shadow: 0 0 20px #ff1111;
         }
         
         #fire-btn {
             width: 105px;
             height: 105px;
-            background: rgba(255, 51, 51, 0.15);
-            border: 3px solid #ff3333;
+            background: rgba(255, 17, 17, 0.15);
+            border: 3px solid #ff1111;
             color: #ffffff;
             border-radius: 50%;
             font-weight: 900;
@@ -131,21 +133,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+            box-shadow: 0 0 20px rgba(255, 17, 17, 0.3);
         }
         #fire-btn:active {
-            background: #ff3333;
-            box-shadow: 0 0 35px #ff3333;
+            background: #ff1111;
+            box-shadow: 0 0 35px #ff1111;
             transform: scale(0.95);
         }
         
-        /* Crosshair centering overlay */
         #crosshair {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 5;
@@ -153,25 +154,25 @@
         #crosshair::before, #crosshair::after {
             content: '';
             position: absolute;
-            background: rgba(255, 51, 51, 0.7);
+            background: rgba(255, 17, 17, 0.6);
         }
-        #crosshair::before { top: 4px; left: -8px; width: 26px; height: 2px; }
-        #crosshair::after { top: -8px; left: 4px; width: 2px; height: 26px; }
+        #crosshair::before { top: 6px; left: -6px; width: 26px; height: 2px; }
+        #crosshair::after { top: -6px; left: 6px; width: 2px; height: 26px; }
     </style>
 </head>
 <body>
 
-    <div id="menu-overlay">
-        <h1 style="font-size: 2.5rem; color: #ff3333; text-shadow: 0 0 20px rgba(255,51,51,0.4); font-weight: 900; letter-spacing: 2px;">CYBER-DOOM CORE</h1>
-        <p style="color: #656d78; margin-top: 8px; font-weight: 500;">Mathematical Raycasting 3D FPS Engine • High Performance Delta Logic</p>
-        <button class="launch-btn" onclick="startRaycastMatrix()">ENGAGE SYSTEM</button>
+    <div id="boot-overlay">
+        <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: RESURRECTION</h1>
+        <p style="color: #5d6775; margin-top: 8px; font-weight: 500; font-family: monospace;">id Tech 4 Paradigm • Flashlight Cone Tracing Vectors</p>
+        <button class="boot-btn" onclick="bootDarkCoreSystem()">INITIALIZE LAYER</button>
     </div>
 
-    <div id="crosshair"></div>
     <canvas id="game-canvas"></canvas>
 
     <div id="ui-layer">
         <div id="top-hud">
+            <div class="hud-element">VITAL MATRIX: <span id="stat-hp">100%</span></div>
             <div class="hud-element">CORES PURGED: <span id="stat-score">0</span></div>
         </div>
 
@@ -184,160 +185,140 @@
     </div>
 
     <script>
-        // --- CHIPTUNE DOOM CONTEXT PROCEDURAL AUDIO ENGINE ---
-        class DoomAudioSynthesizer {
-            constructor() {
-                this.ctx = null;
-                this.bgmSequence = null;
-            }
+        // --- SYNTHESIZED HORROR AUDIO PIPELINE ---
+        class DhewmAudioEngine {
+            constructor() { this.ctx = null; this.droneInterval = null; }
             init() {
                 if (this.ctx) return;
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                this.startDoomBGM();
+                this.startHorrorAtmosphereHum();
             }
-            playBlasterFire() {
+            playWeaponBlaster() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(440, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(380, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.18);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.18);
             }
-            playExplosion() {
+            playExplodeSnap() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(120, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(30, this.ctx.currentTime + 0.3);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.4);
+            }
+            playHurtWarning() {
+                if (!this.ctx) return;
+                let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(60, this.ctx.currentTime);
                 gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.3);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
             }
-            startDoomBGM() {
-                // Classic heavy thrash doom bassline progression
-                const riff = [73, 73, 146, 73, 73, 165, 73, 73, 196, 165, 146, 130];
-                let step = 0;
-                this.bgmSequence = setInterval(() => {
+            startHorrorAtmosphereHum() {
+                this.droneInterval = setInterval(() => {
                     if (!this.ctx || !gameActive) return;
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(riff[step] / 2, this.ctx.currentTime);
-                    
                     let filter = this.ctx.createBiquadFilter();
-                    filter.type = 'lowpass';
-                    filter.frequency.setValueAtTime(320, this.ctx.currentTime);
-
-                    gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
-                    
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(55 + Math.random() * 4, this.ctx.currentTime); // Deep sub-bass growl
+                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(120, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
                     osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 0.25);
-                    step = (step + 1) % riff.length;
-                }, 220);
+                    osc.start(); osc.stop(this.ctx.currentTime + 1.3);
+                }, 1400);
             }
         }
 
-        const audio = new DoomAudioSynthesizer();
+        const audio = new DhewmAudioEngine();
 
-        function startRaycastMatrix() {
-            document.getElementById('menu-overlay').style.display = 'none';
+        function bootDarkCoreSystem() {
+            document.getElementById('boot-overlay').style.display = 'none';
             audio.init();
-            initializeRaycastWorld();
+            launchEngineWorkspace();
         }
 
-        // --- RETRO 3D RAYCASTING ENGINE ENVIRONMENT ---
+        // --- ENGINE MATH WORKSPACE ---
         let canvas, ctx;
-        let lastFrameTime = performance.now();
+        let lastTime = performance.now();
         let gameActive = true;
-        let scoreCount = 0;
+        let score = 0;
+        let health = 100;
 
-        // Grid map design (1 = Wall, 0 = Empty Corridor)
-        const mapWidth = 12;
-        const mapHeight = 12;
-        const mapGrid = [
-            1,1,1,1,1,1,1,1,1,1,1,1,
-            1,0,0,0,0,0,1,0,0,0,0,1,
-            1,0,1,1,0,0,1,0,1,1,0,1,
-            1,0,1,0,0,0,0,0,0,1,0,1,
-            1,0,0,0,1,1,1,1,0,0,0,1,
-            1,0,1,0,1,0,0,1,0,1,0,1,
-            1,0,1,0,1,0,0,1,0,1,0,1,
-            1,0,0,0,1,0,0,1,0,0,0,1,
-            1,0,1,0,0,0,0,0,0,1,0,1,
-            1,0,1,1,0,0,1,0,1,1,0,1,
-            1,0,0,0,0,0,1,0,0,0,0,1,
-            1,1,1,1,1,1,1,1,1,1,1,1
+        const mapW = 14;
+        const mapH = 14;
+        const map = [
+            1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+            1,0,0,0,0,0,1,0,0,0,0,0,0,1,
+            1,0,1,1,1,0,1,0,1,1,1,1,0,1,
+            1,0,1,0,0,0,0,0,0,0,0,1,0,1,
+            1,0,1,0,1,1,0,1,1,1,0,1,0,1,
+            1,0,0,0,1,0,0,0,0,1,0,0,0,1,
+            1,1,1,0,1,0,0,0,0,1,0,1,1,1,
+            1,0,0,0,1,0,0,0,0,1,0,0,0,1,
+            1,0,1,0,1,1,1,1,1,1,0,1,0,1,
+            1,0,1,0,0,0,0,0,0,0,0,1,0,1,
+            1,0,1,1,1,0,1,0,1,1,1,1,0,1,
+            1,0,0,0,0,0,1,0,0,0,0,0,0,1,
+            1,1,1,1,1,1,1,1,1,1,1,1,1,1
         ];
 
-        // Player starting transform properties
-        let player = {
-            x: 2.5,
-            y: 2.5,
-            angle: 0, // Viewing angle in radians
-            fov: Math.PI / 3, // 60 Degree field of view field
-            moveSpeed: 3.5,
-            rotateSpeed: 2.5
-        };
-
-        let enemies = [];
+        let player = { x: 2.5, y: 2.5, angle: 0, fov: Math.PI / 3, speed: 4.0, rotSpeed: 2.6 };
+        let drones = [];
+        let projectiles = [];
         let particles = [];
         
-        // Raycasting render scale boundaries
-        let rayResolution = 240; // Total vertical columns drawn to fill display grid width
-        let muzzleFlashTimer = 0;
+        let colsCount = 240;
+        let flashAlpha = 0;
 
-        // Input mapping markers
-        let turnInput = 0;
-        let forwardInput = 0;
-        let joyActive = false;
-        let joyOrigin = { x: 0, y: 0 };
+        let turnInput = 0, forwardInput = 0, joyActive = false, joyOrigin = { x:0, y:0 };
         const maxJoyDist = 50;
 
-        function initializeRaycastWorld() {
+        function launchEngineWorkspace() {
             canvas = document.getElementById('game-canvas');
             ctx = canvas.getContext('2d');
-            resizeViewportBuffers();
+            recomputeResolution();
 
-            window.addEventListener('resize', resizeViewportBuffers);
-            setupInputNodes();
+            window.addEventListener('resize', recomputeResolution);
+            bindHardwareInputs();
 
-            // Populate active neon drone entities
-            for(let i=0; i<4; i++) spawnCyberDrone();
+            // Spawn localized danger objects
+            for(let i=0; i<4; i++) spawnCyberHellDrone();
 
-            requestAnimationFrame(engineFrameTick);
+            requestAnimationFrame(engineMainUpdateLoop);
         }
 
-        function resizeViewportBuffers() {
+        function recomputeResolution() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            // Balance vertical rendering slices automatically based on display scaling properties
-            rayResolution = Math.min(320, Math.floor(canvas.width / 3));
+            colsCount = Math.min(300, Math.floor(canvas.width / 3.5)); // Balances raster overhead
         }
 
-        function spawnCyberDrone() {
-            let placed = false;
-            while(!placed) {
-                let tx = Math.floor(Math.random() * mapWidth);
-                let ty = Math.floor(Math.random() * mapHeight);
-                // Ensure target square is empty and away from spawn quadrant box indices
-                if(mapGrid[ty * mapWidth + tx] === 0 && (tx > 4 || ty > 4)) {
-                    enemies.push({
-                        x: tx + 0.5,
-                        y: ty + 0.5,
-                        alive: true,
-                        speed: 1.2 + Math.random() * 0.8,
-                        pulseSeed: Math.random() * 5
+        function spawnCyberHellDrone() {
+            let done = false;
+            while(!done) {
+                let tx = Math.floor(Math.random() * mapW);
+                let ty = Math.floor(Math.random() * mapH);
+                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 4)) {
+                    drones.push({
+                        x: tx + 0.5, y: ty + 0.5,
+                        alive: true, speed: 1.4,
+                        shootCooldown: 1.5 + Math.random() * 2,
+                        bobSeed: Math.random() * 10
                     });
-                    placed = true;
+                    done = true;
                 }
             }
         }
 
-        function setupInputNodes() {
+        function bindHardwareInputs() {
             const bound = document.getElementById('joystick-bound');
             const thumb = document.getElementById('joystick-thumb');
             const fireBtn = document.getElementById('fire-btn');
@@ -353,330 +334,324 @@
                 if (!joyActive) return;
                 const touch = e.touches[0];
                 let offset = { x: touch.clientX - joyOrigin.x, y: touch.clientY - joyOrigin.y };
-                let dist = Math.hypot(offset.x, offset.y);
-
-                if (dist > maxJoyDist) {
-                    offset.x = (offset.x / dist) * maxJoyDist;
-                    offset.y = (offset.y / dist) * maxJoyDist;
-                }
-
+                let len = Math.hypot(offset.x, offset.y);
+                if (len > maxJoyDist) { offset.x = (offset.x / len) * maxJoyDist; offset.y = (offset.y / len) * maxJoyDist; }
                 thumb.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
                 
-                // Left/Right translates to rotation, Up/Down translates to moving forward/backward
                 turnInput = offset.x / maxJoyDist;
                 forwardInput = -offset.y / maxJoyDist;
             }, {passive: false});
 
             window.addEventListener('touchend', () => {
-                joyActive = false;
-                thumb.style.transform = 'translate(0px, 0px)';
-                turnInput = 0;
-                forwardInput = 0;
+                joyActive = false; thumb.style.transform = 'translate(0px, 0px)';
+                turnInput = 0; forwardInput = 0;
             });
 
-            // Attack Fire Action Trigger
-            fireBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                executePlasmaShot();
-            });
+            fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dischargeLaserMatrix(); });
 
-            // Keyboard Fallback system configuration parameters
+            // Keyboard Fallback
             let keys = { w: false, s: false, a: false, d: false };
             window.addEventListener('keydown', (e) => {
-                if (e.key === ' ' || e.key === 'Spacebar') executePlasmaShot();
-                if (e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = true; syncKeys(); }
+                if (e.key === ' ' || e.key === 'Spacebar') dischargeLaserMatrix();
+                if (e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = true; sync(); }
             });
             window.addEventListener('keyup', (e) => {
-                if (e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = false; syncKeys(); }
+                if (e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = false; sync(); }
             });
-            function syncKeys() {
+            function sync() {
                 if(joyActive) return;
                 forwardInput = keys.w ? 1 : (keys.s ? -1 : 0);
                 turnInput = keys.a ? -1 : (keys.d ? 1 : 0);
             }
         }
 
-        function executePlasmaShot() {
-            if(!gameActive) return;
-            audio.playBlasterFire();
-            muzzleFlashTimer = 0.12; // Display fire splash frame loop window
+        function dischargeLaserMatrix() {
+            if(!gameActive || health <= 0) return;
+            audio.playWeaponBlaster();
+            flashAlpha = 0.15; 
 
-            // Cast attack vector directly through center look screen column indices
-            // Check if any visible active enemy intersects central aim column calculations
-            let targetHit = null;
-            let closestEnemyDistance = 4.5; // Effective maximum hit distance threshold boundary
+            let target = null;
+            let bestDist = 6.0;
 
-            enemies.forEach(enemy => {
-                if (!enemy.alive) return;
-                
-                // Calculate directional angle relative to drone coordinates
-                let dx = enemy.x - player.x;
-                let dy = enemy.y - player.y;
-                let angleToEnemy = Math.atan2(dy, dx) - player.angle;
+            drones.forEach(d => {
+                if (!d.alive) return;
+                let ang = Math.atan2(d.y - player.y, d.x - player.x) - player.angle;
+                while (ang < -Math.PI) ang += Math.PI * 2;
+                while (ang > Math.PI) ang -= Math.PI * 2;
 
-                // Normalize angle calculations smoothly inside circle boundaries
-                while (angleToEnemy < -Math.PI) angleToEnemy += Math.PI * 2;
-                while (angleToEnemy > Math.PI) angleToEnemy -= Math.PI * 2;
-
-                // If target lines up near central focus point angle indices, calculate distance checks
-                if (Math.abs(angleToEnemy) < 0.22) {
-                    let enemyDistance = Math.hypot(dx, dy);
-                    if (enemyDistance < closestEnemyDistance) {
-                        closestEnemyDistance = enemyDistance;
-                        targetHit = enemy;
-                    }
+                if (Math.abs(ang) < 0.20) {
+                    let distance = Math.hypot(d.x - player.x, d.y - player.y);
+                    if (distance < bestDist) { bestDist = distance; target = d; }
                 }
             });
 
-            if (targetHit) {
-                targetHit.alive = false;
-                audio.playExplosion();
-                scoreCount++;
-                document.getElementById('stat-score').innerText = scoreCount;
-                
-                // Spawn sparkling particle fields at dead target coordinates
-                createCoreDebrisSparks(targetHit.x, targetHit.y);
+            if (target) {
+                target.alive = false;
+                audio.playExplodeSnap();
+                score++;
+                document.getElementById('stat-score').innerText = score;
+                generateVoxelBurst(target.x, target.y, '#ff3333');
 
-                // Instantly cycle a new enemy inside map limits elsewhere
                 setTimeout(() => {
-                    enemies = enemies.filter(e => e !== targetHit);
-                    spawnCyberDrone();
-                }, 800);
+                    drones = drones.filter(e => e !== target);
+                    spawnCyberHellDrone();
+                }, 1000);
             }
         }
 
-        function createCoreDebrisSparks(x, y) {
+        function generateVoxelBurst(x, y, colorHex) {
             for(let i=0; i<15; i++) {
                 particles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * 2.0,
-                    vy: (Math.random() - 0.5) * 2.0,
-                    life: 1.0,
-                    color: '#ff3333'
+                    vx: (Math.random() - 0.5) * 2.5, vy: (Math.random() - 0.5) * 2.5,
+                    life: 1.0, color: colorHex
                 });
             }
         }
 
-        // --- HARDWARE STABLE ENGINE FRAME TIMELINE STEP (dt BIND) ---
-        function engineFrameTick(now) {
-            requestAnimationFrame(engineFrameTick);
+        // --- PROCESS TICK STEP TIMELINES (120Hz STABLE) ---
+        function engineMainUpdateLoop(timestamp) {
+            requestAnimationFrame(engineMainUpdateLoop);
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+            if (dt > 0.1) dt = 0.1;
 
-            let dt = (now - lastFrameTime) / 1000;
-            lastFrameTime = now;
-            if (dt > 0.1) dt = 0.1; // Latency loop clamping limits
+            if (gameActive && health > 0) {
+                if(flashAlpha > 0) flashAlpha -= dt * 2;
 
-            if (gameActive) {
-                if(muzzleFlashTimer > 0) muzzleFlashTimer -= dt;
+                // 1. Process orientation transforms
+                player.angle += turnInput * player.rotSpeed * dt;
+                
+                // 2. Process translation transforms
+                let stepX = Math.cos(player.angle) * forwardInput * player.speed * dt;
+                let stepY = Math.sin(player.angle) * forwardInput * player.speed * dt;
+                
+                let nextX = player.x + stepX, nextY = player.y + stepY;
+                if (map[Math.floor(player.y) * mapW + Math.floor(nextX)] === 0) player.x = nextX;
+                if (map[Math.floor(nextY) * mapW + Math.floor(player.x)] === 0) player.y = nextY;
 
-                // 1. Process rotation transforms
-                player.angle += turnInput * player.rotateSpeed * dt;
-                // Clamp radian scales
-                while (player.angle < 0) player.angle += Math.PI * 2;
-                while (player.angle > Math.PI * 2) player.angle -= Math.PI * 2;
+                // 3. Update Threat Entities & Projectile Launcher Loops
+                drones.forEach(d => {
+                    if (!d.alive) return;
+                    let dx = player.x - d.x, dy = player.y - d.y;
+                    let dist = Math.hypot(dx, dy);
+                    
+                    if(dist > 2.5) {
+                        d.x += (dx / dist) * d.speed * dt;
+                        d.y += (dy / dist) * d.speed * dt;
+                    }
 
-                // 2. Process forward/backward position tracking updates
-                let moveStepX = Math.cos(player.angle) * forwardInput * player.moveSpeed * dt;
-                let moveStepY = Math.sin(player.angle) * forwardInput * player.moveSpeed * dt;
-
-                // Slide Along Walls (Sliding Collision System)
-                let futureX = player.x + moveStepX;
-                let futureY = player.y + moveStepY;
-
-                if (mapGrid[Math.floor(player.y) * mapWidth + Math.floor(futureX)] === 0) player.x = futureX;
-                if (mapGrid[Math.floor(futureY) * mapWidth + Math.floor(player.x)] === 0) player.y = futureY;
-
-                // 3. Process Tracking AI Drones
-                enemies.forEach(enemy => {
-                    if (!enemy.alive) return;
-                    let ex = player.x - enemy.x;
-                    let ey = player.y - enemy.y;
-                    let dist = Math.hypot(ex, ey);
-
-                    if (dist > 0.2) {
-                        enemy.x += (ex / dist) * enemy.speed * dt;
-                        enemy.y += (ey / dist) * enemy.speed * dt;
+                    // Open fire if weapon reloaded
+                    d.shootCooldown -= dt;
+                    if(d.shootCooldown <= 0 && dist < 8.0) {
+                        let projAngle = Math.atan2(dy, dx);
+                        projectiles.push({
+                            x: d.x, y: d.y,
+                            vx: Math.cos(projAngle) * 4.2, vy: Math.sin(projAngle) * 4.2,
+                            radius: 0.12
+                        });
+                        d.shootCooldown = 2.0 + Math.random() * 2;
                     }
                 });
 
-                // Update particle tracking vectors
-                for(let i=particles.length-1; i>=0; i--) {
-                    let p = particles[i];
+                // 4. Track Live Projectiles
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    let p = projectiles[i];
                     p.x += p.vx * dt; p.y += p.vy * dt;
-                    p.life -= dt * 1.5;
+
+                    // Impact detection wrapper on player boundaries
+                    let pDist = Math.hypot(player.x - p.x, player.y - p.y);
+                    if(pDist < 0.35) {
+                        health = Math.max(0, health - 20);
+                        document.getElementById('stat-hp').innerText = health + "%";
+                        audio.playHurtWarning();
+                        projectiles.splice(i, 1);
+                        if(health <= 0) gameActive = false;
+                        continue;
+                    }
+
+                    // Wall impact checks
+                    if(map[Math.floor(p.y) * mapW + Math.floor(p.x)] > 0) {
+                        projectiles.splice(i, 1);
+                    }
+                }
+
+                // Decay particles
+                for(let i=particles.length-1; i>=0; i--) {
+                    let p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.5;
                     if(p.life <= 0) particles.splice(i, 1);
                 }
             }
 
-            renderRaycast3DView();
+            renderDhewmRasterLayer();
         }
 
-        // --- CORE MATHEMATICAL RAYCASTING LAYER ---
-        function renderRaycast3DView() {
-            // Clean viewports buffers
-            ctx.fillStyle = '#05050c'; // Floor matrix backdrop block
+        // --- FLASHLIGHT CONE RASTER LAYER ---
+        function renderDhewmRasterLayer() {
+            // Fill background with baseline environment shadows
+            ctx.fillStyle = '#010103';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw sky ceiling gradient halves splits
-            ctx.fillStyle = '#100818';
-            ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
-            let sliceWidth = canvas.width / rayResolution;
-            let depthBuffer = []; // Store wall depths per column to handle sprite occlusion sorting
+            let sliceW = canvas.width / colsCount;
+            let depthBuffer = [];
 
-            // 1. Cast active vision lines out across columns width
-            for (let i = 0; i < rayResolution; i++) {
-                // Compute current slice angle relative to field of view spectrum
-                let rayAngle = (player.angle - player.fov / 2) + (i / rayResolution) * player.fov;
-                
-                let distanceToWall = 0;
-                let hitWall = false;
-                let sideHit = false; // Check orientation axes face to shade boundaries properly
+            // 1. Raycast Viewport Slices
+            for (let i = 0; i < colsCount; i++) {
+                let rayAngle = (player.angle - player.fov / 2) + (i / colsCount) * player.fov;
+                let distanceToWall = 0, hitWall = false, sideHit = false;
 
-                let eyeX = Math.cos(rayAngle);
-                let eyeY = Math.sin(rayAngle);
+                let eyeX = Math.cos(rayAngle), eyeY = Math.sin(rayAngle);
+                let gridX = Math.floor(player.x), gridY = Math.floor(player.y);
 
-                // Digital Differential Analysis (DDA) algorithm for high speed voxel tracing
-                let startGridX = Math.floor(player.x);
-                let startGridY = Math.floor(player.y);
+                let deltaX = Math.abs(1 / eyeX), deltaY = Math.abs(1 / eyeY);
+                let stepX, stepY, sideX, sideY;
 
-                let sideDistX, sideDistY;
-                let deltaDistX = Math.abs(1 / eyeX);
-                let deltaDistY = Math.abs(1 / eyeY);
-                let stepX, stepY;
+                if (eyeX < 0) { stepX = -1; sideX = (player.x - gridX) * deltaX; } 
+                else { stepX = 1; sideX = (gridX + 1.0 - player.x) * deltaX; }
+                if (eyeY < 0) { stepY = -1; sideY = (player.y - gridY) * deltaY; } 
+                else { stepY = 1; sideY = (gridY + 1.0 - player.y) * deltaY; }
 
-                if (eyeX < 0) { stepX = -1; sideDistX = (player.x - startGridX) * deltaDistX; } 
-                else { stepX = 1; sideDistX = (startGridX + 1.0 - player.x) * deltaDistX; }
-                if (eyeY < 0) { stepY = -1; sideDistY = (player.y - startGridY) * deltaDistY; } 
-                else { stepY = 1; sideDistY = (startGridY + 1.0 - player.y) * deltaDistY; }
+                while (!hitWall && distanceToWall < 14.0) {
+                    if (sideX < sideY) { sideX += deltaX; gridX += stepX; sideHit = false; } 
+                    else { sideY += deltaY; gridY += stepY; sideHit = true; }
 
-                let currentCheckGridX = startGridX;
-                let currentCheckGridY = startGridY;
-
-                while (!hitWall && distanceToWall < 16.0) {
-                    if (sideDistX < sideDistY) {
-                        sideDistX += deltaDistX; currentCheckGridX += stepX; sideHit = false;
-                    } else {
-                        sideDistY += deltaDistY; currentCheckGridY += stepY; sideHit = true;
-                    }
-
-                    if (currentCheckGridX >= 0 && currentCheckGridX < mapWidth && currentCheckGridY >= 0 && currentCheckGridY < mapHeight) {
-                        if (mapGrid[currentCheckGridY * mapWidth + currentCheckGridX] > 0) {
+                    if (gridX >= 0 && gridX < mapW && gridY >= 0 && gridY < mapH) {
+                        if (map[gridY * mapW + gridX] > 0) {
                             hitWall = true;
-                            if (!sideHit) distanceToWall = (sideDistX - deltaDistX);
-                            else          distanceToWall = (sideDistY - deltaDistY);
+                            distanceToWall = sideHit ? (sideY - deltaY) : (startX = sideX - deltaX);
                         }
                     }
                 }
 
-                // Correct fisheye lens distortion using cosine rule mappings
-                let correctedDistance = distanceToWall * Math.cos(rayAngle - player.angle);
-                depthBuffer.push(correctedDistance);
+                let correctedDist = distanceToWall * Math.cos(rayAngle - player.angle);
+                depthBuffer.push(correctedDist);
 
-                // Calculate vertical slice window size to project onto screen matrix
-                let wallSliceHeight = Math.min(canvas.height, (canvas.height / correctedDistance));
+                let wallH = Math.min(canvas.height, (canvas.height / correctedDist));
 
-                // Shading module setup: alternate neon brightness levels depending on side orientations
-                let wallColorValue = Math.max(20, Math.min(255, 200 - (correctedDistance * 12)));
-                ctx.fillStyle = sideHit ? `rgb(0, ${wallColorValue * 0.5}, ${wallColorValue})` : `rgb(0, ${wallColorValue * 0.3}, ${wallColorValue * 0.7})`;
+                // DOOM 3 FLASHLIGHT ALGORITHM: Calculate light intensity drop relative to focus center angles
+                let angleDiff = Math.abs(rayAngle - player.angle);
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
 
-                // Render wall line slice block column
-                ctx.fillRect(
-                    i * sliceWidth, 
-                    (canvas.height / 2) - (wallSliceHeight / 2), 
-                    sliceWidth + 1, 
-                    wallSliceHeight
-                );
+                // Flashlight focus attenuation math falloffs
+                let flashlightBeamWidth = 0.38; 
+                let lightIntensity = 0;
+                if(angleDiff < flashlightBeamWidth) {
+                    lightIntensity = (1.0 - (angleDiff / flashlightBeamWidth)) * (1.0 - (correctedDist / 12.0));
+                    lightIntensity = Math.max(0, lightIntensity);
+                }
+
+                // Render shaded line columns
+                let baseR = Math.floor((sideHit ? 40 : 20) * lightIntensity);
+                let baseG = Math.floor((sideHit ? 50 : 25) * lightIntensity);
+                let baseB = Math.floor((sideHit ? 160 : 100) * lightIntensity);
+
+                ctx.fillStyle = `rgb(${baseR}, ${baseG}, ${baseB})`;
+                ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
             }
 
-            // 2. Render 3D Sprites (Cyber Drones) Projected to View Matrix
-            enemies.forEach(enemy => {
-                let ex = enemy.x - player.x;
-                let ey = enemy.y - player.y;
-                let enemyDist = Math.hypot(ex, ey);
+            // 2. Project 3D Hazard Sprite Matrices
+            let combinedSprites = [];
+            drones.forEach(d => { combinedSprites.push({ obj: d, type: 'drone', x: d.x, y: d.y }); });
+            projectiles.forEach(p => { combinedSprites.push({ obj: p, type: 'fireball', x: p.x, y: p.y }); });
 
-                // Calculate focal direction coordinates
-                let angleToEnemy = Math.atan2(ey, ex) - player.angle;
-                while (angleToEnemy < -Math.PI) angleToEnemy += Math.PI * 2;
-                while (angleToEnemy > Math.PI) angleToEnemy -= Math.PI * 2;
-
-                // Stop drawing if target is located completely behind current view frustum checks
-                if (Math.abs(angleToEnemy) > player.fov * 1.2) return;
-
-                // Calculate screen position center point coordinates
-                let screenX = (canvas.width / 2) + (Math.tan(angleToEnemy) * (canvas.width / 2));
-                let spriteSize = Math.min(canvas.height, (canvas.height / enemyDist));
-
-                // Occlusion pass check: Ensure enemy sprite is obscured by walls
-                let targetColIndex = Math.floor((screenX / canvas.width) * rayResolution);
-                if (targetColIndex >= 0 && targetColIndex < rayResolution && depthBuffer[targetColIndex] < enemyDist) {
-                    return; // Behind wall pass, skip drawing execution
-                }
-
-                ctx.save();
-                ctx.translate(screenX, canvas.height / 2);
-                
-                let waveBob = Math.sin(performance.now() * 0.01 + enemy.pulseSeed) * (spriteSize * 0.06);
-
-                if (enemy.alive) {
-                    // Draw neon warning drone core circle
-                    ctx.fillStyle = '#ff0055';
-                    ctx.shadowBlur = spriteSize * 0.15;
-                    ctx.shadowColor = '#ff0055';
-                    ctx.beginPath();
-                    ctx.arc(0, waveBob, spriteSize * 0.18, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Tech wing bounds panels overlays
-                    ctx.fillStyle = '#3a3d52';
-                    ctx.fillRect(-spriteSize * 0.3, waveBob - (spriteSize * 0.03), spriteSize * 0.6, spriteSize * 0.06);
-                } else {
-                    // Draw breaking core down loops if matching dead state timelines
-                    ctx.fillStyle = '#ffcc00';
-                    ctx.globalAlpha = 0.5;
-                    ctx.beginPath();
-                    ctx.arc(0, spriteSize * 0.1, spriteSize * 0.25, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
+            // Sort sprites by distance backward to front (Painter's Algorithm)
+            combinedSprites.sort((a, b) => {
+                let dA = Math.hypot(player.x - a.x, player.y - a.y);
+                let dB = Math.hypot(player.x - b.x, player.y - b.y);
+                return dB - dA;
             });
 
-            // 3. Render Vector Overlay Muzzle Plasma Weapon Interface Block (Bottom Screen)
+            combinedSprites.forEach(sprite => {
+                let sx = sprite.x - player.x, sy = sprite.y - player.y;
+                let dist = Math.hypot(sx, sy);
+
+                let viewAng = Math.atan2(sy, sx) - player.angle;
+                while (viewAng < -Math.PI) viewAng += Math.PI * 2;
+                while (viewAng > Math.PI) viewAng -= Math.PI * 2;
+
+                if (Math.abs(viewAng) > player.fov * 1.3) return;
+
+                let projX = (canvas.width / 2) + (Math.tan(viewAng) * (canvas.width / 2));
+                let projSize = Math.min(canvas.height, (canvas.height / dist));
+
+                let colIdx = Math.floor((projX / canvas.width) * colsCount);
+                if (colIdx >= 0 && colIdx < colsCount && depthBuffer[colIdx] < dist) return;
+
+                // Flashlight filter application loop for entities visibility
+                let angleDiff = Math.abs((player.angle + viewAng) - player.angle);
+                let illumination = angleDiff < 0.4 ? (1.0 - (dist / 11.0)) : 0.08;
+                illumination = Math.max(0.05, illumination);
+
+                ctx.save();
+                ctx.translate(projX, canvas.height / 2);
+                ctx.globalAlpha = illumination;
+
+                if (sprite.type === 'drone') {
+                    let d = sprite.obj;
+                    let bob = Math.sin(performance.now() * 0.008 + d.bobSeed) * (projSize * 0.06);
+                    if (d.alive) {
+                        ctx.fillStyle = '#ff1155';
+                        ctx.shadowBlur = projSize * 0.15; ctx.shadowColor = '#ff1155';
+                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.15, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = '#222530';
+                        ctx.fillRect(-projSize*0.25, bob - 2, projSize*0.5, 4);
+                    } else {
+                        ctx.fillStyle = '#ff5500'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.2, 0, Math.PI*2); ctx.fill();
+                    }
+                } else if (sprite.type === 'fireball') {
+                    // Render glowing enemy projectile balls
+                    ctx.fillStyle = '#ffcc00';
+                    ctx.shadowBlur = projSize * 0.3; ctx.shadowColor = '#ff3300';
+                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.09, 0, Math.PI * 2); ctx.fill();
+                }
+
+                ctx.restore();
+            });
+            ctx.globalAlpha = 1.0;
+
+            // 3. Render Particles
+            particles.forEach(p => {
+                let px = p.x - player.x, py = p.y - player.y;
+                let pDist = Math.hypot(px, py);
+                let pAng = Math.atan2(py, px) - player.angle;
+                if (Math.abs(pAng) > player.fov) return;
+                let scrX = (canvas.width / 2) + (Math.tan(pAng) * (canvas.width / 2));
+                let sz = Math.min(canvas.height, (canvas.height / pDist)) * 0.05;
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.fillRect(scrX - sz/2, (canvas.height/2) - sz/2, sz, sz);
+            });
+            ctx.globalAlpha = 1.0;
+
+            // 4. Render Weapon Overlay Frame (Doom 3 Hydraulic Plasma Blaster)
             ctx.save();
             ctx.translate(canvas.width / 2, canvas.height);
-            
-            let fireBobOffsetY = muzzleFlashTimer > 0 ? 25 : 0;
-
-            // Plasma Weapon Core Frame
-            ctx.fillStyle = '#1c1e24';
-            ctx.strokeStyle = '#ff3333';
-            ctx.lineWidth = 3;
+            ctx.fillStyle = '#14171d'; ctx.strokeStyle = '#ff1111'; ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.moveTo(-45, fireBobOffsetY);
-            ctx.lineTo(-25, -120 + fireBobOffsetY);
-            ctx.lineTo(25, -120 + fireBobOffsetY);
-            ctx.lineTo(45, fireBobOffsetY);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            // Glowing Plasma Energy chambers
-            ctx.fillStyle = muzzleFlashTimer > 0 ? '#ffffff' : '#ff3333';
-            ctx.fillRect(-8, -110 + fireBobOffsetY, 16, 45);
-
-            // Trigger flash halo splash rings
-            if (muzzleFlashTimer > 0) {
-                ctx.fillStyle = '#ffffff';
-                ctx.shadowBlur = 40;
-                ctx.shadowColor = '#ff3333';
-                ctx.beginPath();
-                ctx.arc(0, -130, 35, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            ctx.moveTo(-40, 0); ctx.lineTo(-20, -110); ctx.lineTo(20, -110); ctx.lineTo(40, 0);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            
+            // Core weapon plasma indicators
+            ctx.fillStyle = flashAlpha > 0 ? '#ffffff' : '#990022';
+            ctx.fillRect(-6, -100, 12, 40);
             ctx.restore();
-        }
 
-        function onWindowResize() {
-            resizeViewportBuffers();
+            // Screen space flash modifiers
+            if(flashAlpha > 0) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+            }
+
+            // Defeat condition display screen overlays
+            if (health <= 0) {
+                ctx.fillStyle = 'rgba(120, 0, 0, 0.85)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
+                ctx.fillText("FRAMEWORK INTRUSION", canvas.width / 2, canvas.height / 2);
+                ctx.font = '500 1.1rem monospace';
+                ctx.fillText("Reload URL page block to compile clean registries.", canvas.width / 2, canvas.height / 2 + 40);
+            }
         }
     </script>
 </body>
