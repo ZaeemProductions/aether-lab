@@ -3,28 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cyber Runner</title>
+    <title>Nythera Labs // Cyber Runner</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #111; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-        
-        /* UI Overlay */
-        .ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
-        .score-card { background: rgba(255, 255, 255, 0.9); padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; color: #1a5c2e; align-self: flex-start; pointer-events: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        /* Game States Overlays */
-        .screen-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.7); color: white; text-align: center; padding: 20px; transition: opacity 0.3s ease; }
-        .screen-overlay.hidden { opacity: 0; pointer-events: none; }
-        #loading-screen { background: #111; z-index: 30; }
-        
-        h1 { font-size: 3rem; margin-bottom: 10px; letter-spacing: 2px; }
-        p { font-size: 1.1rem; margin-bottom: 20px; color: #ccc; }
-        button { background: #4CAF50; color: white; border: none; padding: 15px 40px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; pointer-events: auto; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4); transform: translateY(0); transition: all 0.1s ease; }
-        button:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(76, 175, 80, 0.4); }
-        
-        .spinner { border: 4px solid rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; border-left-color: #4CAF50; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background-color: #87ceeb;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 20px;
+        }
+        .hud-element {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #2e7d32;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            padding: 12px 25px;
+            border-radius: 30px;
+            color: #1b5e20;
+            backdrop-filter: blur(4px);
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        #top-hud {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            pointer-events: auto;
+        }
+        #instructions {
+            align-self: center;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            animation: fadeOut 4s forwards;
+        }
+        #error-log {
+            position: absolute;
+            top: 90px;
+            left: 20px;
+            background: rgba(255, 0, 0, 0.85);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-width: 90%;
+            display: none;
+            z-index: 200;
+            pointer-events: auto;
+        }
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(27, 94, 32, 0.9);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        #game-over-screen h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .btn-restart {
+            margin-top: 25px;
+            padding: 15px 40px;
+            background: #ffffff;
+            border: none;
+            color: #1b5e20;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -32,316 +127,294 @@
 <body>
 
     <div id="canvas-container"></div>
+    <div id="error-log"></div>
 
-    <div class="ui-layer">
-        <div class="score-card">DISTANCE: <span id="score-val">0</span>m</div>
+    <div id="ui-layer">
+        <div id="top-hud">
+            <div class="hud-element">DISTANCE: <span id="score-val">0m</span></div>
+        </div>
+        <div id="instructions">SWIPE LEFT / RIGHT TO SWITCH LANES</div>
     </div>
 
-    <div id="loading-screen" class="screen-overlay">
-        <div class="spinner"></div>
-        <h1>LOADING CORE ASSETS</h1>
-        <p>Optimizing environment textures and structures...</p>
-    </div>
-
-    <div id="crash-screen" class="screen-overlay hidden">
-        <h1 style="color: #ff4a4a;">CRASHED!</h1>
+    <div id="game-over-screen">
+        <h1>CRASHED!</h1>
         <p>You ran into a security matrix barrier.</p>
-        <p>Distance Survived: <span id="final-score">0</span> meters</p>
-        <button id="retry-btn">RUN AGAIN</button>
+        <p>Distance Survived: <span id="final-score">0</span></p>
+        <button class="btn-restart" onclick="resetGame()">RUN AGAIN</button>
     </div>
 
     <script>
-        // --- GAME CONFIGURATION ---
-        const CONFIG = {
-            lanes: [-2.5, 0, 2.5], // X positions for left, center, right lanes
-            laneSpeed: 15,         // Lateral switching speed interpolation
-            baseSpeed: 25,         // Initial forward engine velocity
-            speedIncrement: 0.5,   // Acceleration rate per 100 meters
-            spawnInterval: 1.5,    // Obstacle structural generation cadence (seconds)
-            obstacleSpeed: 0,      // Static obstacles relative to world frame
-            playerZ: 0             // Fixed anchor axis for player engine
-        };
-
-        // --- STATE MANAGEMENT ---
-        let scene, camera, renderer, clock;
-        let player = null;
+        let scene, camera, renderer;
+        let player;
         let obstacles = [];
-        let tracks = [];
+        let particles = [];
+        let environmentChunks = [];
         
-        let currentLane = 1;       // Start in center lane (Index 1)
-        let targetX = CONFIG.lanes[currentLane];
-        let gameActive = false;
-        let currentSpeed = CONFIG.baseSpeed;
-        let distanceTraveled = 0;
-        let lastSpawnTime = 0;
+        let gameActive = true;
+        let score = 0;
+        let gameSpeed = 0.4;
+        const maxSpeed = 0.8;
 
-        // --- INITIALIZATION ---
+        const lanes = [-4, 0, 4]; 
+        let currentLane = 1; 
+        let targetX = lanes[currentLane];
+
+        let touchStartX = 0;
+        let touchMinDistance = 40;
+
         function init() {
             const container = document.getElementById('canvas-container');
             
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xa3c1ad); // Sky color matching your setup
-            scene.fog = new THREE.FogExp2(0xa3c1ad, 0.015);
+            scene.background = new THREE.Color(0xaaccff); 
+            scene.fog = new THREE.FogExp2(0xaaccff, 0.015);
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            
+            camera.position.set(0, 6, 9);
+            camera.lookAt(0, 2, -4);
+
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Dynamic capping for performance
-            renderer.shadowMap.enabled = true;
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputEncoding = THREE.sRGBEncoding; // Fixes dark texture glitches
             container.appendChild(renderer.domElement);
 
-            clock = new THREE.Clock();
-
-            setupLighting();
-            generateInfiniteTrackSystem();
-            loadPlayerModel();
-            setupInputHandlers();
-
-            window.addEventListener('resize', onWindowResize);
-        }
-
-        function setupLighting() {
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
             scene.add(ambientLight);
 
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(5, 20, 10);
-            dirLight.castShadow = true;
-            scene.add(dirLight);
-        }
+            const sunLight = new THREE.DirectionalLight(0xfffaed, 0.9);
+            sunLight.position.set(20, 40, 20);
+            scene.add(sunLight);
 
-        // --- ASSET INFRASTRUCTURE ---
-        function loadPlayerModel() {
-            const loader = new THREE.GLTFLoader();
+            buildInfiniteGroundTrack();
+            buildPlayerCharacter();
+            setupTouchInteractions();
             
-            // Replace with your actual relative path (e.g., 'assets/scan.gltf')
-            // Using a procedural placeholder container until your asset successfully resolves async
-            const playerGroup = new THREE.Group();
-            
-            loader.load('path/to/your/model.gltf', 
-                (gltf) => {
-                    const model = gltf.scene;
-                    
-                    // Critical scale matching logic to prevent giant assets
-                    model.scale.set(0.2, 0.2, 0.2); 
-                    
-                    // Position adaptation logic: center base geometry bounding box
-                    model.position.set(0, 0, 0); 
-                    
-                    playerGroup.add(model);
-                    finalizePlayerInit(playerGroup);
-                },
-                undefined,
-                (error) => {
-                    console.warn("GLTFLoader failed or asset path empty. Instantiating development geometry proxy.");
-                    
-                    // Visual proxy so the developer build never stalls out
-                    const proxyGeo = new THREE.BoxGeometry(1, 1.8, 0.8);
-                    const proxyMat = new THREE.MeshStandardMaterial({ color: 0x336699 });
-                    const proxyMesh = new THREE.Mesh(proxyGeo, proxyMat);
-                    proxyMesh.position.y = 0.9; // Sit on track floor
-                    
-                    playerGroup.add(proxyMesh);
-                    finalizePlayerInit(playerGroup);
-                }
-            );
+            window.addEventListener('resize', onWindowResize);
+            animate();
         }
 
-        function finalizePlayerInit(playerGroup) {
-            player = playerGroup;
-            player.position.set(CONFIG.lanes[currentLane], 0, CONFIG.playerZ);
-            scene.add(player);
+        function buildInfiniteGroundTrack() {
+            for (let i = 0; i < 2; i++) {
+                const chunk = new THREE.Group();
+                chunk.position.z = -i * 100;
 
-            // Smoothly collapse loading matrix state
-            document.getElementById('loading-screen').classList.add('hidden');
-            gameActive = true;
-            clock.getDelta(); // Clear initialization lag step from clock engine
-        }
+                const earthGeo = new THREE.PlaneGeometry(14, 100);
+                const earthMat = new THREE.MeshStandardMaterial({ color: 0x8d6e63, roughness: 0.9 });
+                const earth = new THREE.Mesh(earthGeo, earthMat);
+                earth.rotation.x = -Math.PI / 2;
+                chunk.add(earth);
 
-        function generateInfiniteTrackSystem() {
-            // Generate consecutive track nodes to swap cleanly inside the game loop
-            for (let i = 0; i < 3; i++) {
-                createTrackSegment(-i * 100);
+                const grassGeo = new THREE.PlaneGeometry(100, 100);
+                const grassMat = new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 0.6 });
+                
+                const leftGrass = new THREE.Mesh(grassGeo, grassMat);
+                leftGrass.rotation.x = -Math.PI / 2;
+                leftGrass.position.x = -57;
+                chunk.add(leftGrass);
+
+                const rightGrass = new THREE.Mesh(grassGeo, grassMat);
+                rightGrass.rotation.x = -Math.PI / 2;
+                rightGrass.position.x = 57;
+                chunk.add(rightGrass);
+
+                const lineGeo = new THREE.PlaneGeometry(0.2, 100);
+                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2 });
+                
+                const line1 = new THREE.Mesh(lineGeo, lineMat); line1.rotation.x = -Math.PI/2; line1.position.set(-2, 0.01, 0); chunk.add(line1);
+                const line2 = new THREE.Mesh(lineGeo, lineMat); line2.rotation.x = -Math.PI/2; line2.position.set(2, 0.01, 0); chunk.add(line2);
+
+                scene.add(chunk);
+                environmentChunks.push(chunk);
             }
         }
 
-        function createTrackSegment(zPos) {
-            const trackGroup = new THREE.Group();
-            
-            // Road Bed Plane
-            const roadGeo = new THREE.PlaneGeometry(10, 100);
-            const roadMat = new THREE.MeshStandardMaterial({ color: 0xc2a69d, side: THREE.DoubleSide });
-            const road = new THREE.Mesh(roadGeo, roadMat);
-            road.rotation.x = -Math.PI / 2;
-            road.receiveShadow = true;
-            trackGroup.add(road);
+        // --- FIXED CHARACTER ASSET LOADER ---
+        function buildPlayerCharacter() {
+            player = new THREE.Group();
+            player.position.set(lanes[currentLane], 0, 0);
+            scene.add(player);
 
-            // Procedural Lane Marking Striping
-            const lineGeo = new THREE.PlaneGeometry(0.1, 100);
-            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-            
-            const leftLine = new THREE.Mesh(lineGeo, lineMat);
-            leftLine.position.set(-1.25, 0.01, 0);
-            leftLine.rotation.x = -Math.PI / 2;
-            trackGroup.add(leftLine);
+            const loader = new THREE.GLTFLoader();
+            loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
+                const model = gltf.scene;
+                
+                // Keep your big scale settings
+                model.scale.set(10.0, 10.0, 10.0); 
+                
+                // FIX 1: Lift the model up Y-axis by 2.2 units so he stands on the grass plane
+                model.position.set(0, 2.2, 0); 
+                
+                // FIX 2: Spin the model around so he runs forward instead of backwards
+                model.rotation.y = Math.PI; 
 
-            const rightLine = leftLine.clone();
-            rightLine.position.x = 1.25;
-            trackGroup.add(rightLine);
-
-            trackGroup.position.z = zPos;
-            scene.add(trackGroup);
-            tracks.push(trackGroup);
+                player.add(model);
+            }, undefined, function(error) {
+                // UI Debugger box activation
+                const logBox = document.getElementById('error-log');
+                logBox.style.display = 'block';
+                logBox.innerText = "Model Load Failed! Check if filename matches exactly in your folder.";
+                console.error(error);
+            });
         }
 
-        // --- INPUT LAYER ---
-        function setupInputHandlers() {
-            // Keyboard Listener Engine
-            window.addEventListener('keydown', (e) => {
-                if (!gameActive) return;
-                if (e.key === 'ArrowLeft' || e.key === 'a') moveLane(-1);
-                if (e.key === 'ArrowRight' || e.key === 'd') moveLane(1);
-            });
-
-            // Mobile Touch Swipe Gesture Engine
-            let touchStartX = 0;
+        function setupTouchInteractions() {
             window.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
+                touchStartX = e.touches[0].clientX;
+            }, {passive: true});
 
             window.addEventListener('touchend', (e) => {
-                if (!gameActive) return;
-                const touchEndX = e.changedTouches[0].screenX;
-                const deltaX = touchEndX - touchStartX;
-                
-                if (deltaX < -50) moveLane(-1); // Swiped Left
-                if (deltaX > 50) moveLane(1);   // Swiped Right
-            }, { passive: true });
+                const touchEndX = e.changedTouches[0].clientX;
+                const swipeDistance = touchEndX - touchStartX;
 
-            // UI System Restart Handler
-            document.getElementById('retry-btn').addEventListener('click', resetGameContext);
+                if (Math.abs(swipeDistance) > touchMinDistance) {
+                    if (swipeDistance > 0) {
+                        if (currentLane < 2) {
+                            currentLane++;
+                            targetX = lanes[currentLane];
+                        }
+                    } else {
+                        if (currentLane > 0) {
+                            currentLane--;
+                            targetX = lanes[currentLane];
+                        }
+                    }
+                }
+            }, {passive: true});
+
+            window.addEventListener('keydown', (e) => {
+                if ((e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') && currentLane > 0) {
+                    currentLane--;
+                    targetX = lanes[currentLane];
+                }
+                if ((e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') && currentLane < 2) {
+                    currentLane++;
+                    targetX = lanes[currentLane];
+                }
+            });
         }
 
-        function moveLane(direction) {
-            currentLane = Math.max(0, Math.min(2, currentLane + direction));
-            targetX = CONFIG.lanes[currentLane];
+        function spawnObstacle() {
+            if (!gameActive) return;
+
+            const targetSpawnLane = Math.floor(Math.random() * 3);
+            const obstacleGroup = new THREE.Group();
+
+            const frameGeo = new THREE.BoxGeometry(3.2, 2.5, 0.6);
+            const frameMat = new THREE.MeshStandardMaterial({ color: 0x2c3e50, roughness: 0.4, metalness: 0.7 });
+            const frame = new THREE.Mesh(frameGeo, frameMat);
+            frame.position.y = 1.25;
+            obstacleGroup.add(frame);
+
+            const beamGeo = new THREE.BoxGeometry(2.8, 0.3, 0.7);
+            const beamMat = new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0xff0000, roughness: 0.1 });
+            const beam = new THREE.Mesh(beamGeo, beamMat);
+            beam.position.y = 1.25;
+            obstacleGroup.add(beam);
+
+            obstacleGroup.position.set(lanes[targetSpawnLane], 0, -120);
+            obstacleGroup.userData = { lane: targetSpawnLane };
+
+            scene.add(obstacleGroup);
+            obstacles.push(obstacleGroup);
         }
 
-        // --- GAME LOOP ENGINE (PROMOTION 120HZ COMPLIANT) ---
+        function createExplosion(pos, colorHex) {
+            const geo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+
+            for(let i=0; i<30; i++) {
+                const p = new THREE.Mesh(geo, mat);
+                p.position.copy(pos);
+                p.position.y += 1.5; 
+                p.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.6,
+                        Math.random() * 0.5,
+                        (Math.random() - 0.5) * 0.6
+                    ),
+                    life: 1.0
+                };
+                scene.add(p);
+                particles.push(p);
+            }
+        }
+
         function animate() {
             requestAnimationFrame(animate);
 
-            // Fetch actual duration delta between operations
-            const delta = clock.getDelta();
+            if (gameActive) {
+                gameSpeed = Math.min(maxSpeed, gameSpeed + 0.00015);
+                score += Math.floor(gameSpeed * 5);
+                document.getElementById('score-val').innerText = score + "m";
 
-            if (gameActive && player) {
-                // Accelerate scaling engine dynamically based on progression milestone
-                currentSpeed += CONFIG.speedIncrement * (delta * 0.1);
-                distanceTraveled += currentSpeed * delta;
-                document.getElementById('score-val').innerText = Math.floor(distanceTraveled);
-
-                // 1. Precise Frame-Rate Independent Linear Interpolation for lane updates
-                player.position.x = THREE.MathUtils.lerp(player.position.x, targetX, CONFIG.laneSpeed * delta);
-
-                // 2. Continuous Track Recycling Mechanics
-                tracks.forEach(track => {
-                    track.position.z += currentSpeed * delta;
-                    // If segment completely passes camera frame perspective, recycle to back of array line
-                    if (track.position.z > 50) {
-                        track.position.z -= 300;
-                    }
+                environmentChunks.forEach(chunk => {
+                    chunk.position.z += gameSpeed * 60; 
+                    if (chunk.position.z > 80) chunk.position.z = -115; 
                 });
 
-                // 3. Dynamic Obstacle Generation Logic Flow
-                lastSpawnTime += delta;
-                if (lastSpawnTime >= CONFIG.spawnInterval) {
-                    spawnObstacleMatrix();
-                    lastSpawnTime = 0;
+                if (player) {
+                    player.position.x += (targetX - player.position.x) * 0.25;
+                    // Running animation bounce
+                    player.position.y = Math.abs(Math.sin(performance.now() * 0.012)) * 0.2;
+                    player.rotation.z = (player.position.x - targetX) * -0.05; 
                 }
 
-                // 4. Obstacle Lifetime Handling and Evaluation Vector Loop
                 for (let i = obstacles.length - 1; i >= 0; i--) {
-                    const obstacle = obstacles[i];
-                    obstacle.position.z += currentSpeed * delta;
+                    const obs = obstacles[i];
+                    obs.position.z += gameSpeed * 60;
 
-                    // Execute local bounding box calculation metrics for clean collision tracking
-                    if (obstacle.position.z > 2) {
-                        scene.remove(obstacle);
-                        obstacles.splice(i, 1);
-                        continue;
+                    if (obs.position.z > -1.5 && obs.position.z < 1.5 && obs.userData.lane === currentLane) {
+                        triggerGameOver();
                     }
 
-                    // Strict Collision Frame Intersection Metrics Evaluation
-                    const zDiff = Math.abs(obstacle.position.z - player.position.z);
-                    const xDiff = Math.abs(obstacle.position.x - player.position.x);
-                    
-                    if (zDiff < 1.0 && xDiff < 1.2) {
-                        triggerCrashSequence();
+                    if (obs.position.z > 20) {
+                        scene.remove(obs);
+                        obstacles.splice(i, 1);
                     }
                 }
 
-                // 5. Polished Camera Offset Matrix - Floating Anchor Perspective
-                camera.position.x = THREE.MathUtils.lerp(camera.position.x, player.position.x * 0.7, 4 * delta);
-                camera.position.y = 3.5;               // Altitude position vector looking down 
-                camera.position.z = CONFIG.playerZ + 6.5; // Offset placement distance vector behind unit frame
-                camera.lookAt(player.position.x, 1.2, CONFIG.playerZ - 3); // Dynamic tracking look-target focal vector
+                if (Math.random() < 0.02 + (gameSpeed * 0.02)) {
+                    if (obstacles.length === 0 || obstacles[obstacles.length - 1].position.z > -75) {
+                        spawnObstacle();
+                    }
+                }
+            }
+
+            for(let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.position.add(p.userData.velocity);
+                p.userData.life -= 0.02;
+                p.scale.multiplyScalar(0.96);
+                if(p.userData.life <= 0) {
+                    scene.remove(p);
+                    particles.splice(i, 1);
+                }
             }
 
             renderer.render(scene, camera);
         }
 
-        // --- PROCEDURAL ENGINE ELEMENT SCENARIOS ---
-        function spawnObstacleMatrix() {
-            // Select random track execution lane vector assignment
-            const randomLaneIndex = Math.floor(Math.random() * CONFIG.lanes.length);
-            const xPos = CONFIG.lanes[randomLaneIndex];
-
-            // Procedural geometry block construct
-            const obsHeight = 1.2 + Math.random() * 0.8;
-            const geo = new THREE.BoxGeometry(1.6, obsHeight, 1);
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: 0x2a2a2a, 
-                roughness: 0.2,
-                metalness: 0.8
-            });
-            
-            const obstacle = new THREE.Mesh(geo, mat);
-            obstacle.position.set(xPos, obsHeight / 2, -200); // Spawns cleanly in the deep distance fog layer
-            obstacle.castShadow = true;
-            
-            scene.add(obstacle);
-            obstacles.push(obstacle);
-        }
-
-        function triggerCrashSequence() {
+        function triggerGameOver() {
             gameActive = false;
-            document.getElementById('final-score').innerText = Math.floor(distanceTraveled);
-            document.getElementById('crash-screen').classList.remove('hidden');
+            createExplosion(player.position, 0xff3333);
+            document.getElementById('final-score').innerText = score + " meters";
+            document.getElementById('game-over-screen').style.display = 'flex';
         }
 
-        function resetGameContext() {
-            // Purge and isolate old array element matrices from live memory execution trees
-            obstacles.forEach(obs => scene.remove(obs));
+        function resetGame() {
+            obstacles.forEach(o => scene.remove(o));
             obstacles = [];
             
-            // Set track structures back inside their linear start locations
-            for (let i = 0; i < tracks.length; i++) {
-                tracks[i].position.z = -i * 100;
-            }
-
-            // Restore engine configurations
             currentLane = 1;
-            targetX = CONFIG.lanes[currentLane];
-            player.position.set(targetX, 0, CONFIG.playerZ);
-            
-            distanceTraveled = 0;
-            currentSpeed = CONFIG.baseSpeed;
-            lastSpawnTime = 0;
-            
-            document.getElementById('crash-screen').classList.add('hidden');
+            targetX = lanes[currentLane];
+            if(player) player.position.set(targetX, 0, 0);
+
+            gameSpeed = 0.4;
+            score = 0;
+            document.getElementById('score-val').innerText = "0m";
+            document.getElementById('game-over-screen').style.display = 'none';
             gameActive = true;
-            clock.getDelta(); // Purge UI runtime context shift latency steps from game clock loop
         }
 
         function onWindowResize() {
@@ -350,9 +423,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // --- TRIGGER START ---
-        init();
-        animate();
+        window.onload = init;
     </script>
 </body>
 </html>
