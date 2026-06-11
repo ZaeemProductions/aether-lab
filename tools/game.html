@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mr. Kim's Dark Core // dhewm3 Edition</title>
+    <title>Zaeem Labs // Dark Core Alpha</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #020204;
+            background-color: #010103;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         #game-canvas {
@@ -29,14 +29,14 @@
             z-index: 1;
         }
         
-        /* Tactical System Startup Boot Overlay */
+        /* Initialization Interface Menu Overlay */
         #boot-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #020205;
+            background: #030306;
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -48,8 +48,8 @@
         .boot-btn {
             margin-top: 25px;
             padding: 16px 50px;
-            background: linear-gradient(135deg, #ff1111 0%, #770000 100%);
-            border: 2px solid #ff3333;
+            background: linear-gradient(135deg, #ff1111 0%, #880000 100%);
+            border: 2px solid #ff4444;
             color: #ffffff;
             font-weight: 900;
             font-size: 1.2rem;
@@ -73,9 +73,9 @@
             padding: 25px;
         }
         .hud-element {
-            background: rgba(4, 4, 8, 0.9);
+            background: rgba(3, 3, 6, 0.9);
             border: 2px solid #ff1111;
-            box-shadow: 0 0 15px rgba(255, 17, 17, 0.3);
+            box-shadow: 0 0 15px rgba(255, 17, 17, 0.2);
             padding: 12px 25px;
             border-radius: 20px;
             color: #ffffff;
@@ -92,8 +92,9 @@
         }
         #stat-hp { color: #ff3333; text-shadow: 0 0 6px #ff3333; }
         #stat-score { color: #00ffcc; text-shadow: 0 0 6px #00ffcc; }
+        #stat-weapon { color: #ffaa00; text-shadow: 0 0 6px #ffaa00; }
         
-        /* iPad Mobile Dual-Stick Input Layer */
+        /* Tactical iPad Mobile Controls Configuration Layout */
         #controls-layer {
             display: flex;
             justify-content: space-between;
@@ -121,9 +122,29 @@
             box-shadow: 0 0 20px #ff1111;
         }
         
+        #action-cluster {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        #swap-btn {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 170, 0, 0.15);
+            border: 2px solid #ffaa00;
+            color: #ffaa00;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+        }
         #fire-btn {
-            width: 105px;
-            height: 105px;
+            width: 110px;
+            height: 110px;
             background: rgba(255, 17, 17, 0.15);
             border: 3px solid #ff1111;
             color: #ffffff;
@@ -133,11 +154,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 20px rgba(255, 17, 17, 0.3);
+            box-shadow: 0 0 25px rgba(255, 17, 17, 0.3);
         }
         #fire-btn:active {
             background: #ff1111;
-            box-shadow: 0 0 35px #ff1111;
             transform: scale(0.95);
         }
         
@@ -154,7 +174,7 @@
         #crosshair::before, #crosshair::after {
             content: '';
             position: absolute;
-            background: rgba(255, 17, 17, 0.6);
+            background: rgba(255, 17, 17, 0.5);
         }
         #crosshair::before { top: 6px; left: -6px; width: 26px; height: 2px; }
         #crosshair::after { top: -6px; left: 6px; width: 2px; height: 26px; }
@@ -163,16 +183,18 @@
 <body>
 
     <div id="boot-overlay">
-        <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: RESURRECTION</h1>
-        <p style="color: #5d6775; margin-top: 8px; font-weight: 500; font-family: monospace;">id Tech 4 Paradigm • Flashlight Cone Tracing Vectors</p>
-        <button class="boot-btn" onclick="bootDarkCoreSystem()">INITIALIZE LAYER</button>
+        <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: ADVANCED</h1>
+        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">Vector Weapon Matrices • Integrated Telemetry Minimap</p>
+        <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE WORKSPACE</button>
     </div>
 
+    <div id="crosshair"></div>
     <canvas id="game-canvas"></canvas>
 
     <div id="ui-layer">
         <div id="top-hud">
-            <div class="hud-element">VITAL MATRIX: <span id="stat-hp">100%</span></div>
+            <div class="hud-element">VITAL STATUS: <span id="stat-hp">100%</span></div>
+            <div class="hud-element">WEAPON: <span id="stat-weapon">PLASMA</span></div>
             <div class="hud-element">CORES PURGED: <span id="stat-score">0</span></div>
         </div>
 
@@ -180,73 +202,89 @@
             <div id="joystick-bound" class="touch-zone">
                 <div id="joystick-thumb"></div>
             </div>
-            <button id="fire-btn" class="touch-zone">FIRE</button>
+            <div id="action-cluster">
+                <button id="swap-btn" class="touch-zone" onclick="switchWeaponLoadout()">SWAP</button>
+                <button id="fire-btn" class="touch-zone">FIRE</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- SYNTHESIZED HORROR AUDIO PIPELINE ---
-        class DhewmAudioEngine {
-            constructor() { this.ctx = null; this.droneInterval = null; }
+        // --- PROCEDURAL AUDIO GENERATION CIRCUIT ---
+        class SynthAudioEngine {
+            constructor() { this.ctx = null; this.ambience = null; }
             init() {
                 if (this.ctx) return;
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                this.startHorrorAtmosphereHum();
+                this.startDrone();
             }
-            playWeaponBlaster() {
+            playPlasma() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(380, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.18);
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.18);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.15);
             }
-            playExplodeSnap() {
+            playShotgun() {
+                if (!this.ctx) return;
+                // Double oscillator combo layout for bass compression explosions
+                for(let k=0; k<2; k++) {
+                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                    osc.type = k === 0 ? 'sawtooth' : 'triangle';
+                    osc.frequency.setValueAtTime(180 - (k*60), this.ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(30, this.ctx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + 0.25);
+                }
+            }
+            playExplode() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(95, this.ctx.currentTime);
                 osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.4);
-                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(); osc.stop(this.ctx.currentTime + 0.4);
             }
-            playHurtWarning() {
+            playHurt() {
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(60, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(65, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(); osc.stop(this.ctx.currentTime + 0.2);
             }
-            startHorrorAtmosphereHum() {
-                this.droneInterval = setInterval(() => {
+            startDrone() {
+                this.ambience = setInterval(() => {
                     if (!this.ctx || !gameActive) return;
-                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-                    let filter = this.ctx.createBiquadFilter();
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(55 + Math.random() * 4, this.ctx.currentTime); // Deep sub-bass growl
-                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(120, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
+                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), filter = this.ctx.createBiquadFilter();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(50 + Math.random() * 5, this.ctx.currentTime);
+                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(100, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.14, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.4);
                     osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + 1.3);
-                }, 1400);
+                    osc.start(); osc.stop(this.ctx.currentTime + 1.5);
+                }, 1500);
             }
         }
 
-        const audio = new DhewmAudioEngine();
+        const audio = new SynthAudioEngine();
 
-        function bootDarkCoreSystem() {
+        function bootDarkCoreEngine() {
             document.getElementById('boot-overlay').style.display = 'none';
             audio.init();
-            launchEngineWorkspace();
+            launchEngineCircuit();
         }
 
-        // --- ENGINE MATH WORKSPACE ---
-        let canvas, ctx;
+        // --- RAYCASTING VECTOR ENGINE ENGINE CORES ---
+        let canvas, ctx, clock;
         let lastTime = performance.now();
         let gameActive = true;
         let score = 0;
@@ -270,55 +308,61 @@
             1,1,1,1,1,1,1,1,1,1,1,1,1,1
         ];
 
-        let player = { x: 2.5, y: 2.5, angle: 0, fov: Math.PI / 3, speed: 4.0, rotSpeed: 2.6 };
+        let player = { x: 2.5, y: 2.5, angle: 0, fov: Math.PI / 3, speed: 4.2, rotSpeed: 2.6 };
+        let currentWeapon = "PLASMA"; // Options: PLASMA, SHOTGUN
         let drones = [];
         let projectiles = [];
         let particles = [];
         
         let colsCount = 240;
-        let flashAlpha = 0;
+        let muzzleFlash = 0;
 
         let turnInput = 0, forwardInput = 0, joyActive = false, joyOrigin = { x:0, y:0 };
         const maxJoyDist = 50;
 
-        function launchEngineWorkspace() {
+        function launchEngineCircuit() {
             canvas = document.getElementById('game-canvas');
             ctx = canvas.getContext('2d');
-            recomputeResolution();
+            recomputeViewportResolution();
 
-            window.addEventListener('resize', recomputeResolution);
-            bindHardwareInputs();
+            window.addEventListener('resize', recomputeViewportResolution);
+            setupHardwareInputBindings();
 
-            // Spawn localized danger objects
-            for(let i=0; i<4; i++) spawnCyberHellDrone();
+            for(let i=0; i<4; i++) spawnMatrixDrone();
 
-            requestAnimationFrame(engineMainUpdateLoop);
+            requestAnimationFrame(engineFrameStep);
         }
 
-        function recomputeResolution() {
+        function recomputeViewportResolution() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            colsCount = Math.min(300, Math.floor(canvas.width / 3.5)); // Balances raster overhead
+            colsCount = Math.min(280, Math.floor(canvas.width / 4)); 
         }
 
-        function spawnCyberHellDrone() {
-            let done = false;
-            while(!done) {
+        function spawnMatrixDrone() {
+            let placed = false;
+            while(!placed) {
                 let tx = Math.floor(Math.random() * mapW);
                 let ty = Math.floor(Math.random() * mapH);
                 if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 4)) {
                     drones.push({
                         x: tx + 0.5, y: ty + 0.5,
-                        alive: true, speed: 1.4,
-                        shootCooldown: 1.5 + Math.random() * 2,
+                        alive: true, speed: 1.5,
+                        shootCooldown: 1.0 + Math.random() * 2,
                         bobSeed: Math.random() * 10
                     });
-                    done = true;
+                    placed = true;
                 }
             }
         }
 
-        function bindHardwareInputs() {
+        function switchWeaponLoadout() {
+            currentWeapon = currentWeapon === "PLASMA" ? "SHOTGUN" : "PLASMA";
+            document.getElementById('stat-weapon').innerText = currentWeapon;
+            document.getElementById('stat-weapon').style.color = currentWeapon === "SHOTGUN" ? "#ffaa00" : "#00ffcc";
+        }
+
+        function setupHardwareInputBindings() {
             const bound = document.getElementById('joystick-bound');
             const thumb = document.getElementById('joystick-thumb');
             const fireBtn = document.getElementById('fire-btn');
@@ -347,82 +391,106 @@
                 turnInput = 0; forwardInput = 0;
             });
 
-            fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dischargeLaserMatrix(); });
+            fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dischargeActiveWeapon(); });
 
-            // Keyboard Fallback
-            let keys = { w: false, s: false, a: false, d: false };
+            // Keyboard binds fallback triggers
             window.addEventListener('keydown', (e) => {
-                if (e.key === ' ' || e.key === 'Spacebar') dischargeLaserMatrix();
-                if (e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = true; sync(); }
+                if (e.key === ' ' || e.key === 'Spacebar') dischargeActiveWeapon();
+                if (e.key === '1') { currentWeapon = "PLASMA"; document.getElementById('stat-weapon').innerText = "PLASMA"; }
+                if (e.key === '2') { currentWeapon = "SHOTGUN"; document.getElementById('stat-weapon').innerText = "SHOTGUN"; }
+                if (e.key.toLowerCase() === 'w' || e.key === 'ArrowUp') forwardInput = 1;
+                if (e.key.toLowerCase() === 's' || e.key === 'ArrowDown') forwardInput = -1;
+                if (e.key.toLowerCase() === 'a' || e.key === 'ArrowLeft') turnInput = -1;
+                if (e.key.toLowerCase() === 'd' || e.key === 'ArrowRight') turnInput = 1;
             });
             window.addEventListener('keyup', (e) => {
-                if (e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = false; sync(); }
+                if (['w', 's', 'arrowup', 'arrowdown'].includes(e.key.toLowerCase())) forwardInput = 0;
+                if (['a', 'd', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) turnInput = 0;
             });
-            function sync() {
-                if(joyActive) return;
-                forwardInput = keys.w ? 1 : (keys.s ? -1 : 0);
-                turnInput = keys.a ? -1 : (keys.d ? 1 : 0);
-            }
         }
 
-        function dischargeLaserMatrix() {
+        function dischargeActiveWeapon() {
             if(!gameActive || health <= 0) return;
-            audio.playWeaponBlaster();
-            flashAlpha = 0.15; 
+            
+            muzzleFlash = 0.12; 
+            let hitsRegistered = [];
 
-            let target = null;
-            let bestDist = 6.0;
+            if (currentWeapon === "PLASMA") {
+                audio.playPlasma();
+                // Single centralized precision focus ray sweep
+                evaluateRayHit(0, 6.0, hitsRegistered);
+            } else {
+                audio.playShotgun();
+                // Cast 5 distinct angled rays simultaneously across wide close spread bounds
+                let spreads = [-0.16, -0.08, 0, 0.08, 0.16];
+                spreads.forEach(angleOffset => {
+                    evaluateRayHit(angleOffset, 3.8, hitsRegistered);
+                });
+            }
+
+            // Clean down hit targets maps
+            hitsRegistered.forEach(target => {
+                if (target.alive) {
+                    target.alive = false;
+                    audio.playExplode();
+                    score++;
+                    document.getElementById('stat-score').innerText = score;
+                    spawnExplosionSparks(target.x, target.y, '#ff3355');
+
+                    setTimeout(() => {
+                        drones = drones.filter(e => e !== target);
+                        spawnMatrixDrone();
+                    }, 900);
+                }
+            });
+        }
+
+        function evaluateRayHit(angleOffset, maxRange, hitList) {
+            let testAngle = player.angle + angleOffset;
+            let closestDrone = null;
+            let bestDistance = maxRange;
 
             drones.forEach(d => {
-                if (!d.alive) return;
-                let ang = Math.atan2(d.y - player.y, d.x - player.x) - player.angle;
+                if (!d.alive || hitList.includes(d)) return;
+                let ang = Math.atan2(d.y - player.y, d.x - player.x) - testAngle;
                 while (ang < -Math.PI) ang += Math.PI * 2;
                 while (ang > Math.PI) ang -= Math.PI * 2;
 
-                if (Math.abs(ang) < 0.20) {
+                if (Math.abs(ang) < 0.18) {
                     let distance = Math.hypot(d.x - player.x, d.y - player.y);
-                    if (distance < bestDist) { bestDist = distance; target = d; }
+                    if (distance < bestDistance) { bestDistance = distance; closestDrone = d; }
                 }
             });
 
-            if (target) {
-                target.alive = false;
-                audio.playExplodeSnap();
-                score++;
-                document.getElementById('stat-score').innerText = score;
-                generateVoxelBurst(target.x, target.y, '#ff3333');
-
-                setTimeout(() => {
-                    drones = drones.filter(e => e !== target);
-                    spawnCyberHellDrone();
-                }, 1000);
+            if (closestDrone && !hitList.includes(closestDrone)) {
+                hitList.push(closestDrone);
             }
         }
 
-        function generateVoxelBurst(x, y, colorHex) {
-            for(let i=0; i<15; i++) {
+        function spawnExplosionSparks(x, y, color) {
+            for(let i=0; i<16; i++) {
                 particles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * 2.5, vy: (Math.random() - 0.5) * 2.5,
-                    life: 1.0, color: colorHex
+                    vx: (Math.random() - 0.5) * 2.2, vy: (Math.random() - 0.5) * 2.2,
+                    life: 1.0, color: color
                 });
             }
         }
 
-        // --- PROCESS TICK STEP TIMELINES (120Hz STABLE) ---
-        function engineMainUpdateLoop(timestamp) {
-            requestAnimationFrame(engineMainUpdateLoop);
+        // --- HARDWARE FLUID VECTOR PHYSICS LOOP (120Hz STABLE) ---
+        function engineFrameStep(timestamp) {
+            requestAnimationFrame(engineFrameStep);
             let dt = (timestamp - lastTime) / 1000;
             lastTime = timestamp;
-            if (dt > 0.1) dt = 0.1;
+            if (dt > 0.1) dt = 0.1; 
 
             if (gameActive && health > 0) {
-                if(flashAlpha > 0) flashAlpha -= dt * 2;
+                if(muzzleFlash > 0) muzzleFlash -= dt;
 
-                // 1. Process orientation transforms
                 player.angle += turnInput * player.rotSpeed * dt;
-                
-                // 2. Process translation transforms
+                while (player.angle < 0) player.angle += Math.PI * 2;
+                while (player.angle > Math.PI * 2) player.angle -= Math.PI * 2;
+
                 let stepX = Math.cos(player.angle) * forwardInput * player.speed * dt;
                 let stepY = Math.sin(player.angle) * forwardInput * player.speed * dt;
                 
@@ -430,47 +498,43 @@
                 if (map[Math.floor(player.y) * mapW + Math.floor(nextX)] === 0) player.x = nextX;
                 if (map[Math.floor(nextY) * mapW + Math.floor(player.x)] === 0) player.y = nextY;
 
-                // 3. Update Threat Entities & Projectile Launcher Loops
+                // Move Threat Drones & Spawn Fireball Vectors
                 drones.forEach(d => {
                     if (!d.alive) return;
                     let dx = player.x - d.x, dy = player.y - d.y;
                     let dist = Math.hypot(dx, dy);
                     
-                    if(dist > 2.5) {
+                    if(dist > 2.2) {
                         d.x += (dx / dist) * d.speed * dt;
                         d.y += (dy / dist) * d.speed * dt;
                     }
 
-                    // Open fire if weapon reloaded
                     d.shootCooldown -= dt;
-                    if(d.shootCooldown <= 0 && dist < 8.0) {
+                    if(d.shootCooldown <= 0 && dist < 8.5) {
                         let projAngle = Math.atan2(dy, dx);
                         projectiles.push({
                             x: d.x, y: d.y,
-                            vx: Math.cos(projAngle) * 4.2, vy: Math.sin(projAngle) * 4.2,
-                            radius: 0.12
+                            vx: Math.cos(projAngle) * 4.4, vy: Math.sin(projAngle) * 4.4
                         });
-                        d.shootCooldown = 2.0 + Math.random() * 2;
+                        d.shootCooldown = 1.8 + Math.random() * 2.2;
                     }
                 });
 
-                // 4. Track Live Projectiles
+                // Track Fireballs
                 for (let i = projectiles.length - 1; i >= 0; i--) {
                     let p = projectiles[i];
                     p.x += p.vx * dt; p.y += p.vy * dt;
 
-                    // Impact detection wrapper on player boundaries
                     let pDist = Math.hypot(player.x - p.x, player.y - p.y);
                     if(pDist < 0.35) {
                         health = Math.max(0, health - 20);
                         document.getElementById('stat-hp').innerText = health + "%";
-                        audio.playHurtWarning();
+                        audio.playHurt();
                         projectiles.splice(i, 1);
                         if(health <= 0) gameActive = false;
                         continue;
                     }
 
-                    // Wall impact checks
                     if(map[Math.floor(p.y) * mapW + Math.floor(p.x)] > 0) {
                         projectiles.splice(i, 1);
                     }
@@ -478,24 +542,27 @@
 
                 // Decay particles
                 for(let i=particles.length-1; i>=0; i--) {
-                    let p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.5;
+                    let p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.6;
                     if(p.life <= 0) particles.splice(i, 1);
                 }
             }
 
-            renderDhewmRasterLayer();
+            renderGraphicsCircuit();
         }
 
-        // --- FLASHLIGHT CONE RASTER LAYER ---
-        function renderDhewmRasterLayer() {
-            // Fill background with baseline environment shadows
+        // --- RENDER CORE WITH DYNAMIC FLASHLIGHT AND HUD TELEMETRY ---
+        function renderGraphicsCircuit() {
+            // Shadows foundation back buffer fill
             ctx.fillStyle = '#010103';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0b0612';
+            ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
             let sliceW = canvas.width / colsCount;
             let depthBuffer = [];
 
-            // 1. Raycast Viewport Slices
+            // 1. Raycast Environment Slices
             for (let i = 0; i < colsCount; i++) {
                 let rayAngle = (player.angle - player.fov / 2) + (i / colsCount) * player.fov;
                 let distanceToWall = 0, hitWall = false, sideHit = false;
@@ -518,7 +585,7 @@
                     if (gridX >= 0 && gridX < mapW && gridY >= 0 && gridY < mapH) {
                         if (map[gridY * mapW + gridX] > 0) {
                             hitWall = true;
-                            distanceToWall = sideHit ? (sideY - deltaY) : (startX = sideX - deltaX);
+                            distanceToWall = sideHit ? (sideY - deltaY) : (sideX - deltaX);
                         }
                     }
                 }
@@ -528,41 +595,38 @@
 
                 let wallH = Math.min(canvas.height, (canvas.height / correctedDist));
 
-                // DOOM 3 FLASHLIGHT ALGORITHM: Calculate light intensity drop relative to focus center angles
+                // Flashlight Falloff Attenuation Math Formulas
                 let angleDiff = Math.abs(rayAngle - player.angle);
                 while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
                 while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
 
-                // Flashlight focus attenuation math falloffs
-                let flashlightBeamWidth = 0.38; 
-                let lightIntensity = 0;
-                if(angleDiff < flashlightBeamWidth) {
-                    lightIntensity = (1.0 - (angleDiff / flashlightBeamWidth)) * (1.0 - (correctedDist / 12.0));
-                    lightIntensity = Math.max(0, lightIntensity);
+                let beamWidth = 0.42; 
+                let intensity = 0;
+                if(angleDiff < beamWidth) {
+                    intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 11.5));
+                    intensity = Math.max(0, intensity);
                 }
 
-                // Render shaded line columns
-                let baseR = Math.floor((sideHit ? 40 : 20) * lightIntensity);
-                let baseG = Math.floor((sideHit ? 50 : 25) * lightIntensity);
-                let baseB = Math.floor((sideHit ? 160 : 100) * lightIntensity);
+                let r = Math.floor((sideHit ? 40 : 20) * intensity);
+                let g = Math.floor((sideHit ? 50 : 25) * intensity);
+                let b = Math.floor((sideHit ? 160 : 100) * intensity);
 
-                ctx.fillStyle = `rgb(${baseR}, ${baseG}, ${baseB})`;
+                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
             }
 
-            // 2. Project 3D Hazard Sprite Matrices
-            let combinedSprites = [];
-            drones.forEach(d => { combinedSprites.push({ obj: d, type: 'drone', x: d.x, y: d.y }); });
-            projectiles.forEach(p => { combinedSprites.push({ obj: p, type: 'fireball', x: p.x, y: p.y }); });
+            // 2. Project Sprites (Drones & Fireballs)
+            let spriteQueue = [];
+            drones.forEach(d => { spriteQueue.push({ obj: d, type: 'drone', x: d.x, y: d.y }); });
+            projectiles.forEach(p => { spriteQueue.push({ obj: p, type: 'fireball', x: p.x, y: p.y }); });
 
-            // Sort sprites by distance backward to front (Painter's Algorithm)
-            combinedSprites.sort((a, b) => {
+            spriteQueue.sort((a, b) => {
                 let dA = Math.hypot(player.x - a.x, player.y - a.y);
                 let dB = Math.hypot(player.x - b.x, player.y - b.y);
                 return dB - dA;
             });
 
-            combinedSprites.forEach(sprite => {
+            spriteQueue.forEach(sprite => {
                 let sx = sprite.x - player.x, sy = sprite.y - player.y;
                 let dist = Math.hypot(sx, sy);
 
@@ -578,10 +642,9 @@
                 let colIdx = Math.floor((projX / canvas.width) * colsCount);
                 if (colIdx >= 0 && colIdx < colsCount && depthBuffer[colIdx] < dist) return;
 
-                // Flashlight filter application loop for entities visibility
                 let angleDiff = Math.abs((player.angle + viewAng) - player.angle);
-                let illumination = angleDiff < 0.4 ? (1.0 - (dist / 11.0)) : 0.08;
-                illumination = Math.max(0.05, illumination);
+                let illumination = angleDiff < 0.42 ? (1.0 - (dist / 11.0)) : 0.08;
+                illumination = Math.max(0.04, illumination);
 
                 ctx.save();
                 ctx.translate(projX, canvas.height / 2);
@@ -593,66 +656,147 @@
                     if (d.alive) {
                         ctx.fillStyle = '#ff1155';
                         ctx.shadowBlur = projSize * 0.15; ctx.shadowColor = '#ff1155';
-                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.15, 0, Math.PI * 2); ctx.fill();
-                        ctx.fillStyle = '#222530';
-                        ctx.fillRect(-projSize*0.25, bob - 2, projSize*0.5, 4);
+                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.14, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = '#1b1d26';
+                        ctx.fillRect(-projSize*0.22, bob - 2, projSize*0.44, 4);
                     } else {
-                        ctx.fillStyle = '#ff5500'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.2, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#ff6600'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.18, 0, Math.PI*2); ctx.fill();
                     }
                 } else if (sprite.type === 'fireball') {
-                    // Render glowing enemy projectile balls
                     ctx.fillStyle = '#ffcc00';
-                    ctx.shadowBlur = projSize * 0.3; ctx.shadowColor = '#ff3300';
-                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.09, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = projSize * 0.35; ctx.shadowColor = '#ff3300';
+                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.08, 0, Math.PI * 2); ctx.fill();
                 }
 
                 ctx.restore();
             });
             ctx.globalAlpha = 1.0;
 
-            // 3. Render Particles
+            // Render Particle sparks
             particles.forEach(p => {
                 let px = p.x - player.x, py = p.y - player.y;
-                let pDist = Math.hypot(px, py);
-                let pAng = Math.atan2(py, px) - player.angle;
+                let pDist = Math.hypot(px, py), pAng = Math.atan2(py, px) - player.angle;
                 if (Math.abs(pAng) > player.fov) return;
                 let scrX = (canvas.width / 2) + (Math.tan(pAng) * (canvas.width / 2));
                 let sz = Math.min(canvas.height, (canvas.height / pDist)) * 0.05;
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
                 ctx.fillRect(scrX - sz/2, (canvas.height/2) - sz/2, sz, sz);
             });
             ctx.globalAlpha = 1.0;
 
-            // 4. Render Weapon Overlay Frame (Doom 3 Hydraulic Plasma Blaster)
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height);
-            ctx.fillStyle = '#14171d'; ctx.strokeStyle = '#ff1111'; ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(-40, 0); ctx.lineTo(-20, -110); ctx.lineTo(20, -110); ctx.lineTo(40, 0);
-            ctx.closePath(); ctx.fill(); ctx.stroke();
-            
-            // Core weapon plasma indicators
-            ctx.fillStyle = flashAlpha > 0 ? '#ffffff' : '#990022';
-            ctx.fillRect(-6, -100, 12, 40);
-            ctx.restore();
+            // 3. Render Custom Modular Weapon Frames Base overlays
+            renderActiveWeaponHUD();
 
-            // Screen space flash modifiers
-            if(flashAlpha > 0) {
-                ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-            }
+            // 4. INTEGRATED TELEMETRY WIREFRAME MINIMAP (Top Right)
+            renderIntegratedTelemetryMinimap();
 
-            // Defeat condition display screen overlays
+            // Handle damage screens alerts
             if (health <= 0) {
-                ctx.fillStyle = 'rgba(120, 0, 0, 0.85)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(100, 0, 0, 0.88)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#ffffff'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
-                ctx.fillText("FRAMEWORK INTRUSION", canvas.width / 2, canvas.height / 2);
+                ctx.fillText("VITAL MATRIX DESTROYED", canvas.width / 2, canvas.height / 2);
                 ctx.font = '500 1.1rem monospace';
-                ctx.fillText("Reload URL page block to compile clean registries.", canvas.width / 2, canvas.height / 2 + 40);
+                ctx.fillText("Tap refresh page link parameters to restart workspace.", canvas.width / 2, canvas.height / 2 + 45);
             }
         }
+
+        function renderActiveWeaponHUD() {
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height);
+            
+            let recoilY = muzzleFlash > 0 ? (currentWeapon === "SHOTGUN" ? 35 : 20) : 0;
+            ctx.fillStyle = '#12141a'; ctx.strokeStyle = currentWeapon === "SHOTGUN" ? '#ffaa00' : '#00ffcc';
+            ctx.lineWidth = 3;
+
+            if (currentWeapon === "PLASMA") {
+                ctx.beginPath();
+                ctx.moveTo(-35, recoilY); ctx.lineTo(-18, -115 + recoilY);
+                ctx.lineTo(18, -115 + recoilY); ctx.lineTo(35, recoilY);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                
+                ctx.fillStyle = muzzleFlash > 0 ? '#ffffff' : '#00aaff';
+                ctx.fillRect(-5, -105 + recoilY, 10, 35);
+            } else {
+                // Bulkier Dual Barrel Shotgun block frame blueprints
+                ctx.beginPath();
+                ctx.moveTo(-50, recoilY); ctx.lineTo(-30, -95 + recoilY);
+                ctx.lineTo(30, -95 + recoilY); ctx.lineTo(50, recoilY);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = '#050507';
+                ctx.fillRect(-14, -90 + recoilY, 10, 20);
+                ctx.fillRect(4, -90 + recoilY, 10, 20);
+            }
+
+            if (muzzleFlash > 0) {
+                ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 45;
+                ctx.shadowColor = currentWeapon === "SHOTGUN" ? '#ffaa00' : '#ff3333';
+                ctx.beginPath(); 
+                ctx.arc(0, currentWeapon === "SHOTGUN" ? -105 : -125, currentWeapon === "SHOTGUN" ? 42 : 28, 0, Math.PI * 2); 
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function renderIntegratedTelemetryMinimap() {
+            ctx.save();
+            
+            // Layout dimensions anchors maps
+            let mapScale = 7; 
+            let offsetBoxX = canvas.width - (mapW * mapScale) - 25;
+            let offsetBoxY = 85; 
+
+            // Minimap background plate box bounds
+            ctx.fillStyle = 'rgba(5, 7, 15, 0.8)';
+            ctx.strokeStyle = '#ff1111';
+            ctx.lineWidth = 2;
+            ctx.fillRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
+            ctx.strokeRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
+
+            // Draw grid lines
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.4)';
+            for(let ty=0; ty<mapH; ty++) {
+                for(let tx=0; tx<mapW; tx++) {
+                    if (map[ty * mapW + tx] > 0) {
+                        ctx.fillRect(offsetBoxX + (tx * mapScale), offsetBoxY + (ty * mapScale), mapScale - 0.5, mapScale - 0.5);
+                    }
+                }
+            }
+
+            // Draw active danger objects tracking blips
+            ctx.fillStyle = '#ff0055';
+            drones.forEach(d => {
+                if(d.alive) {
+                    ctx.beginPath();
+                    ctx.arc(offsetBoxX + (d.x * mapScale), offsetBoxY + (d.y * mapScale), 2.2, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            });
+
+            // Draw player position cursor dots and view cone parameters
+            ctx.save();
+            ctx.translate(offsetBoxX + (player.x * mapScale), offsetBoxY + (player.y * mapScale));
+            ctx.rotate(player.angle);
+
+            // View cone wire overlay path
+            ctx.strokeStyle = 'rgba(255, 170, 0, 0.35)';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(25, -10);
+            ctx.moveTo(0,0);
+            ctx.lineTo(25, 10);
+            ctx.stroke();
+
+            // Target cursor center blip
+            ctx.fillStyle = '#00ffcc';
+            ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI*2); ctx.fill();
+            
+            ctx.restore();
+            ctx.restore();
+        }
+
+        function onWindowResize() { recomputeViewportResolution(); }
     </script>
 </body>
 </html>
