@@ -101,6 +101,7 @@
             align-items: flex-end;
             width: 100%;
             padding-bottom: 15px;
+            pointer-events: none;
         }
         .touch-zone { pointer-events: auto; }
         
@@ -184,7 +185,7 @@
 
     <div id="boot-overlay">
         <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: ADVANCED</h1>
-        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">Vector Weapon Matrices • Swipe Right To Look around</p>
+        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">True Dual-Stick Mapping • Optimized Touch Registers</p>
         <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE WORKSPACE</button>
     </div>
 
@@ -316,14 +317,14 @@
         let colsCount = 240;
         let muzzleFlash = 0;
 
-        // Isolated Controller States
+        // True Touch ID Assignments (Fixes overlap/dropouts completely)
         let forwardInput = 0;
         let strafeInput = 0;
         let joyActive = false;
         let joyOrigin = { x:0, y:0 };
         const maxJoyDist = 50;
 
-        // Dynamic Right Screen Swipe Camera States
+        let moveTouchId = null;
         let lookTouchId = null;
         let lastLookX = 0;
 
@@ -374,40 +375,50 @@
             const thumb = document.getElementById('joystick-thumb');
             const fireBtn = document.getElementById('fire-btn');
 
-            // --- LEFT SIDE: MOVEMENT JOYSTICK ---
+            // --- LINK SPECIFIC TOUCH TO JOYSTICK SYSTEM ---
             bound.addEventListener('touchstart', (e) => {
-                joyActive = true;
-                const rect = bound.getBoundingClientRect();
-                joyOrigin.x = rect.left + rect.width / 2;
-                joyOrigin.y = rect.top + rect.height / 2;
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    let touch = e.changedTouches[i];
+                    if (moveTouchId === null) {
+                        moveTouchId = touch.identifier;
+                        joyActive = true;
+                        const rect = bound.getBoundingClientRect();
+                        joyOrigin.x = rect.left + rect.width / 2;
+                        joyOrigin.y = rect.top + rect.height / 2;
+                    }
+                }
             }, {passive: true});
 
-            // --- RIGHT SIDE: SWIPE LOOK ENGINE ---
+            // --- LINK SPECIFIC TOUCH TO RIGHT SCENE MOUSEPAD LOOK ---
             window.addEventListener('touchstart', (e) => {
                 for (let i = 0; i < e.changedTouches.length; i++) {
                     let touch = e.changedTouches[i];
-                    // If the touch started on the right half of the screen, assign it to camera looking
+                    // Verify touch hit right side and doesn't belong to any button frames
                     if (touch.clientX > window.innerWidth / 2 && lookTouchId === null) {
-                        // Avoid intercepting the fire button or swap button clicks
                         if (touch.target.tagName === 'BUTTON') continue;
-                        
                         lookTouchId = touch.identifier;
                         lastLookX = touch.clientX;
                     }
                 }
             }, {passive: true});
 
+            // --- CORE FLOW: CAPTURE AND KILL SAFARI BACKGROUND ACTIONS ---
             window.addEventListener('touchmove', (e) => {
-                // 1. Process Movement Joystick
-                if (joyActive) {
-                    let moveTouch = null;
-                    for(let i=0; i<e.touches.length; i++) {
-                        if (e.touches[i].clientX <= window.innerWidth / 2) {
-                            moveTouch = e.touches[i];
+                // If either system is active, freeze the web page from shifting!
+                if (joyActive || lookTouchId !== null) {
+                    e.preventDefault(); 
+                }
+
+                // 1. Evaluate Joystick Vector Tracking
+                if (joyActive && moveTouchId !== null) {
+                    let activeJoystickTouch = null;
+                    for (let i = 0; i < e.touches.length; i++) {
+                        if (e.touches[i].identifier === moveTouchId) {
+                            activeJoystickTouch = e.touches[i];
                         }
                     }
-                    if(moveTouch) {
-                        let offset = { x: moveTouch.clientX - joyOrigin.x, y: moveTouch.clientY - joyOrigin.y };
+                    if (activeJoystickTouch) {
+                        let offset = { x: activeJoystickTouch.clientX - joyOrigin.x, y: activeJoystickTouch.clientY - joyOrigin.y };
                         let len = Math.hypot(offset.x, offset.y);
                         if (len > maxJoyDist) { offset.x = (offset.x / len) * maxJoyDist; offset.y = (offset.y / len) * maxJoyDist; }
                         thumb.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
@@ -417,45 +428,54 @@
                     }
                 }
 
-                // 2. Process Fluid Camera Looking Drag
+                // 2. Evaluate Swipe Camera Matrix Tracking
                 if (lookTouchId !== null) {
+                    let activeLookTouch = null;
                     for (let i = 0; i < e.touches.length; i++) {
                         if (e.touches[i].identifier === lookTouchId) {
-                            let touch = e.touches[i];
-                            let deltaX = touch.clientX - lastLookX;
-                            
-                            // Adjust camera look angle directly relative to displacement distance
-                            player.angle += deltaX * 0.006; 
-                            lastLookX = touch.clientX;
+                            activeLookTouch = e.touches[i];
                         }
                     }
+                    if (activeLookTouch) {
+                        let deltaX = activeLookTouch.clientX - lastLookX;
+                        player.angle += deltaX * 0.007; // Smooth precision scale factor
+                        lastLookX = activeLookTouch.clientX;
+                    }
                 }
-            }, {passive: false});
+            }, {passive: false}); // passive: false allows preventDefault to fire!
 
+            // --- DETACH FINGER LIFTS CLEANLY ---
             window.addEventListener('touchend', (e) => {
                 for (let i = 0; i < e.changedTouches.length; i++) {
                     let touch = e.changedTouches[i];
                     if (touch.identifier === lookTouchId) {
                         lookTouchId = null;
                     }
+                    if (touch.identifier === moveTouchId) {
+                        moveTouchId = null;
+                        joyActive = false;
+                        thumb.style.transform = 'translate(0px, 0px)';
+                        forwardInput = 0;
+                        strafeInput = 0;
+                    }
                 }
+            });
 
-                // If movement thumb lifted, zero out coordinates parameters
-                let leftTouchStillActive = false;
-                for(let i=0; i<e.touches.length; i++) {
-                    if(e.touches[i].clientX <= window.innerWidth / 2) leftTouchStillActive = true;
-                }
-                if(!leftTouchStillActive) {
-                    joyActive = false;
-                    thumb.style.transform = 'translate(0px, 0px)';
-                    forwardInput = 0;
-                    strafeInput = 0;
+            window.addEventListener('touchcancel', (e) => {
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    let touch = e.changedTouches[i];
+                    if (touch.identifier === lookTouchId) lookTouchId = null;
+                    if (touch.identifier === moveTouchId) {
+                        moveTouchId = null; joyActive = false;
+                        thumb.style.transform = 'translate(0px, 0px)';
+                        forwardInput = 0; strafeInput = 0;
+                    }
                 }
             });
 
             fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dischargeActiveWeapon(); });
 
-            // Keyboard fallbacks split mappings
+            // Keyboard fallbacks 
             window.addEventListener('keydown', (e) => {
                 if (e.key === ' ' || e.key === 'Spacebar') dischargeActiveWeapon();
                 if (e.key.toLowerCase() === 'w') forwardInput = 1;
@@ -536,7 +556,6 @@
             }
         }
 
-        // --- PHYSICS FRAME ENGINE TICK ---
         function engineFrameStep(timestamp) {
             requestAnimationFrame(engineFrameStep);
             let dt = (timestamp - lastTime) / 1000;
@@ -549,7 +568,6 @@
                 while (player.angle < 0) player.angle += Math.PI * 2;
                 while (player.angle > Math.PI * 2) player.angle -= Math.PI * 2;
 
-                // Authentic Strafing Matrix Engine (Perpendicular Vector Math Splits)
                 let fwdX = Math.cos(player.angle) * forwardInput;
                 let fwdY = Math.sin(player.angle) * forwardInput;
                 
@@ -563,7 +581,6 @@
                 if (map[Math.floor(player.y) * mapW + Math.floor(nextX)] === 0) player.x = nextX;
                 if (map[Math.floor(nextY) * mapW + Math.floor(player.x)] === 0) player.y = nextY;
 
-                // Drone tracking loop
                 drones.forEach(d => {
                     if (!d.alive) return;
                     let dx = player.x - d.x, dy = player.y - d.y;
@@ -585,7 +602,6 @@
                     }
                 });
 
-                // Track Fireballs
                 for (let i = projectiles.length - 1; i >= 0; i--) {
                     let p = projectiles[i];
                     p.x += p.vx * dt; p.y += p.vy * dt;
@@ -605,7 +621,6 @@
                     }
                 }
 
-                // Decay particles
                 for(let i=particles.length-1; i>=0; i--) {
                     let p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.6;
                     if(p.life <= 0) particles.splice(i, 1);
@@ -615,7 +630,6 @@
             renderGraphicsCircuit();
         }
 
-        // --- RENDER CORE WITH DYNAMIC FLASHLIGHT AND HUD TELEMETRY ---
         function renderGraphicsCircuit() {
             ctx.fillStyle = '#010103';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -677,7 +691,6 @@
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
             }
 
-            // Project Sprites
             let spriteQueue = [];
             drones.forEach(d => { spriteQueue.push({ obj: d, type: 'drone', x: d.x, y: d.y }); });
             projectiles.forEach(p => { spriteQueue.push({ obj: p, type: 'fireball', x: p.x, y: p.y }); });
@@ -734,7 +747,6 @@
             });
             ctx.globalAlpha = 1.0;
 
-            // Render Particle sparks
             particles.forEach(p => {
                 let px = p.x - player.x, py = p.y - player.y;
                 let pDist = Math.hypot(px, py), pAng = Math.atan2(py, px) - player.angle;
