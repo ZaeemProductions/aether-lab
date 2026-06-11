@@ -16,7 +16,7 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #0a0e17;
+            background-color: #05070f;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         #canvas-container {
@@ -27,6 +27,36 @@
             left: 0;
             z-index: 1;
         }
+        
+        /* Audio Unlock Setup Overlay */
+        #audio-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 26, 0.95);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            text-align: center;
+        }
+        .btn-start-game {
+            margin-top: 20px;
+            padding: 16px 45px;
+            background: linear-gradient(135deg, #ffaa00 0%, #ff5500 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+            border-radius: 35px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 170, 0, 0.5);
+        }
+
         #ui-layer {
             position: absolute;
             top: 0;
@@ -41,15 +71,15 @@
             padding: 25px;
         }
         .hud-element {
-            background: rgba(13, 17, 23, 0.85);
-            border: 2px solid #ffaa00;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+            background: rgba(10, 14, 26, 0.85);
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
             padding: 12px 25px;
             border-radius: 20px;
             color: #ffffff;
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(8px);
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 1px;
         }
         #top-hud {
@@ -60,43 +90,63 @@
         #stat-growth { color: #ffaa00; text-shadow: 0 0 8px #ffaa00; }
         #stat-count { color: #00ffcc; text-shadow: 0 0 8px #00ffcc; }
         
-        /* iPad Mobile Virtual Joystick */
+        /* GUI Responsive Controls Layer */
         #controls-layer {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: flex-end;
             width: 100%;
             padding-bottom: 15px;
         }
         .touch-zone { pointer-events: auto; }
+        
         #joystick-bound {
-            width: 130px;
-            height: 130px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(255, 170, 0, 0.3);
+            width: 140px;
+            height: 140px;
+            background: rgba(0, 255, 204, 0.03);
+            border: 3px dashed rgba(0, 255, 204, 0.4);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.05);
         }
         #joystick-thumb {
-            width: 50px;
-            height: 50px;
-            background: radial-gradient(circle, #ffaa00 0%, #ff5500 100%);
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle, #00ffcc 0%, #0088aa 100%);
             border-radius: 50%;
-            box-shadow: 0 0 20px #ffaa00;
+            box-shadow: 0 0 25px #00ffcc;
         }
-        #instructions {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-size: 0.9rem;
+        
+        #ability-btn {
+            width: 105px;
+            height: 105px;
+            background: rgba(255, 170, 0, 0.15);
+            border: 3px solid #ffaa00;
+            color: #ffffff;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+            transition: transform 0.05s ease, opacity 0.3s;
         }
+        #ability-btn:disabled {
+            opacity: 0.4;
+            border-color: #555;
+            box-shadow: none;
+        }
+        .cooldown-text {
+            font-size: 0.75rem;
+            color: #ffcc00;
+            margin-top: 2px;
+        }
+        
         #error-log {
             position: absolute;
             top: 90px;
@@ -118,48 +168,133 @@
 </head>
 <body>
 
+    <div id="audio-overlay">
+        <h1 style="font-size: 2.5rem; color: #ffaa00; text-shadow: 0 0 15px #ffaa00;">MR. KIM SIMULATOR</h1>
+        <p style="color: #8a99ad; margin-top: 10px; padding: 0 20px;">Loads Custom 3D Character Asset, Time-Delta Physics, and Web Audio Systems</p>
+        <button class="btn-start-game" onclick="startGameInterface()">INITIALIZE SYSTEM</button>
+    </div>
+
     <div id="canvas-container"></div>
     <div id="error-log"></div>
 
     <div id="ui-layer">
         <div id="top-hud">
             <div class="hud-element">MR. KIM SIZE: <span id="stat-growth">1.0x</span></div>
-            <div class="hud-element">DEVOURED: <span id="stat-count">0</span></div>
+            <div class="hud-element">ABSORBED DUMMIES: <span id="stat-count">0</span></div>
         </div>
 
         <div id="controls-layer">
             <div id="joystick-bound" class="touch-zone">
                 <div id="joystick-thumb"></div>
             </div>
+            <button id="ability-btn" class="touch-zone" onclick="triggerShadowTwinAbility()">
+                <span>TWIN</span>
+                <div id="cd-timer" class="cooldown-text">READY</div>
+            </button>
         </div>
-        <div id="instructions">RUN INTO SMALLER DUMMIES TO ABSORB THEM</div>
     </div>
 
     <script>
+        // --- NATIVE AUDIO ENGINE ---
+        class WebAudioSystem {
+            constructor() {
+                this.ctx = null;
+                this.bgmInterval = null;
+            }
+            init() {
+                if (this.ctx) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.startChiptuneBGM();
+            }
+            playPopSound() {
+                if (!this.ctx) return;
+                let osc = this.ctx.createOscillator();
+                let gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.12);
+            }
+            playTwinSound() {
+                if (!this.ctx) return;
+                let osc = this.ctx.createOscillator();
+                let gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(200, this.ctx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.4);
+            }
+            startChiptuneBGM() {
+                let noteSequence = [110, 130, 146, 130, 165, 146, 110, 165];
+                let index = 0;
+                this.bgmInterval = setInterval(() => {
+                    if (!gameActive || !this.ctx) return;
+                    let osc = this.ctx.createOscillator();
+                    let gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(noteSequence[index], this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.4);
+                    index = (index + 1) % noteSequence.length;
+                }, 400);
+            }
+        }
+
+        const audio = new WebAudioSystem();
+
+        function startGameInterface() {
+            document.getElementById('audio-overlay').style.display = 'none';
+            audio.init();
+            initEngine();
+        }
+
+        // --- CORE GAME MODULE CONFIGURATION ---
         let scene, camera, renderer, clock;
         let player, playerMesh;
+        let twinClone = null;
         let targets = [];
         let particles = [];
         
+        let gameActive = true;
         let devouredCount = 0;
-        let playerScaleModifier = 4.0; // Perfect base layout scale
+        let playerScaleModifier = 4.0; 
         let cameraZoomFactor = 1.0;
         
         const moveInput = new THREE.Vector2(0, 0);
-        const mapSize = 45;
-        const playerSpeedBase = 15.0;
+        const mapSize = 50;
+        const playerSpeedBase = 16.0;
+
+        // Ability parameters
+        let twinAbilityActive = false;
+        let twinTimeRemaining = 0;
+        let twinCooldownTimer = 0;
+        const twinMaxCooldown = 12.0;
 
         let joystickActive = false;
         let joystickStart = new THREE.Vector2();
         const maxJoystickDist = 50;
 
-        function init() {
+        function initEngine() {
             const container = document.getElementById('canvas-container');
             clock = new THREE.Clock();
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0a0e17);
-            scene.fog = new THREE.FogExp2(0x0a0e17, 0.015);
+            scene.background = new THREE.Color(0x05070f);
+            scene.fog = new THREE.FogExp2(0x05070f, 0.012);
 
             camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
             updateCameraPosition();
@@ -170,45 +305,47 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
+            // Lighting Rig Configuration
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xffaa00, 0.8);
-            sunLight.position.set(20, 40, 20);
-            scene.add(sunLight);
+            const skyLight = new THREE.DirectionalLight(0x00ffcc, 0.7);
+            skyLight.position.set(20, 45, 20);
+            scene.add(skyLight);
 
-            const rimLight = new THREE.DirectionalLight(0x00ffff, 0.4);
-            rimLight.position.set(-20, 20, -20);
-            scene.add(rimLight);
+            const backlight = new THREE.DirectionalLight(0xff00ff, 0.4);
+            backlight.position.set(-20, 20, -20);
+            scene.add(backlight);
 
             buildPlaygroundMap();
             buildPlayerCharacter();
             setupJoystickControls();
             
-            for(let i=0; i<15; i++) spawnTargetItem();
+            for(let i=0; i<18; i++) spawnCyberDummy();
 
             window.addEventListener('resize', onWindowResize);
-            animate();
+            clock.getDelta(); // Clear buffer timeline spikes
         }
 
         function buildPlaygroundMap() {
             const floorGeo = new THREE.PlaneGeometry(mapSize * 2, mapSize * 2);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x121824, roughness: 0.6 });
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x0b0f19, roughness: 0.5 });
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             scene.add(floor);
 
-            const gridLines = new THREE.GridHelper(mapSize * 2, mapSize, 0xffaa00, 0x1f293d);
-            gridLines.position.y = 0.01;
+            const gridLines = new THREE.GridHelper(mapSize * 2, mapSize, 0x00ffcc, 0x161f33);
+            gridLines.position.y = 0.005;
             scene.add(gridLines);
 
-            const fenceGeo = new THREE.BoxGeometry(mapSize * 2, 1, 1);
-            const fenceMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0x552200 });
+            // Glowing Boundary Structures
+            const wallGeo = new THREE.BoxGeometry(mapSize * 2, 0.6, 0.6);
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00aa88 });
             
-            const n = new THREE.Mesh(fenceGeo, fenceMat); n.position.set(0, 0.5, -mapSize); scene.add(n);
-            const s = new THREE.Mesh(fenceGeo, fenceMat); s.position.set(0, 0.5, mapSize); scene.add(s);
-            const e = new THREE.Mesh(fenceGeo, fenceMat); e.rotation.y = Math.PI/2; e.position.set(mapSize, 0.5, 0); scene.add(e);
-            const w = new THREE.Mesh(fenceGeo, fenceMat); w.rotation.y = Math.PI/2; w.position.set(-mapSize, 0.5, 0); scene.add(w);
+            const n = new THREE.Mesh(wallGeo, wallMat); n.position.set(0, 0.3, -mapSize); scene.add(n);
+            const s = new THREE.Mesh(wallGeo, wallMat); s.position.set(0, 0.3, mapSize); scene.add(s);
+            const e = new THREE.Mesh(wallGeo, wallMat); e.rotation.y = Math.PI/2; e.position.set(mapSize, 0.3, 0); scene.add(e);
+            const w = new THREE.Mesh(wallGeo, wallMat); w.rotation.y = Math.PI/2; w.position.set(-mapSize, 0.3, 0); scene.add(w);
         }
 
         function buildPlayerCharacter() {
@@ -219,17 +356,16 @@
             const loader = new THREE.GLTFLoader();
             loader.load('./Meshy_AI_Cloudy_Sky_Portrait_0610185922_texture.glb', function(gltf) {
                 playerMesh = gltf.scene;
-                
                 playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier); 
                 
-                // FIXED VALUE: Brought up to 2.2 units so feet touch ground surface perfectly
-                playerMesh.position.set(0, 0.55 * playerScaleModifier, 0); 
+                // FIXED COORDINATES: Shifted upwards relative to scale matrix to prevent leg embedding errors
+                playerMesh.position.set(0, 0.28 * playerScaleModifier, 0); 
                 playerMesh.rotation.y = Math.PI; 
                 player.add(playerMesh);
             }, undefined, function(error) {
                 const logBox = document.getElementById('error-log');
                 logBox.style.display = 'block';
-                logBox.innerText = "Check file location for your custom portrait model.";
+                logBox.innerText = "Asset verify fail. Confirm filename fits folder root layout.";
                 console.error(error);
             });
         }
@@ -260,93 +396,119 @@
                 thumb.style.transform = 'translate(0px, 0px)';
                 moveInput.set(0, 0);
             });
-
-            let keys = { w: false, a: false, s: false, d: false };
-            window.addEventListener('keydown', (e) => {
-                if(e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = true; updateKeyInput(); }
-            });
-            window.addEventListener('keyup', (e) => {
-                if(e.key.toLowerCase() in keys) { keys[e.key.toLowerCase()] = false; updateKeyInput(); }
-            });
-            function updateKeyInput() {
-                if(joystickActive) return;
-                let x = 0, z = 0;
-                if(keys.w) z += 1; if(keys.s) z -= 1;
-                if(keys.a) x -= 1; if(keys.d) x += 1;
-                moveInput.set(x, z).normalize();
-            }
         }
 
-        function spawnTargetItem() {
-            const targetGroup = new THREE.Group();
-            const scaleFactor = 0.4 + Math.random() * 1.5;
+        // --- THE TWIN SPECIAL ABILITY LOGIC ---
+        function triggerShadowTwinAbility() {
+            if (twinCooldownTimer > 0 || twinAbilityActive || !playerMesh) return;
+            
+            audio.playTwinSound();
+            twinAbilityActive = true;
+            twinTimeRemaining = 5.0; // Ability lasts for 5 seconds
 
-            const body = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.4, 0.4, 1.4, 8),
-                new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff, roughness: 0.4 })
+            twinClone = new THREE.Group();
+            
+            // Build Hologram Representation of your current size state
+            const cloneGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
+            const cloneMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.7 });
+            const holoMesh = new THREE.Mesh(cloneGeo, cloneMat);
+            
+            // Scaled dynamically relative to current size ratios
+            const currentScaleRatio = playerScaleModifier / 4.0;
+            holoMesh.scale.set(currentScaleRatio, currentScaleRatio, currentScaleRatio);
+            holoMesh.position.y = 0.9 * currentScaleRatio;
+            twinClone.add(holoMesh);
+
+            // Spawn slightly forward from where Mr. Kim is facing
+            const forwardVector = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0,1,0), player.rotation.y);
+            twinClone.position.copy(player.position).add(forwardVector.multiplyScalar(3));
+            
+            scene.add(twinClone);
+            createSparksExplosion(twinClone.position, 0x00ffff, currentScaleRatio);
+        }
+
+        // --- UPGRADED MECH-DUMMY GENERATOR ---
+        function spawnCyberDummy() {
+            const dummyGroup = new THREE.Group();
+            const scaleFactor = 0.5 + Math.random() * 1.5;
+
+            // Multi-part Mech structure
+            const torso = new THREE.Mesh(
+                new THREE.BoxGeometry(0.7, 0.8, 0.6),
+                new THREE.MeshStandardMaterial({ color: 0x1c2333, roughness: 0.3, metalness: 0.7 })
             );
-            body.position.y = 0.7;
-            targetGroup.add(body);
+            torso.position.y = 0.6;
+            dummyGroup.add(torso);
 
-            const head = new THREE.Mesh(
-                new THREE.SphereGeometry(0.35, 8, 8),
-                new THREE.MeshStandardMaterial({ color: 0xffffff })
+            const visor = new THREE.Mesh(
+                new THREE.BoxGeometry(0.5, 0.15, 0.1),
+                new THREE.MeshBasicMaterial({ color: 0xff0055 })
             );
-            head.position.y = 1.5;
-            targetGroup.add(head);
+            visor.position.set(0, 0.7, 0.31);
+            dummyGroup.add(visor);
 
-            targetGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            const wheel = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.2, 0.3, 8),
+                new THREE.MeshStandardMaterial({ color: 0x050505 })
+            );
+            wheel.rotation.z = Math.PI/2;
+            wheel.position.y = 0.15;
+            dummyGroup.add(wheel);
 
-            targetGroup.position.set(
+            dummyGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            
+            // Random distribution positioning coordinates
+            dummyGroup.position.set(
                 (Math.random() - 0.5) * (mapSize * 1.7),
                 0,
                 (Math.random() - 0.5) * (mapSize * 1.7)
             );
 
-            targetGroup.userData = { 
-                radius: scaleFactor * 0.8,
-                bounceSeed: Math.random() * 10,
-                fleeing: false
+            dummyGroup.userData = { 
+                radius: scaleFactor * 0.7,
+                fleeSpeed: 6.5 + (Math.random() * 3.0),
+                seed: Math.random() * 5
             };
 
-            scene.add(targetGroup);
-            targets.push(targetGroup);
+            scene.add(dummyGroup);
+            targets.push(dummyGroup);
         }
 
-        function createAbsorbParticles(pos, colorHex, scaleVal) {
+        function createSparksExplosion(pos, colorHex, currentScale) {
             const geo = new THREE.BoxGeometry(0.15, 0.15, 0.15);
             const mat = new THREE.MeshBasicMaterial({ color: colorHex });
-            const count = Math.floor(15 * scaleVal);
+            const count = Math.floor(18 * currentScale);
             
             for(let i=0; i<count; i++) {
                 const p = new THREE.Mesh(geo, mat);
                 p.position.copy(pos);
-                p.position.y += scaleVal;
+                p.position.y += 0.5 * currentScale;
                 p.userData = {
                     velocity: new THREE.Vector3(
-                        (Math.random() - 0.5) * (8 * scaleVal),
-                        Math.random() * (10 * scaleVal),
-                        (Math.random() - 0.5) * (8 * scaleVal)
+                        (Math.random() - 0.5) * (9 * currentScale),
+                        Math.random() * (11 * currentScale),
+                        (Math.random() - 0.5) * (9 * currentScale)
                     ),
-                    life: 0.7
+                    life: 0.65
                 };
                 scene.add(p);
                 particles.push(p);
             }
         }
 
-        function handlePlayerGrowth(targetRadius) {
+        function handleGrowthSequence(targetRadius) {
+            audio.playPopSound();
             devouredCount++;
             
-            const growthIncrement = targetRadius * 0.25;
+            const growthIncrement = targetRadius * 0.22;
             playerScaleModifier += growthIncrement;
-            cameraZoomFactor += growthIncrement * 0.12;
+            cameraZoomFactor += growthIncrement * 0.14;
 
             if (playerMesh) {
                 playerMesh.scale.set(playerScaleModifier, playerScaleModifier, playerScaleModifier);
                 
-                // FIXED RATIO ENGINE: Maintains leg position on top of floor throughout full growth cycle
-                playerMesh.position.y = 0.55 * playerScaleModifier;
+                // HEIGHT RE-CALIBRATION MATRIX: Matches floor offset during active expansion shifts
+                playerMesh.position.y = 0.28 * playerScaleModifier; 
             }
 
             document.getElementById('stat-growth').innerText = (playerScaleModifier / 4.0).toFixed(1) + "x";
@@ -359,65 +521,136 @@
                 (player ? player.position.y : 0) + (14 * cameraZoomFactor), 
                 (player ? player.position.z : 0) + (18 * cameraZoomFactor)
             );
-            if(player) camera.lookAt(player.position.x, player.position.y + (1.5 * cameraZoomFactor), player.position.z);
+            if(player) camera.lookAt(player.position.x, player.position.y + (1.2 * cameraZoomFactor), player.position.z);
         }
 
+        // --- HARDWARE STABLE TICK LOOP ---
         function animate() {
             requestAnimationFrame(animate);
+            if (!clock) return;
+            
+            // Delta time calculation ensures identical velocities on 60Hz and 120Hz screens
             const delta = clock.getDelta();
 
-            if (player) {
-                const speedModifier = playerSpeedBase * (1 + (cameraZoomFactor - 1) * 0.4); 
-                const moveVec = new THREE.Vector3(moveInput.x, 0, -moveInput.y).multiplyScalar(speedModifier * delta);
-                player.position.add(moveVec);
-
-                if (moveInput.lengthSq() > 0.01) {
-                    player.rotation.y = Math.atan2(moveInput.x, -moveInput.y);
+            if (gameActive) {
+                // Update Cooldown Interface Elements
+                if (twinCooldownTimer > 0) {
+                    twinCooldownTimer -= delta;
+                    if (twinCooldownTimer <= 0) {
+                        document.getElementById('ability-btn').disabled = false;
+                        document.getElementById('cd-timer').innerText = "READY";
+                    } else {
+                        document.getElementById('ability-btn').disabled = true;
+                        document.getElementById('cd-timer').innerText = twinCooldownTimer.toFixed(1) + "s";
+                    }
                 }
 
-                player.position.x = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.x));
-                player.position.z = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.z));
+                // Handle Twin Active AI Routine Mapping
+                if (twinAbilityActive && twinClone) {
+                    twinTimeRemaining -= delta;
+                    
+                    // Automated vacuum AI path tracking nearest target entity item
+                    let closestTarget = null;
+                    let recordDist = Infinity;
+                    
+                    targets.forEach(t => {
+                        let d = twinClone.position.distanceTo(t.position);
+                        if (d < recordDist) {
+                            recordDist = d;
+                            closestTarget = t;
+                        }
+                    });
 
-                updateCameraPosition();
+                    if (closestTarget) {
+                        let twinMoveDir = new THREE.Vector3().subVectors(closestTarget.position, twinClone.position);
+                        twinMoveDir.y = 0;
+                        twinMoveDir.normalize();
+                        twinClone.position.add(twinMoveDir.multiplyScalar(22.0 * delta)); // Fast clone chase vector
+                    }
+
+                    if (twinTimeRemaining <= 0) {
+                        createSparksExplosion(twinClone.position, 0x00ffff, playerScaleModifier / 4.0);
+                        scene.remove(twinClone);
+                        twinClone = null;
+                        twinAbilityActive = false;
+                        twinCooldownTimer = twinMaxCooldown; // Initiate standard cooldown tracking cycle
+                    }
+                }
+
+                // Mr. Kim Movement Processing
+                if (player) {
+                    const speedModifier = playerSpeedBase * (1 + (cameraZoomFactor - 1) * 0.35); 
+                    const moveVec = new THREE.Vector3(moveInput.x, 0, -moveInput.y).multiplyScalar(speedModifier * delta);
+                    player.position.add(moveVec);
+
+                    if (moveInput.lengthSq() > 0.01) {
+                        player.rotation.y = Math.atan2(moveInput.x, -moveInput.y);
+                    }
+
+                    player.position.x = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.x));
+                    player.position.z = Math.max(-mapSize + 2, Math.min(mapSize - 2, player.position.z));
+
+                    updateCameraPosition();
+                }
+
+                // Mech-Dummy Entities Execution Arrays
+                const currentPlayerRadius = (playerScaleModifier / 4.0) * 1.5;
+                const time = performance.now() * 0.005;
+
+                for(let i = targets.length - 1; i >= 0; i--) {
+                    const target = targets[i];
+                    
+                    // Hover animations
+                    target.children[0].position.y = 0.6 + Math.sin(time + target.userData.seed) * 0.08;
+
+                    const distToPlayer = player.position.distanceTo(target.position);
+                    const distToTwin = twinClone ? twinClone.position.distanceTo(target.position) : Infinity;
+                    
+                    const combinedRadius = currentPlayerRadius + target.userData.radius;
+
+                    // Fleeing Routine execution path logic triggers if player or clone gets close
+                    let dangerDist = Math.min(distToPlayer, distToTwin);
+                    let dangerSource = distToPlayer < distToTwin ? player : twinClone;
+
+                    if (dangerDist < combinedRadius * 4.0) {
+                        const fleeDir = new THREE.Vector3().subVectors(target.position, dangerSource.position);
+                        fleeDir.y = 0;
+                        fleeDir.normalize();
+                        target.position.add(fleeDir.multiplyScalar(target.userData.fleeSpeed * delta));
+                        target.rotation.y = Math.atan2(fleeDir.x, fleeDir.z);
+                        
+                        target.position.x = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.x));
+                        target.position.z = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.z));
+                    }
+
+                    // Check Player Consumption
+                    if (distToPlayer < combinedRadius) {
+                        createSparksExplosion(target.position, 0xffaa00, target.scale.y);
+                        handleGrowthSequence(target.userData.radius);
+                        scene.remove(target);
+                        targets.splice(i, 1);
+                        spawnCyberDummy();
+                        continue;
+                    }
+
+                    // Check Shadow Twin Vacuum Consumption
+                    if (distToTwin < (combinedRadius * 1.2)) {
+                        createSparksExplosion(target.position, 0x00ffff, target.scale.y);
+                        handleGrowthSequence(target.userData.radius);
+                        scene.remove(target);
+                        targets.splice(i, 1);
+                        spawnCyberDummy();
+                    }
+                }
             }
 
-            const time = performance.now() * 0.004;
-            const currentPlayerRadius = (playerScaleModifier / 4.0) * 1.5;
-
-            for(let i = targets.length - 1; i >= 0; i--) {
-                const target = targets[i];
-                
-                target.position.y = Math.abs(Math.sin(time + target.userData.bounceSeed)) * 0.5 * target.scale.y;
-
-                const distance = player.position.distanceTo(target.position);
-                const combinedRadius = currentPlayerRadius + target.userData.radius;
-
-                if (distance < combinedRadius * 3.5) {
-                    const fleeDir = new THREE.Vector3().subVectors(target.position, player.position).normalize();
-                    target.position.add(fleeDir.multiplyScalar(6.0 * delta * target.scale.x));
-                    target.rotation.y = Math.atan2(fleeDir.x, fleeDir.z);
-                    
-                    target.position.x = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.x));
-                    target.position.z = Math.max(-mapSize+2, Math.min(mapSize-2, target.position.z));
-                }
-
-                if (distance < combinedRadius) {
-                    createAbsorbParticles(target.position, 0xffaa00, target.scale.y);
-                    handlePlayerGrowth(target.userData.radius);
-                    
-                    scene.remove(target);
-                    targets.splice(i, 1);
-                    
-                    spawnTargetItem();
-                }
-            }
-
+            // Frame-independent explosion mechanics
             for(let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.position.add(p.userData.velocity.clone().multiplyScalar(delta));
-                p.userData.velocity.y -= delta * 22.0; 
+                p.userData.velocity.y -= delta * 24.0; 
                 p.userData.life -= delta;
-                p.scale.multiplyScalar(0.96);
+                p.scale.multiplyScalar(0.95);
 
                 if(p.userData.life <= 0) {
                     scene.remove(p);
@@ -433,8 +666,6 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
-
-        window.onload = init;
     </script>
 </body>
 </html>
