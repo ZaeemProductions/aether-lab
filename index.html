@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Mainframe Suite</title>
+    <title>Game Center // 1st Hub</title>
     
+    <!-- Official Branding Web Logo Tab Icon -->
     <link rel="icon" type="image/png" href="logo.png">
 
     <style>
@@ -39,7 +40,7 @@
             pointer-events: none;
         }
 
-        /* Hub Interface Scanner Container */
+        /* Hub Interface Main Container */
         .mainframe-wrapper {
             position: relative;
             z-index: 2;
@@ -59,11 +60,11 @@
             text-align: center;
             margin-bottom: 50px;
             padding: 30px;
-            border-bottom: 1px dashed rgba(255, 17, 17, 0.2);
+            border-bottom: 1px dashed rgba(255, 17, 17, 0.15);
         }
         .lab-logo {
-            width: 115px;
-            height: 115px;
+            width: 120px;
+            height: 120px;
             object-fit: contain;
             filter: drop-shadow(0 0 15px rgba(255, 17, 17, 0.6)) 
                     drop-shadow(0 0 30px rgba(0, 255, 204, 0.3));
@@ -71,18 +72,20 @@
             animation: corePulse 4s infinite ease-in-out;
         }
         .lab-title {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 900;
-            letter-spacing: 5px;
+            letter-spacing: 6px;
             color: #ffffff;
-            text-shadow: 0 0 10px rgba(255, 17, 17, 0.4);
+            text-shadow: 0 0 12px rgba(255, 17, 17, 0.5);
         }
         .lab-subtitle {
-            font-size: 0.85rem;
-            color: #556275;
-            margin-top: 8px;
-            letter-spacing: 2px;
+            font-size: 0.95rem;
+            color: #00ffcc;
+            text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+            margin-top: 10px;
+            letter-spacing: 3px;
             text-transform: uppercase;
+            font-weight: 700;
         }
 
         /* Custom Project Modular Matrix Grid Layout */
@@ -176,7 +179,7 @@
             text-decoration: none;
             transition: all 0.2s ease;
         }
-        .launch-anchor:block-active, .launch-anchor:hover {
+        .launch-anchor:hover {
             background: #00ffcc;
             color: #020205;
             box-shadow: 0 0 15px #00ffcc;
@@ -200,7 +203,7 @@
 
         /* Infrastructure Status Terminal Footer Layout */
         .hub-telemetry-footer {
-            border-top: 1px dashed rgba(255, 17, 17, 0.2);
+            border-top: 1px dashed rgba(255, 17, 17, 0.15);
             padding-top: 25px;
             display: flex;
             flex-direction: column;
@@ -229,14 +232,17 @@
 
     <div class="mainframe-wrapper">
         
+        <!-- Updated Arcade Header Configuration -->
         <header class="hub-header">
-            <img src="logo.png" alt="Zaeem Labs Graphic Core Asset" class="lab-logo">
-            <h1 class="lab-title">ZAEEM LABS</h1>
-            <div class="lab-subtitle">Experimental Graphics Infrastructure Simulation Mainframe</div>
+            <img src="logo.png" alt="Zaeem Labs Logo" class="lab-logo">
+            <h1 class="lab-title">GAME CENTER</h1>
+            <div class="lab-subtitle">1st Hub // Zaeem Labs</div>
         </header>
 
+        <!-- Games Grid System -->
         <main class="modules-grid">
             
+            <!-- CORE 01: ACTIVE RETRO 3D SHOOTER SYSTEM -->
             <section class="module-card online">
                 <div class="status-flag online">READY</div>
                 <div class="module-meta">
@@ -246,6 +252,7 @@
                 <a href="tools/game.html" class="launch-anchor">BOOT CORE</a>
             </section>
 
+            <!-- CORE 02: FUTURE GAME PREPARATION SLOT CONTAINER -->
             <section class="module-card offline">
                 <div class="status-flag encrypted">LOCKED</div>
                 <div class="module-meta">
@@ -255,6 +262,7 @@
                 <button class="lock-anchor" disabled>SECURE MODULE</button>
             </section>
 
+            <!-- CORE 03: FUTURE GAME PREPARATION SLOT CONTAINER -->
             <section class="module-card offline">
                 <div class="status-flag encrypted">LOCKED</div>
                 <div class="module-meta">
@@ -266,6 +274,7 @@
 
         </main>
 
+        <!-- Terminal Framework Diagnostics Footer Telemetry Logs -->
         <footer class="hub-telemetry-footer">
             <div class="telemetry-row">
                 <span>SYSTEM STATUS: <span style="color: #00ffcc; font-weight:900;">SECURED</span></span>
@@ -273,7 +282,7 @@
             </div>
             <div class="telemetry-row">
                 <span>HARDWARE SYNC: <span class="telemetry-value">120HZ PROMOTION PLATFORMS OK</span></span>
-                <span>REGISTRY VERSION: <span class="telemetry-value">ALPHA_CORE.4.0</span></span>
+                <span>REGISTRY VERSION: <span class="telemetry-value">ALPHA_CORE.4.1</span></span>
             </div>
         </footer>
 
