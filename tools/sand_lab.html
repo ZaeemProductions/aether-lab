@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zaeem Labs // Particle Sandbox</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0; padding: 0;
+            user-select: none; -webkit-user-select: none;
+        }
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #05050c;
+            color: #ffffff;
+            font-family: ui-monospace, Consolas, monospace;
+            overflow: hidden;
+        }
+        .container {
+            display: flex; flex-direction: column;
+            width: 100%; height: 100%; padding: 20px;
+            position: relative; z-index: 2;
+        }
+        .header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px dashed rgba(255, 0, 255, 0.2); padding-bottom: 15px; margin-bottom: 15px;
+        }
+        .back-btn {
+            color: #728196; text-decoration: none; font-size: 0.85rem; font-weight: 700;
+        }
+        .back-btn:hover { color: #ff00ff; }
+        h1 { font-size: 1.5rem; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 0, 255, 0.3); }
+
+        .sandbox-area {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            background: #010103; border: 2px solid rgba(255, 0, 255, 0.15);
+            border-radius: 16px; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+        #sandbox-canvas {
+            display: block; background: #000000; box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        /* Tactical Element Selection Dock */
+        .toolbar {
+            display: flex; justify-content: center; gap: 10px; margin-top: 15px; padding: 10px;
+            background: rgba(13, 14, 28, 0.8); border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);
+            overflow-x: auto;
+        }
+        .tool-btn {
+            padding: 12px 20px; background: #0b0c16; border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #728196; font-size: 0.85rem; font-weight: 900; border-radius: 10px; cursor: pointer;
+            transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;
+        }
+        .tool-btn.active {
+            color: #ffffff; box-shadow: 0 0 12px var(--glow); border-color: var(--glow); background: rgba(255,255,255,0.02);
+        }
+        .clear-btn {
+            padding: 12px 20px; background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366;
+            color: #ff3366; font-size: 0.85rem; font-weight: 900; border-radius: 10px; cursor: pointer;
+        }
+        .clear-btn:hover { background: #ff3366; color: #ffffff; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-bar">
+            <a href="game_center.html" class="back-btn">⚡ EXIT_SIMULATION</a>
+            <h1>PARTICLE LABORATORY</h1>
+            <span style="color:#00ffcc; font-size:0.8rem; font-weight:900;">STATUS: CALM</span>
+        </div>
+
+        <div class="sandbox-area" id="canvas-container">
+            <canvas id="sandbox-canvas"></canvas>
+        </div>
+
+        <div class="toolbar">
+            <button class="tool-btn active" style="--glow: #ffcc00;" onclick="selectElement(1, this)">🟡 SAND</button>
+            <button class="tool-btn" style="--glow: #3399ff;" onclick="selectElement(2, this)">🔵 WATER</button>
+            <button class="tool-btn" style="--glow: #ff3300;" onclick="selectElement(3, this)">🔥 FIRE</button>
+            <button class="tool-btn" style="--glow: #44bd66;" onclick="selectElement(4, this)">🌱 PLANT</button>
+            <button class="tool-btn" style="--glow: #728196;" onclick="selectElement(5, this)">🧱 WALL</button>
+            <button class="tool-btn" style="--glow: #ffffff;" onclick="selectElement(0, this)">💨 ERASER</button>
+            <button class="clear-btn" onclick="clearSandboxGrid()">PURGE ALL</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CHILL AUDIO TRACK SYNTH SEQUENCER ---
+        class GentleSoundEngine {
+            constructor() { this.ctx = null; this.interval = null; }
+            init() {
+                if (this.ctx) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.startZenDroneLoop();
+            }
+            startZenDroneLoop() {
+                let notes = [55.00, 65.41, 73.42, 82.41]; // Cozy bass notes (A, C, D, E)
+                let currentIdx = 0;
+                this.interval = setInterval(() => {
+                    if (!this.ctx) return;
+                    let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+                    osc.type = 'sine'; // Super soft wave profile
+                    osc.frequency.setValueAtTime(notes[currentIdx], this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.8);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + 1.9);
+                    currentIdx = (currentIdx + 1) % notes.length;
+                }, 2000);
+            }
+        }
+        const audio = new GentleSoundEngine();
+
+        // --- PHYSICS SANDBOX SIMULATION SYSTEM ---
+        let canvas = document.getElementById('sandbox-canvas');
+        let ctx = canvas.getContext('2d');
+        
+        // Setup cell matrix size (120x120 handles mobile hardware easily without heat/lag)
+        const gridW = 120;
+        const gridH = 120;
+        let cellSize = 4;
+
+        let grid = new Array(gridW * gridH).fill(0);
+        let nextGrid = new Array(gridW * gridH).fill(0);
+
+        let currentSelectedElement = 1; // Default to Sand
+        let isDrawing = false;
+
+        window.onload = () => {
+            adjustCanvasScale();
+            audio.init();
+            setInterval(updatePhysicsCircuit, 1000 / 60); // Stable 60FPS lock loop
+            renderGridCircuit();
+        };
+
+        function adjustCanvasScale() {
+            let container = document.getElementById('canvas-container');
+            let size = Math.min(container.clientWidth, container.clientHeight) - 20;
+            canvas.width = size;
+            canvas.height = size;
+            cellSize = size / gridW;
+        }
+        window.addEventListener('resize', adjustCanvasScale);
+
+        function selectElement(id, btn) {
+            currentSelectedElement = id;
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function clearSandboxGrid() {
+            grid.fill(0);
+        }
+
+        // --- INTERACTIVE TOUCH TRACKING MATRICES ---
+        function getCellCoordinates(e) {
+            let rect = canvas.getBoundingClientRect();
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            let x = Math.floor((clientX - rect.left) / cellSize);
+            let y = Math.floor((clientY - rect.top) / cellSize);
+            return { x, y };
+        }
+
+        function spawnParticles(e) {
+            let coord = getCellCoordinates(e);
+            if (coord.x >= 0 && coord.x < gridW && coord.y >= 0 && coord.y < gridH) {
+                // Spray radius makes painting satisfying
+                let radius = currentSelectedElement === 5 ? 1 : 2; 
+                for (let dy = -radius; dy <= radius; dy++) {
+                    for (let dx = -radius; dx <= radius; dx++) {
+                        if (Math.random() > 0.4 || currentSelectedElement === 5) {
+                            let nx = coord.x + dx;
+                            let ny = coord.y + dy;
+                            if (nx >= 0 && nx < gridW && ny >= 0 && ny < gridH) {
+                                let idx = ny * gridW + nx;
+                                if (currentSelectedElement === 0) grid[idx] = 0; // Eraser
+                                else if (grid[idx] === 0) grid[idx] = currentSelectedElement;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; spawnParticles(e); });
+        window.addEventListener('mousemove', (e) => { if (isDrawing) spawnParticles(e); });
+        window.addEventListener('mouseup', () => isDrawing = false);
+
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; spawnParticles(e); }, { passive: true });
+        window.addEventListener('touchmove', (e) => { if (isDrawing) spawnParticles(e); }, { passive: true });
+        window.addEventListener('touchend', () => isDrawing = false);
+
+        // --- CELLULAR AUTOMATA PHYSICS CIRCUIT ---
+        function updatePhysicsCircuit() {
+            nextGrid.fill(0);
+
+            // Retain unmovable wall grid states instantly
+            for (let i = 0; i < grid.length; i++) {
+                if (grid[i] === 5) nextGrid[i] = 5;
+            }
+
+            for (let y = gridH - 1; y >= 0; y--) {
+                for (let x = 0; x < gridW; x++) {
+                    let idx = y * gridW + x;
+                    let type = grid[idx];
+
+                    if (type === 0 || type === 5) continue;
+
+                    let below = (y + 1) * gridW + x;
+                    let belowLeft = (y + 1) * gridW + (x - 1);
+                    let belowRight = (y + 1) * gridW + (x + 1);
+                    let left = y * gridW + (x - 1);
+                    let right = y * gridW + (x + 1);
+
+                    // 1. SAND LOGIC MATRIX
+                    if (type === 1) {
+                        if (y < gridH - 1 && grid[below] === 0 && nextGrid[below] === 0) { nextGrid[below] = 1; }
+                        else if (y < gridH - 1 && x > 0 && grid[belowLeft] === 0 && nextGrid[belowLeft] === 0) { nextGrid[belowLeft] = 1; }
+                        else if (y < gridH - 1 && x < gridW - 1 && grid[belowRight] === 0 && nextGrid[belowRight] === 0) { nextGrid[belowRight] = 1; }
+                        // Sink inside water
+                        else if (y < gridH - 1 && grid[below] === 2) { nextGrid[below] = 1; grid[below] = 2; nextGrid[idx] = 2; }
+                        else { nextGrid[idx] = 1; }
+                    }
+
+                    // 2. WATER FLUID DYNAMICS
+                    else if (type === 2) {
+                        if (y < gridH - 1 && grid[below] === 0 && nextGrid[below] === 0) { nextGrid[below] = 2; }
+                        else if (y < gridH - 1 && x > 0 && grid[belowLeft] === 0 && nextGrid[belowLeft] === 0) { nextGrid[belowLeft] = 2; }
+                        else if (y < gridH - 1 && x < gridW - 1 && grid[belowRight] === 0 && nextGrid[belowRight] === 0) { nextGrid[belowRight] = 2; }
+                        // Outward side fluid spills
+                        else if (x > 0 && grid[left] === 0 && nextGrid[left] === 0 && Math.random() > 0.3) { nextGrid[left] = 2; }
+                        else if (x < gridW - 1 && grid[right] === 0 && nextGrid[right] === 0 && Math.random() > 0.3) { nextGrid[right] = 2; }
+                        else { nextGrid[idx] = 2; }
+                    }
+
+                    // 3. FIRE LATTICE DYNAMICS
+                    else if (type === 3) {
+                        let above = (y - 1) * gridW + x;
+                        // Fire evaporates into thin air randomly
+                        if (Math.random() * 100 > 82) { nextGrid[idx] = 0; continue; }
+                        
+                        // Burn plants nearby
+                        let burned = false;
+                        let checkDirs = [above, below, left, right];
+                        for(let d of checkDirs) {
+                            if (grid[d] === 4) { grid[d] = 3; burned = true; }
+                        }
+
+                        if (y > 0 && grid[above] === 0 && nextGrid[above] === 0) { nextGrid[above] = 3; }
+                        else { nextGrid[idx] = 3; }
+                    }
+
+                    // 4. PLANT MATRICES LOGIC (Spreads if fed water)
+                    else if (type === 4) {
+                        nextGrid[idx] = 4;
+                        // Drink nearby water cells to grow upward stems
+                        let adjacent = [below, left, right];
+                        adjacent.forEach(adj => {
+                            if (grid[adj] === 2 && Math.random() * 100 > 94) {
+                                grid[adj] = 0; // absorb water
+                                let upCell = (y - 1) * gridW + (x + Math.floor(Math.random()*3)-1);
+                                if (y > 0 && grid[upCell] === 0) grid[upCell] = 4;
+                            }
+                        });
+                    }
+                }
+            }
+
+            // Copy calculation frames back onto workspace grid registers
+            let temp = grid; grid = nextGrid; nextGrid = temp;
+        }
+
+        // --- RENDER MATRIX CIRCUIT ---
+        function renderGridCircuit() {
+            requestAnimationFrame(renderGridCircuit);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let y = 0; y < gridH; y++) {
+                for (let x = 0; x < gridW; x++) {
+                    let type = grid[y * gridW + x];
+                    if (type === 0) continue;
+
+                    if (type === 1) ctx.fillStyle = '#ffcc00';      // Sand
+                    else if (type === 2) ctx.fillStyle = '#3399ff'; // Water
+                    else if (type === 3) ctx.fillStyle = '#ff4400'; // Fire
+                    else if (type === 4) ctx.fillStyle = '#44bd66'; // Plant
+                    else if (type === 5) ctx.fillStyle = '#3a3b45'; // Wall
+
+                    ctx.fillRect(x * cellSize, y * cellSize, cellSize + 0.5, cellSize + 0.5);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
