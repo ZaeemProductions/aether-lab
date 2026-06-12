@@ -141,7 +141,6 @@
             box-shadow: 0 0 15px #ff00ff;
         }
 
-        /* SEARCH DRAWER */
         #search-results-tray {
             margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 12px; max-height: 260px; overflow-y: auto; padding: 10px;
@@ -163,7 +162,7 @@
         }
         .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* --- PREMIUM STUDIO INTERFACE WORKSPACE --- */
+        /* --- STUDIO WORKSPACE GRID --- */
         .processor-workspace {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
@@ -184,6 +183,7 @@
             min-height: 380px;
             position: relative;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+            overflow: hidden;
         }
         #studio-canvas {
             max-width: 100%;
@@ -192,6 +192,8 @@
             border-radius: 8px;
             cursor: crosshair;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            /* Initializing smooth transition parameters */
+            transition: filter 0.05s linear; 
         }
         .canvas-telemetry-bar {
             width: 100%;
@@ -218,7 +220,6 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
         
-        /* Premium Preset Grid Setup */
         .presets-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -290,6 +291,7 @@
             <button class="tab-btn" onclick="switchPanel('processor-panel', this)">LAB MEDIA PROCESSOR STUDIO</button>
         </div>
 
+        <!-- PANEL 01: IMDb STREAM INJECTOR -->
         <div id="imdb-panel" class="panel-card active">
             <div class="input-group" style="margin-bottom: 30px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15); padding-bottom: 25px;">
                 <label>Built-In Title Search Engine</label>
@@ -302,7 +304,7 @@
                 <label>Target Entry ID / Source Registry</label>
                 <div class="input-row">
                     <input type="text" id="imdb-input" placeholder="Or paste direct IMDb URL/ID (e.g. tt1375666)">
-                    <button class="action-btn" onclick="injectImdbStream()">PLAY STREAM</button>
+                    <input type="button" class="action-btn" value="PLAY STREAM" onclick="injectImdbStream()">
                 </div>
             </div>
             <div id="imdb-video-box" class="video-box">
@@ -310,6 +312,7 @@
             </div>
         </div>
 
+        <!-- PANEL 02: RE-ENGINEERED DEVICE PROCESSING STUDIO -->
         <div id="processor-panel" class="panel-card">
             <div class="input-group">
                 <label>Upload Media File Asset</label>
@@ -318,19 +321,23 @@
 
             <div class="processor-workspace">
                 
+                <!-- Left Viewport (Live Rendering Deck) -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div class="studio-canvas-panel">
                         <canvas id="studio-canvas"></canvas>
                         <p id="canvas-placeholder-text" style="color: #434d5c; font-size: 0.9rem; font-weight: 700;">AWAITING WORKSPACE REGISTRY INPUT</p>
                     </div>
+                    <!-- Live File Telemetry Status Tracker -->
                     <div class="canvas-telemetry-bar">
                         <span>DIMENSIONS: <span id="telemetry-res" style="color:#ffffff;">0 x 0</span></span>
                         <span>LIVE STATUS: <span id="telemetry-status" style="color:#00ffcc; font-weight:900;">IDLE</span></span>
                     </div>
                 </div>
 
+                <!-- Right Parameters Controls Box -->
                 <div class="controls-panel">
                     
+                    <!-- MASTER FILTERS & PRESETS -->
                     <div class="control-row">
                         <label style="color: #ff00ff; margin-bottom: 12px;">1. Studio Engine Filters</label>
                         
@@ -363,6 +370,7 @@
                         </div>
                     </div>
 
+                    <!-- BACKGROUND REMOVER CHROMA ISOLATOR -->
                     <div class="control-row">
                         <label style="color: #00ffcc; margin-bottom: 8px;">2. Chroma Background Isolator</label>
                         <div class="bg-remove-indicator">Target Mask: Tap directly on any color in the preview canvas to drop it out.</div>
@@ -374,6 +382,7 @@
                         <button class="action-btn" style="width:100%; border-color: #00ffcc; color:#00ffcc; background: rgba(0,255,204,0.02);" onclick="resetChromaKeyMask()">CLEAR ISOLATION MASK</button>
                     </div>
 
+                    <!-- FILE ENCODING & EXPORT -->
                     <div class="control-row">
                         <label style="color: #ffaa00; margin-bottom: 12px;">3. Export Optimization Compiler</label>
                         
@@ -400,7 +409,8 @@
     </div>
 
     <script>
-        // --- IMDb AUTOSUGGEST CONTROLLERS ---
+        let searchDebounceTimeout = null;
+
         function switchPanel(panelId, btnElement) {
             document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -449,7 +459,7 @@
             document.getElementById('imdb-video-box').style.display = 'block';
         }
 
-        // --- LAB MEDIA PROCESSOR RE-ENGINEERED ENGINE COMPONENT ---
+        // --- LAB MEDIA PROCESSOR RE-ENGINEERED STABILITY SYSTEM ---
         let workspaceCanvas = document.getElementById('studio-canvas');
         let workspaceCtx = workspaceCanvas.getContext('2d');
         let sourceWorkspaceImage = new Image();
@@ -462,11 +472,26 @@
             reader.onload = function() {
                 sourceWorkspaceImage.onload = function() {
                     document.getElementById('canvas-placeholder-text').style.display = 'none';
-                    workspaceCanvas.width = sourceWorkspaceImage.naturalWidth;
-                    workspaceCanvas.height = sourceWorkspaceImage.naturalHeight;
                     
-                    // Push file specs into live telemetry container trackers
-                    document.getElementById('telemetry-res').innerText = `${workspaceCanvas.width} x ${workspaceCanvas.height}`;
+                    // FIXED CRITICAL CRASH PATCH: Clamping canvas dimensions to protect iOS memory allocations
+                    let maxDimensionBound = 1440; 
+                    let width = sourceWorkspaceImage.naturalWidth;
+                    let height = sourceWorkspaceImage.naturalHeight;
+                    
+                    if (width > maxDimensionBound || height > maxDimensionBound) {
+                        if (width > height) {
+                            height = Math.round((height * maxDimensionBound) / width);
+                            width = maxDimensionBound;
+                        } else {
+                            width = Math.round((width * maxDimensionBound) / height);
+                            height = maxDimensionBound;
+                        }
+                    }
+                    
+                    workspaceCanvas.width = width;
+                    workspaceCanvas.height = height;
+                    
+                    document.getElementById('telemetry-res').innerText = `${sourceWorkspaceImage.naturalWidth} x ${sourceWorkspaceImage.naturalHeight}`;
                     document.getElementById('telemetry-status').innerText = "ASSET ENGAGED";
                     document.getElementById('telemetry-status').style.color = "#00ffcc";
                     
@@ -477,7 +502,6 @@
             if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
         }
 
-        // Live Eye-Dropper sampling mapping loop
         workspaceCanvas.addEventListener('click', function(e) {
             if (!sourceWorkspaceImage.src) return;
 
@@ -488,6 +512,7 @@
             let clickX = Math.floor((e.clientX - rect.left) * scaleX);
             let clickY = Math.floor((e.clientY - rect.top) * scaleY);
 
+            // Access pixel arrays directly from the backing layer coordinates
             let sampleCtx = workspaceCanvas.getContext('2d');
             let pixelData = sampleCtx.getImageData(clickX, clickY, 1, 1).data;
 
@@ -502,7 +527,6 @@
             applyStudioTransforms();
         });
 
-        // 1-Tap Filter Preset Injector Matrix Logic 
         function applyQuickPreset(presetType) {
             if (!sourceWorkspaceImage.src) return alert("ERROR: Upload a file asset first.");
 
@@ -535,7 +559,7 @@
             applyStudioTransforms();
         }
 
-        // Core Live Graphics Render Loop Circuit
+        // --- FIXED REAL-TIME RENDERING CIRCUIT ---
         function applyStudioTransforms() {
             if (!sourceWorkspaceImage.src) return;
 
@@ -546,7 +570,6 @@
             let hue = document.getElementById('filter-hue').value;
             let tolerance = document.getElementById('bg-tolerance').value;
 
-            // Sync on-screen label readouts instantly (True Real-Time Performance feedback)
             document.getElementById('val-bright').innerText = b + "%";
             document.getElementById('val-contrast').innerText = c + "%";
             document.getElementById('val-saturate').innerText = s + "%";
@@ -554,11 +577,11 @@
             document.getElementById('val-hue').innerText = hue + "deg";
             document.getElementById('val-tolerance').innerText = tolerance;
 
+            // Step 1: Draw the base image cleanly on the core canvas context first
             workspaceCtx.clearRect(0, 0, workspaceCanvas.width, workspaceCanvas.height);
-            workspaceCtx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px) hue-rotate(${hue}deg)`;
             workspaceCtx.drawImage(sourceWorkspaceImage, 0, 0, workspaceCanvas.width, workspaceCanvas.height);
 
-            // Execute Chroma Key alpha stripping pass locally
+            // Step 2: Strip colors before executing display matrices to avoid artifacts
             if (chromaKeySelected) {
                 let imgData = workspaceCtx.getImageData(0, 0, workspaceCanvas.width, workspaceCanvas.height);
                 let pixelBuffer = imgData.data;
@@ -566,12 +589,12 @@
                 for (let i = 0; i < pixelBuffer.length; i += 4) {
                     let r = pixelBuffer[i];
                     let g = pixelBuffer[i+1];
-                    let b = pixelBuffer[i+2];
+                    let bCol = pixelBuffer[i+2];
 
                     let colorDistance = Math.sqrt(
                         Math.pow(r - chromaTargetColor.r, 2) +
                         Math.pow(g - chromaTargetColor.g, 2) +
-                        Math.pow(b - chromaTargetColor.b, 2)
+                        Math.pow(bCol - chromaTargetColor.b, 2)
                     );
 
                     if (colorDistance < tolerance) {
@@ -580,16 +603,37 @@
                 }
                 workspaceCtx.putImageData(imgData, 0, 0);
             }
+
+            // FIXED SAFARI FILTER BUG OVERRIDE: Routes adjustments directly through CSS vectors
+            // This runs natively inside iPad ProMotion parameters at 120Hz without freezing
+            workspaceCanvas.style.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px) hue-rotate(${hue}deg)`;
         }
 
+        // --- EXPORT MATRIX COMPILER (BAKES CSS CONTROLS DOWN) ---
         function compileAndDownloadProcessedAsset() {
-            if (!sourceWorkspaceImage.src) return alert("ERROR: File asset workspace matrix is unallocated.");
+            if (!sourceWorkspaceImage.src) return alert("ERROR: Asset unallocated.");
 
             let format = document.getElementById('export-format').value;
             let qualitySlider = document.getElementById('export-quality').value;
             let normalizedQuality = qualitySlider / 100;
 
-            let processedUrl = workspaceCanvas.toDataURL(format, normalizedQuality);
+            // Generate an offscreen compilation layer canvas to flatten CSS settings parameters
+            let exportCanvas = document.createElement('canvas');
+            exportCanvas.width = workspaceCanvas.width;
+            exportCanvas.height = workspaceCanvas.height;
+            let exportCtx = exportCanvas.getContext('2d');
+
+            let b = document.getElementById('filter-bright').value;
+            let c = document.getElementById('filter-contrast').value;
+            let s = document.getElementById('filter-saturate').value;
+            let blur = document.getElementById('filter-blur').value;
+            let hue = document.getElementById('filter-hue').value;
+
+            // Permanently bake current visual styles onto export canvas arrays maps
+            exportCtx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px) hue-rotate(${hue}deg)`;
+            exportCtx.drawImage(workspaceCanvas, 0, 0);
+
+            let processedUrl = exportCanvas.toDataURL(format, normalizedQuality);
             let downloadWireAnchor = document.createElement('a');
             downloadWireAnchor.href = processedUrl;
             downloadWireAnchor.download = `zaeem_labs_studio_${Date.now()}.${format.split('/')[1]}`;
