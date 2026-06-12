@@ -32,7 +32,7 @@
         .container {
             position: relative;
             z-index: 2;
-            max-width: 950px;
+            max-width: 1050px;
             margin: 0 auto;
         }
         .back-btn {
@@ -81,6 +81,8 @@
             border-radius: 12px;
             letter-spacing: 1px;
             transition: all 0.2s ease;
+            font-size: 0.8rem;
+            text-align: center;
         }
         .tab-btn.active {
             background: rgba(255, 0, 255, 0.08);
@@ -100,9 +102,7 @@
         }
         .panel-card.active { display: block; }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+        .input-group { margin-bottom: 20px; }
         label {
             display: block;
             font-size: 0.8rem;
@@ -110,12 +110,10 @@
             margin-bottom: 8px;
             letter-spacing: 1px;
             text-transform: uppercase;
+            font-weight: bold;
         }
-        .input-row {
-            display: flex;
-            gap: 10px;
-        }
-        input[type="text"] {
+        .input-row { display: flex; gap: 10px; }
+        input[type="text"], input[type="file"] {
             flex: 1;
             padding: 16px;
             background: #020205;
@@ -125,10 +123,7 @@
             font-size: 0.9rem;
             outline: none;
         }
-        input[type="text"]:focus {
-            border-color: #00ffcc;
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
-        }
+        input[type="file"] { cursor: pointer; }
 
         .action-btn {
             padding: 16px 30px;
@@ -147,136 +142,104 @@
             box-shadow: 0 0 15px #ff00ff;
         }
 
+        /* SEARCH RESULTS STYLES */
         #search-results-tray {
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 12px;
-            max-height: 260px;
-            overflow-y: auto;
-            padding: 10px;
-            border-radius: 10px;
-            background: rgba(2, 2, 5, 0.95);
-            border: 1px solid rgba(0, 255, 204, 0.3);
-            display: none;
+            margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px; max-height: 260px; overflow-y: auto; padding: 10px;
+            border-radius: 10px; background: rgba(2, 2, 5, 0.95); border: 1px solid rgba(0, 255, 204, 0.3); display: none;
         }
         .search-node-card {
-            background: #0a0b19;
-            border: 1px solid rgba(255, 0, 255, 0.1);
-            border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            background: #0a0b19; border: 1px solid rgba(255, 0, 255, 0.1);
+            border-radius: 10px; padding: 10px; display: flex; gap: 12px; align-items: center; cursor: pointer;
         }
-        .search-node-card:hover {
-            border-color: #00ffcc;
-            background: rgba(0, 255, 204, 0.08);
-        }
-        .search-node-thumb {
-            width: 40px;
-            height: 55px;
-            object-fit: cover;
-            background: #111;
-            border-radius: 4px;
-        }
-        .search-node-meta h4 {
-            font-size: 0.85rem;
-            color: #ffffff;
-            margin-bottom: 3px;
-        }
-        .search-node-meta p {
-            font-size: 0.75rem;
-            color: #728196;
-        }
+        .search-node-card:hover { border-color: #00ffcc; background: rgba(0, 255, 204, 0.08); }
+        .search-node-thumb { width: 40px; height: 55px; object-fit: cover; border-radius: 4px; }
+        .search-node-meta h4 { font-size: 0.85rem; color: #ffffff; margin-bottom: 3px; }
+        .search-node-meta p { font-size: 0.75rem; color: #728196; }
 
         .video-box {
-            margin-top: 25px;
-            display: none;
-            border: 2px solid #00ffcc;
-            border-radius: 14px;
-            overflow: hidden;
-            background: #000000;
-            position: relative;
-            padding-bottom: 56.25%; 
-            height: 0;
+            margin-top: 25px; display: none; border: 2px solid #00ffcc; border-radius: 14px;
+            overflow: hidden; background: #000000; position: relative; padding-bottom: 56.25%; height: 0;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
         }
-        .video-box iframe {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border: none;
-        }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        .preview-box {
-            margin-top: 25px;
+        .preview-box { background: #020205; border: 1px solid rgba(0, 255, 204, 0.2); border-radius: 12px; padding: 20px; display: none; margin-top: 25px;}
+        .preview-flex { display: flex; gap: 20px; align-items: center; }
+        .preview-thumb { width: 150px; height: 90px; background: #111222; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 1px solid rgba(255,255,255,0.1); }
+        .preview-info h3 { font-size: 1.1rem; color: #ffffff; margin-bottom: 5px; }
+        .preview-info p { font-size: 0.8rem; color: #556275; margin-bottom: 12px; }
+        .dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 15px; }
+        .dl-node {
+            padding: 16px; background: rgba(0, 255, 204, 0.04); border: 1px solid #00ffcc; color: #00ffcc;
+            text-align: center; text-decoration: none; font-size: 0.85rem; font-weight: 900; border-radius: 10px; letter-spacing: 1px;
+        }
+        .dl-node:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
+
+        /* --- PROCESSING LAB COMPONENT LAYOUTS --- */
+        .processor-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) { .processor-workspace { grid-template-columns: 1fr; } }
+        
+        .studio-canvas-panel {
             background: #020205;
-            border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            display: none;
-        }
-        .preview-flex {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .preview-thumb {
-            width: 150px;
-            height: 90px;
-            background: #111222;
-            border-radius: 8px;
+            border: 2px dashed rgba(255, 0, 255, 0.2);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            min-height: 350px;
+            position: relative;
         }
-        .preview-info h3 {
-            font-size: 1.1rem;
-            color: #ffffff;
-            margin-bottom: 5px;
+        #studio-canvas {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 8px;
+            cursor: crosshair;
         }
-        .preview-info p {
-            font-size: 0.8rem;
-            color: #556275;
-            margin-bottom: 12px;
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        .dl-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .dl-node {
-            padding: 16px;
-            background: rgba(0, 255, 204, 0.04);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-            text-align: center;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 900;
+        .control-row {
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
             border-radius: 10px;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .dl-node:hover {
-            background: #00ffcc;
-            color: #020205;
-            box-shadow: 0 0 15px #00ffcc;
+        .slider-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            color: #728196;
         }
-        .dl-node.open-source {
-            border-color: #ff00ff;
-            color: #ff00ff;
-            background: rgba(255, 0, 255, 0.04);
+        input[type="range"] {
+            width: 100%;
+            accent-color: #ff00ff;
+            cursor: pointer;
         }
-        .dl-node.open-source:hover {
-            background: #ff00ff;
-            color: #020205;
-            box-shadow: 0 0 15px #ff00ff;
+        .select-input {
+            width: 100%;
+            padding: 14px;
+            background: #020205;
+            border: 1px solid rgba(255,0,255,0.2);
+            color: white;
+            border-radius: 8px;
+            outline: none;
+        }
+        .bg-remove-indicator {
+            font-size: 0.75rem;
+            color: #00ffcc;
+            margin-top: 5px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -290,16 +253,17 @@
 
         <header>
             <h1>MEDIA DECK</h1>
-            <div class="subtitle">Zaeem Labs // Stream & Download Controller</div>
+            <div class="subtitle">Zaeem Labs // Processing & Stream Controller</div>
         </header>
 
         <div class="tab-bar">
             <button class="tab-btn active" onclick="switchPanel('imdb-panel', this)">IMDb MOVIE MATRIX</button>
             <button class="tab-btn" onclick="switchPanel('dl-panel', this)">SOCIAL SCRAPER SUITE</button>
+            <button class="tab-btn" onclick="switchPanel('processor-panel', this)">LAB MEDIA PROCESSOR</button>
         </div>
 
+        <!-- PANEL 01: IMDb STREAM INJECTOR -->
         <div id="imdb-panel" class="panel-card active">
-            
             <div class="input-group" style="margin-bottom: 30px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15); padding-bottom: 25px;">
                 <label>Built-In Title Search Engine</label>
                 <div class="input-row">
@@ -307,7 +271,6 @@
                 </div>
                 <div id="search-results-tray"></div>
             </div>
-
             <div class="input-group">
                 <label>Target Entry ID / Source Registry</label>
                 <div class="input-row">
@@ -315,12 +278,12 @@
                     <button class="action-btn" onclick="injectImdbStream()">PLAY STREAM</button>
                 </div>
             </div>
-
             <div id="imdb-video-box" class="video-box">
                 <iframe id="imdb-frame" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
             </div>
         </div>
 
+        <!-- PANEL 02: MULTI-ROUTE SOCIAL EXTRACTOR -->
         <div id="dl-panel" class="panel-card">
             <div class="input-group">
                 <label>Media Source Link parameters</label>
@@ -329,31 +292,104 @@
                     <button class="action-btn" onclick="processSocialLink()">EXTRACT PARAMETERS</button>
                 </div>
             </div>
-
-            <div id="local-stream-box" class="video-box" style="margin-bottom: 25px; border-color: #ff00ff; box-shadow: 0 0 30px rgba(255, 0, 255, 0.15);">
+            <div id="local-stream-box" class="video-box" style="margin-bottom: 25px; border-color: #ff00ff;">
                 <iframe id="local-stream-frame" src="" allowfullscreen></iframe>
             </div>
-
             <div id="dl-preview-box" class="preview-box">
                 <div class="preview-flex">
                     <div id="meta-icon" class="preview-thumb">⚡</div>
                     <div class="preview-info">
                         <h3 id="meta-title">Extracted Media Core Stream</h3>
                         <p id="meta-source">Source: Parsing Verified</p>
-                        <div style="color: #00ffcc; font-size: 0.75rem; font-weight: 900;">STATUS: TRAUMA-FREE MATRIX ENGAGED</div>
                     </div>
                 </div>
-                
                 <label style="margin-top: 20px;">Available Safe Lab Extraction Routes</label>
                 <div class="dl-grid" id="download-nodes-grid"></div>
+            </div>
+        </div>
+
+        <!-- PANEL 03: NEW LAB MEDIA PROCESSOR ENGINE (COMPRESS / CONVERT / EDIT / BG REMOVE) -->
+        <div id="processor-panel" class="panel-card">
+            <div class="input-group">
+                <label>Upload Media File Asset</label>
+                <input type="file" id="media-uploader-input" accept="image/*" onchange="loadMediaToWorkspaceCanvas(event)">
+            </div>
+
+            <div class="processor-workspace">
+                <!-- Left Frame Viewport Screen -->
+                <div class="studio-canvas-panel">
+                    <canvas id="studio-canvas"></canvas>
+                    <p id="canvas-placeholder-text" style="color: #434d5c; position: absolute; font-size: 0.9rem;">NO MEDIA DETECTED IN WORKSPACE REGISTRY</p>
+                </div>
+
+                <!-- Right Frame Configuration Controls Panel -->
+                <div class="controls-panel">
+                    <!-- SECTION 1: PHOTO PARAMETERS EDITS -->
+                    <div class="control-row">
+                        <label style="color: #ff00ff; margin-bottom: 12px;">1. Image Filter Matrix</label>
+                        
+                        <div class="input-group">
+                            <div class="slider-meta"><span>Brightness</span><span id="val-bright">100%</span></div>
+                            <input type="range" id="filter-bright" min="0" max="200" value="100" oninput="applyStudioTransforms()">
+                        </div>
+                        <div class="input-group">
+                            <div class="slider-meta"><span>Contrast</span><span id="val-contrast">100%</span></div>
+                            <input type="range" id="filter-contrast" min="0" max="200" value="100" oninput="applyStudioTransforms()">
+                        </div>
+                        <div class="input-group">
+                            <div class="slider-meta"><span>Saturation</span><span id="val-saturate">100%</span></div>
+                            <input type="range" id="filter-saturate" min="0" max="200" value="100" oninput="applyStudioTransforms()">
+                        </div>
+                        <div class="input-group">
+                            <div class="slider-meta"><span>Blur Radius</span><span id="val-blur">0px</span></div>
+                            <input type="range" id="filter-blur" min="0" max="20" value="0" oninput="applyStudioTransforms()">
+                        </div>
+                        <div class="input-group">
+                            <div class="slider-meta"><span>Hue Rotate</span><span id="val-hue">0deg</span></div>
+                            <input type="range" id="filter-hue" min="0" max="360" value="0" oninput="applyStudioTransforms()">
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: CHROMA-KEY BG REMOVAL -->
+                    <div class="control-row">
+                        <label style="color: #00ffcc; margin-bottom: 5px;">2. Chroma Background Isolator</label>
+                        <div class="bg-remove-indicator">Target Mask: Click anywhere directly on the image screen above to sample key color</div>
+                        
+                        <div class="input-group" style="margin-top: 15px;">
+                            <div class="slider-meta"><span>Color Mask Tolerance</span><span id="val-tolerance">30</span></div>
+                            <input type="range" id="bg-tolerance" min="1" max="150" value="30" oninput="applyStudioTransforms()">
+                        </div>
+                        <button class="action-btn" style="width:100%; border-color: #00ffcc; color:#00ffcc; background: rgba(0,255,204,0.05);" onclick="resetChromaKeyMask()">RESET ISOLATOR MASK</button>
+                    </div>
+
+                    <!-- SECTION 3: COMPRESSION & CONVERSION EXPORTS -->
+                    <div class="control-row">
+                        <label style="color: #ffaa00; margin-bottom: 12px;">3. Compression & Export Registry</label>
+                        
+                        <div class="input-group">
+                            <label>Target Target Format Extension</label>
+                            <select id="export-format" class="select-input">
+                                <option value="image/jpeg">JPEG (.jpg)</option>
+                                <option value="image/png">PNG (.png)</option>
+                                <option value="image/webp">WEBP (.webp)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="slider-meta"><span>Compression Ratio Quality</span><span id="val-quality">85%</span></div>
+                            <input type="range" id="export-quality" min="10" max="100" value="85" oninput="document.getElementById('val-quality').innerText = this.value + '%'">
+                        </div>
+
+                        <button class="action-btn" style="width: 100%; border-color: #ffaa00; color: #ffaa00; background: rgba(255,170,0,0.05);" onclick="compileAndDownloadProcessedAsset()">EXPORT ENCODED MEDIA</button>
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
-        let searchDebounceTimeout = null;
-
+        // --- PRE-EXISTING CONFIG LAYOUT MATRIX ROUTERS ---
         function switchPanel(panelId, btnElement) {
             document.querySelectorAll('.panel-card').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -365,150 +401,190 @@
             clearTimeout(searchDebounceTimeout);
             let query = document.getElementById('deck-search-bar').value.trim();
             let tray = document.getElementById('search-results-tray');
-
-            if (query.length < 2) {
-                tray.style.display = 'none';
-                return;
-            }
-
+            if (query.length < 2) { tray.style.display = 'none'; return; }
             searchDebounceTimeout = setTimeout(() => {
                 let sanitizedQuery = query.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
                 let targetLetter = sanitizedQuery[0];
-                
-                let oldScript = document.getElementById('imdb-jsonp-bridge');
-                if (oldScript) oldScript.remove();
-
+                let oldScript = document.getElementById('imdb-jsonp-bridge'); if (oldScript) oldScript.remove();
                 let cbName = `imdb$${sanitizedQuery}`;
-                window[cbName] = function(data) {
-                    populateResultsTray(data);
-                    try { delete window[cbName]; } catch(e) {}
-                };
-
-                let script = document.createElement('script');
-                script.id = 'imdb-jsonp-bridge';
+                window[cbName] = function(data) { populateResultsTray(data); try { delete window[cbName]; } catch(e) {} };
+                let script = document.createElement('script'); script.id = 'imdb-jsonp-bridge';
                 script.src = `https://sg.media-imdb.com/suggests/${targetLetter}/${encodeURIComponent(sanitizedQuery)}.json`;
                 document.body.appendChild(script);
             }, 300);
         }
 
         function populateResultsTray(data) {
-            let tray = document.getElementById('search-results-tray');
-            tray.innerHTML = '';
-
-            if (!data || !data.d || data.d.length === 0) {
-                tray.style.display = 'none';
-                return;
-            }
-
+            let tray = document.getElementById('search-results-tray'); tray.innerHTML = '';
+            if (!data || !data.d || data.d.length === 0) { tray.style.display = 'none'; return; }
             data.d.forEach(node => {
                 if (!node.id.startsWith('tt') || !['feature', 'tv_series', 'tv_miniseries', 'movie'].includes(node.q)) return;
-
-                let card = document.createElement('div');
-                card.className = 'search-node-card';
-                
+                let card = document.createElement('div'); card.className = 'search-node-card';
                 let thumbSrc = (node.i && node.i[0]) ? node.i[0] : 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=120&auto=format&fit=crop';
                 let releaseYear = node.y ? node.y : 'N/A';
                 let contentTypeLabel = (node.q.startsWith('tv')) ? '🎬 TV SHOW' : '🎥 MOVIE';
-
-                card.innerHTML = `
-                    <img class="search-node-thumb" src="${thumbSrc}">
-                    <div class="search-node-meta">
-                        <h4>${node.l}</h4>
-                        <p>${releaseYear} • ${contentTypeLabel}</p>
-                    </div>
-                `;
-
-                card.onclick = function() {
-                    document.getElementById('imdb-input').value = node.id;
-                    tray.style.display = 'none';
-                    injectImdbStream();
-                };
-
+                card.innerHTML = `<img class="search-node-thumb" src="${thumbSrc}"><div class="search-node-meta"><h4>${node.l}</h4><p>${releaseYear} • ${contentTypeLabel}</p></div>`;
+                card.onclick = function() { document.getElementById('imdb-input').value = node.id; tray.style.display = 'none'; injectImdbStream(); };
                 tray.appendChild(card);
             });
-
             tray.style.display = (tray.children.length > 0) ? 'grid' : 'none';
         }
 
         function injectImdbStream() {
             let inputVal = document.getElementById('imdb-input').value.trim();
-            let idMatch = inputVal.match(/tt\d+/);
-            let imdbId = idMatch ? idMatch[0] : inputVal;
-
-            if (!imdbId || !imdbId.startsWith('tt')) {
-                alert("ERROR: Please use the title search bar above or paste an ID starting with tt.");
-                return;
-            }
-
-            let playImdbUrl = `https://www.playimdb.com/title/${imdbId}/`;
-            let frame = document.getElementById('imdb-frame');
-            let box = document.getElementById('imdb-video-box');
-            
-            frame.src = playImdbUrl;
-            box.style.display = 'block';
-            box.scrollIntoView({ behavior: 'smooth' });
+            let idMatch = inputVal.match(/tt\d+/); let imdbId = idMatch ? idMatch[0] : inputVal;
+            if (!imdbId || !imdbId.startsWith('tt')) { alert("ERROR: Invalid ID entry parameters."); return; }
+            document.getElementById('imdb-frame').src = `https://www.playimdb.com/title/${imdbId}/`;
+            document.getElementById('imdb-video-box').style.display = 'block';
         }
 
-        // Helper regex matching script to strip YouTube Video Identification strings cleanly
         function extractYouTubeVideoId(url) {
             let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            let match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
+            let match = url.match(regExp); return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // --- BULLETPROOF MULTI-ROUTE UTILITY PARSER ---
         function processSocialLink() {
-            let url = document.getElementById('dl-input').value.trim();
-            if (!url) return alert("ERROR: Input address field cannot settle empty entries.");
-
-            let title = "Media Resource Element";
-            let platformIcon = "⚡";
-            
+            let url = document.getElementById('dl-input').value.trim(); if (!url) return alert("ERROR: Field empty.");
             let ytId = extractYouTubeVideoId(url);
             let localPlayerBox = document.getElementById('local-stream-box');
             let localPlayerFrame = document.getElementById('local-stream-frame');
             let grid = document.getElementById('download-nodes-grid');
-
             if (ytId) {
-                title = "YouTube Sandbox Mainframe";
-                platformIcon = "🎥";
-
-                // INJECTS AN AD-FREE PLAYER DIRECTLY INSIDE YOUR LAB SITE CONTAINER
-                localPlayerFrame.src = `https://yewtu.be/embed/${ytId}?quality=dash`;
-                localPlayerBox.style.display = 'block';
-
-                // Safe open-source mirror terminal connection link (100% ad-free file save interface)
-                let ultraSafeSaveNode = `https://yewtu.be/watch?v=${ytId}`;
-
-                grid.innerHTML = `
-                    <a href="${ultraSafeSaveNode}" target="_blank" class="dl-node open-source">⬇️ OPEN CLEAN DOWNLOAD NODE</a>
-                    <a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL YOUTUBE LINK</a>
-                `;
+                localPlayerFrame.src = `https://yewtu.be/embed/${ytId}?quality=dash`; localPlayerBox.style.display = 'block';
+                grid.innerHTML = `<a href="https://yewtu.be/watch?v=${ytId}" target="_blank" class="dl-node open-source">⬇️ OPEN CLEAN DOWNLOAD NODE</a><a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL YOUTUBE LINK</a>`;
             } else {
-                // If it's Instagram or Facebook, clean-wipe the local iframe box and deploy Cobalt structures
-                localPlayerFrame.src = "";
-                localPlayerBox.style.display = 'none';
-
-                if (url.includes('instagram.com')) {
-                    title = "Instagram Media Profile Reel";
-                    platformIcon = "📸";
-                } else if (url.includes('facebook.com') || url.includes('fb.watch')) {
-                    title = "Facebook Video Payload Package";
-                    platformIcon = "🌐";
-                }
-
+                localPlayerFrame.src = ""; localPlayerBox.style.display = 'none';
                 let adFreeCobaltLink = `https://cobalt.tools/#${encodeURIComponent(url)}`;
-
-                grid.innerHTML = `
-                    <a href="${adFreeCobaltLink}" target="_blank" class="dl-node open-source">🚀 DOWNLOAD (AD-FREE COBALT)</a>
-                    <a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL SOURCE LINK</a>
-                `;
+                grid.innerHTML = `<a href="${adFreeCobaltLink}" target="_blank" class="dl-node open-source">🚀 DOWNLOAD (AD-FREE COBALT)</a><a href="${url}" target="_blank" class="dl-node">📺 ORIGINAL SOURCE LINK</a>`;
             }
-
-            document.getElementById('meta-title').innerText = title;
-            document.getElementById('meta-icon').innerText = platformIcon;
-            document.getElementById('meta-source').innerText = `Verified: ${url.substring(0, 45)}...`;
+            document.getElementById('meta-title').innerText = ytId ? "YouTube Sandbox Mainframe" : "External Resource Element";
             document.getElementById('dl-preview-box').style.display = 'block';
+        }
+
+        // --- NEW LOCAL CLIENT-SIDE MEDIA PROCESSING GRAPHICS SUITE ---
+        let workspaceCanvas = document.getElementById('studio-canvas');
+        let workspaceCtx = workspaceCanvas.getContext('2d');
+        let sourceWorkspaceImage = new Image();
+        
+        let chromaKeySelected = false;
+        let chromaTargetColor = { r: 0, g: 0, b: 0 };
+
+        function loadMediaToWorkspaceCanvas(event) {
+            let reader = new FileReader();
+            reader.onload = function() {
+                sourceWorkspaceImage.onload = function() {
+                    document.getElementById('canvas-placeholder-text').style.display = 'none';
+                    // Synchronize vector size attributes
+                    workspaceCanvas.width = sourceWorkspaceImage.naturalWidth;
+                    workspaceCanvas.height = sourceWorkspaceImage.naturalHeight;
+                    resetChromaKeyMask();
+                    applyStudioTransforms();
+                };
+                sourceWorkspaceImage.src = reader.result;
+            };
+            if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Capture direct click tracking grid vector positions to lock sampled color keys
+        workspaceCanvas.addEventListener('click', function(e) {
+            if (!sourceWorkspaceImage.src) return;
+
+            let rect = workspaceCanvas.getBoundingClientRect();
+            // Translate display scaling maps to pixel accurate locations
+            let scaleX = workspaceCanvas.width / rect.width;
+            let scaleY = workspaceCanvas.height / rect.height;
+            
+            let clickX = Math.floor((e.clientX - rect.left) * scaleX);
+            let clickY = Math.floor((e.clientY - rect.top) * scaleY);
+
+            // Sample raw array metrics from pixel coordinates position
+            let sampleCtx = workspaceCanvas.getContext('2d');
+            let pixelData = sampleCtx.getImageData(clickX, clickY, 1, 1).data;
+
+            chromaTargetColor.r = pixelData[0];
+            chromaTargetColor.g = pixelData[1];
+            chromaTargetColor.b = pixelData[2];
+            chromaKeySelected = true;
+
+            applyStudioTransforms();
+        });
+
+        function resetChromaKeyMask() {
+            chromaKeySelected = false;
+            applyStudioTransforms();
+        }
+
+        function applyStudioTransforms() {
+            if (!sourceWorkspaceImage.src) return;
+
+            // 1. Gather all slider matrix tracker metric parameters
+            let b = document.getElementById('filter-bright').value;
+            let c = document.getElementById('filter-contrast').value;
+            let s = document.getElementById('filter-saturate').value;
+            let blur = document.getElementById('filter-blur').value;
+            let hue = document.getElementById('filter-hue').value;
+            let tolerance = document.getElementById('bg-tolerance').value;
+
+            // Sync visual numeric metric texts
+            document.getElementById('val-bright').innerText = b + "%";
+            document.getElementById('val-contrast').innerText = c + "%";
+            document.getElementById('val-saturate').innerText = s + "%";
+            document.getElementById('val-blur').innerText = blur + "px";
+            document.getElementById('val-hue').innerText = hue + "deg";
+            document.getElementById('val-tolerance').innerText = tolerance;
+
+            // Clear framework workspace layer before recalculation draw loop execution
+            workspaceCtx.clearRect(0, 0, workspaceCanvas.width, workspaceCanvas.height);
+            
+            // 2. Apply combined structural CSS matrix parameters inside canvas filter registers
+            workspaceCtx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px) hue-rotate(${hue}deg)`;
+            workspaceCtx.drawImage(sourceWorkspaceImage, 0, 0, workspaceCanvas.width, workspaceCanvas.height);
+
+            // 3. Execute Alpha Channel Isolation Loop if Chroma Mask color registers lock high matching entries
+            if (chromaKeySelected) {
+                let imgData = workspaceCtx.getImageData(0, 0, workspaceCanvas.width, workspaceCanvas.height);
+                let pixelBuffer = imgData.data;
+
+                for (let i = 0; i < pixelBuffer.length; i += 4) {
+                    let r = pixelBuffer[i];
+                    let g = pixelBuffer[i+1];
+                    let b = pixelBuffer[i+2];
+
+                    // Euclidean dimensional vector delta math equations logic tracking arrays
+                    let colorDistance = Math.sqrt(
+                        Math.pow(r - chromaTargetColor.r, 2) +
+                        Math.pow(g - chromaTargetColor.g, 2) +
+                        Math.pow(b - chromaTargetColor.b, 2)
+                    );
+
+                    // If pixel matches within boundary criteria scale parameters drop alpha matrix state down
+                    if (colorDistance < tolerance) {
+                        pixelBuffer[i + 3] = 0; // Cut alpha opacity map layer array parameters
+                    }
+                }
+                // Write completely crunched pixel maps data array back onto active render circuit context
+                workspaceCtx.putImageData(imgData, 0, 0);
+            }
+        }
+
+        // --- ENCODE PATHWAY COMPILER DOWNLOAD REGISTRY ACTIONS ---
+        function compileAndDownloadProcessedAsset() {
+            if (!sourceWorkspaceImage.src) return alert("ERROR: Workspace tracking registry contains empty file assets data arrays.");
+
+            let format = document.getElementById('export-format').value;
+            let qualitySlider = document.getElementById('export-quality').value;
+            let normalizedQuality = qualitySlider / 100; // Normalizes values cleanly between 0.0 and 1.0 boundary spaces
+
+            // Create direct data uri conversion matrices context links arrays mapping
+            let processedUrl = workspaceCanvas.toDataURL(format, normalizedQuality);
+
+            let downloadWireAnchor = document.createElement('a');
+            downloadWireAnchor.href = processedUrl;
+            downloadWireAnchor.download = `zaem_labs_export_${Date.now()}.${format.split('/')[1]}`;
+            
+            document.body.appendChild(downloadWireAnchor);
+            downloadWireAnchor.click();
+            downloadWireAnchor.remove();
         }
     </script>
 </body>
