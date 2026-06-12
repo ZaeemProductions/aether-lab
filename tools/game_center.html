@@ -10,12 +10,10 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
         }
         body, html {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background-color: #020205;
             color: #ffffff;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -28,91 +26,59 @@
                 linear-gradient(rgba(0, 255, 204, 0.015) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 204, 0.015) 1px, transparent 1px);
             background-size: 35px 35px;
-            z-index: 1;
-            pointer-events: none;
+            z-index: 1; pointer-events: none;
         }
         .center-wrapper {
-            position: relative;
-            z-index: 2;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
+            position: relative; z-index: 2;
+            max-width: 1100px; margin: 0 auto;
+            padding: 40px 20px; display: flex; flex-direction: column;
             min-height: 100vh;
         }
         .back-mainframe {
-            align-self: flex-start;
-            text-decoration: none;
-            color: #728196;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            transition: color 0.2s ease;
+            align-self: flex-start; text-decoration: none;
+            color: #728196; font-size: 0.85rem; font-weight: 700;
+            letter-spacing: 1px; margin-bottom: 20px; display: inline-flex;
+            align-items: center; transition: color 0.2s ease;
         }
-        .back-mainframe:hover { color: #ff1111; }
+        .back-mainframe:hover { color: #ff00ff; }
+        
         .center-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 50px;
-            padding-bottom: 30px;
-            border-bottom: 1px dashed rgba(0, 255, 204, 0.15);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            margin-bottom: 50px; padding-bottom: 30px; border-bottom: 1px dashed rgba(0, 255, 204, 0.15);
         }
         .center-title {
-            font-size: 2.6rem;
-            font-weight: 900;
-            letter-spacing: 7px;
-            color: #ffffff;
+            font-size: 2.6rem; font-weight: 900; letter-spacing: 7px; color: #ffffff;
             text-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
         }
         .center-subtitle {
-            color: #ff1111;
-            text-shadow: 0 0 8px rgba(255, 17, 17, 0.2);
-            margin-top: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            font-weight: 700;
+            color: #00ffcc; text-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+            margin-top: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700;
+            font-size: 0.85rem;
         }
+        
         .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            flex-grow: 1;
-            margin-bottom: 40px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px; flex-grow: 1; margin-bottom: 40px;
         }
         .game-card {
             background: rgba(4, 5, 10, 0.9);
             border: 1px solid rgba(0, 255, 204, 0.12);
-            border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
+            border-radius: 16px; padding: 25px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .game-card.online {
-            border-color: rgba(0, 255, 204, 0.25);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-        }
+        .game-card.online { border-color: rgba(0, 255, 204, 0.25); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
         .game-card.online:hover {
-            transform: translateY(-5px);
-            border-color: #00ffcc;
+            transform: translateY(-5px); border-color: #00ffcc;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.25);
         }
         .game-card.online.purple-glow:hover {
-            border-color: #ff00ff;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
+            border-color: #ff00ff; box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
         }
+        
         .status-tag {
-            position: absolute;
-            top: 18px; right: 18px; font-size: 0.65rem; font-weight: 900;
+            position: absolute; top: 18px; right: 18px; font-size: 0.65rem; font-weight: 900;
             padding: 5px 12px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase;
         }
         .status-tag.online { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; }
@@ -134,34 +100,39 @@
     </style>
 </head>
 <body>
+
     <div class="grid-backdrop"></div>
+
     <div class="center-wrapper">
         <a href="../index.html" class="back-mainframe">⚡ BACK_TO_MAINFRAME</a>
+
         <header class="center-header">
             <h1 class="center-title">GAME CENTER</h1>
             <div class="center-subtitle">Tool 01 // Zaeem Labs Deployment Suite</div>
         </header>
+
         <main class="games-grid">
             
             <section class="game-card online">
-                <div class="status-tag online">Active Core</div>
+                <div class="status-tag online">3-IN-1 PACK</div>
                 <div>
-                    <h2 class="game-title">MEADOW DASH</h2>
-                    <p class="game-desc">A beautiful, open-world 2D dashboard field running fluid drifting momentum physics. Collect elements, escape boundaries, and zoom around with kinetic neon dash trails to calming arpeggiated tracks.</p>
+                    <h2 class="game-title">ARCADE CABINET</h2>
+                    <p class="game-desc">A premium compilation of three offline classics running on a juiced vector graphics engine. Features a neon-glowing Snake, a perfectly aligned anti-inversion 2048 matrix, and a local Chess board to play vs an automated smart AI bot.</p>
                 </div>
-                <a href="game.html" class="action-btn">LAUNCH SIMULATION</a>
+                <a href="game.html" class="action-btn">LAUNCH CABINET</a>
             </section>
 
             <section class="game-card online purple-glow">
-                <div class="status-tag purple">Relaxing Sim</div>
+                <div class="status-tag purple">PHYSICS SIM</div>
                 <div>
-                    <h2 class="game-title">PARTICLE LAB // SANDBOX</h2>
-                    <p class="game-desc">A highly tactical, therapeutic physics environment. Manipulate elements like falling sand, streaming water, growing plants, and burning fire. Watch elements interact in real-time with zero stress and calming audio.</p>
+                    <h2 class="game-title">PARTICLE LABORATORY V2</h2>
+                    <p class="game-desc">A therapeutic, highly reactive falling sand physics simulator. Interact with 10 complex elements including acid-melting fluids, burning wood structures, floating oil layers, and deep-radius C4 explosions.</p>
                 </div>
-                <a href="sand_lab.html" class="action-btn purple-btn">BOOT SANDBOX</a>
+                <a href="sand_lab.html" class="action-btn purple-btn">BOOT REACTOR</a>
             </section>
 
         </main>
     </div>
+
 </body>
 </html>
