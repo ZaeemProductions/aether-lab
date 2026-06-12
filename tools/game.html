@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaeem Labs // Dark Core Alpha</title>
+    <title>Zaeem Labs // Dark Core Overdrive</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
-            background-color: #010103;
+            background-color: #06040a;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         #game-canvas {
@@ -36,7 +36,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #030306;
+            background: #09070f;
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -48,14 +48,14 @@
         .boot-btn {
             margin-top: 25px;
             padding: 16px 50px;
-            background: linear-gradient(135deg, #ff1111 0%, #880000 100%);
-            border: 2px solid #ff4444;
+            background: linear-gradient(135deg, #00ffcc 0%, #0055ff 100%);
+            border: 2px solid #00ffcc;
             color: #ffffff;
             font-weight: 900;
             font-size: 1.2rem;
             border-radius: 35px;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 17, 17, 0.4);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
             letter-spacing: 1px;
         }
 
@@ -73,9 +73,9 @@
             padding: 25px;
         }
         .hud-element {
-            background: rgba(3, 3, 6, 0.9);
-            border: 2px solid #ff1111;
-            box-shadow: 0 0 15px rgba(255, 17, 17, 0.2);
+            background: rgba(13, 9, 23, 0.85);
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
             padding: 12px 25px;
             border-radius: 20px;
             color: #ffffff;
@@ -90,11 +90,11 @@
             justify-content: space-between;
             width: 100%;
         }
-        #stat-hp { color: #ff3333; text-shadow: 0 0 6px #ff3333; }
+        #stat-hp { color: #ff3366; text-shadow: 0 0 6px #ff3366; }
         #stat-score { color: #00ffcc; text-shadow: 0 0 6px #00ffcc; }
-        #stat-weapon { color: #ffaa00; text-shadow: 0 0 6px #ffaa00; }
+        #stat-weapon { color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
         
-        /* Tactical iPad Mobile Controls Configuration Layout */
+        /* Tactical Mobile Controls Layout */
         #controls-layer {
             display: flex;
             justify-content: space-between;
@@ -108,8 +108,8 @@
         #joystick-bound {
             width: 135px;
             height: 135px;
-            background: rgba(255, 255, 255, 0.01);
-            border: 3px dashed rgba(255, 17, 17, 0.3);
+            background: rgba(255, 255, 255, 0.02);
+            border: 3px dashed rgba(0, 255, 204, 0.4);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -118,9 +118,9 @@
         #joystick-thumb {
             width: 52px;
             height: 52px;
-            background: radial-gradient(circle, #ff3333 0%, #880000 100%);
+            background: radial-gradient(circle, #00ffcc 0%, #0055ff 100%);
             border-radius: 50%;
-            box-shadow: 0 0 20px #ff1111;
+            box-shadow: 0 0 20px #00ffcc;
         }
         
         #action-cluster {
@@ -132,22 +132,22 @@
         #swap-btn {
             width: 80px;
             height: 80px;
-            background: rgba(255, 170, 0, 0.15);
-            border: 2px solid #ffaa00;
-            color: #ffaa00;
+            background: rgba(255, 0, 255, 0.15);
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
             border-radius: 50%;
             font-weight: 900;
             font-size: 0.9rem;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
         }
         #fire-btn {
             width: 110px;
             height: 110px;
-            background: rgba(255, 17, 17, 0.15);
-            border: 3px solid #ff1111;
+            background: rgba(0, 255, 204, 0.15);
+            border: 3px solid #00ffcc;
             color: #ffffff;
             border-radius: 50%;
             font-weight: 900;
@@ -155,10 +155,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 25px rgba(255, 17, 17, 0.3);
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
         }
         #fire-btn:active {
-            background: #ff1111;
+            background: #00ffcc;
+            color: #000;
             transform: scale(0.95);
         }
         
@@ -175,7 +176,7 @@
         #crosshair::before, #crosshair::after {
             content: '';
             position: absolute;
-            background: rgba(255, 17, 17, 0.5);
+            background: rgba(0, 255, 204, 0.6);
         }
         #crosshair::before { top: 6px; left: -6px; width: 26px; height: 2px; }
         #crosshair::after { top: -6px; left: 6px; width: 2px; height: 26px; }
@@ -184,9 +185,9 @@
 <body>
 
     <div id="boot-overlay">
-        <h1 style="font-size: 2.4rem; color: #ff1111; text-shadow: 0 0 20px rgba(255,17,17,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: ADVANCED</h1>
-        <p style="color: #555e6b; margin-top: 8px; font-weight: 500; font-family: monospace;">True Dual-Stick Mapping • Optimized Touch Registers</p>
-        <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE WORKSPACE</button>
+        <h1 style="font-size: 2.4rem; color: #00ffcc; text-shadow: 0 0 20px rgba(0,255,204,0.4); font-weight: 900; letter-spacing: 2px;">DARK CORE: OVERDRIVE</h1>
+        <p style="color: #6c5a94; margin-top: 8px; font-weight: 500; font-family: monospace;">Vibrant Arcade Pipeline • Fluid Spawn Overrides</p>
+        <button class="boot-btn" onclick="bootDarkCoreEngine()">INITIALIZE SUITE</button>
     </div>
 
     <div id="crosshair"></div>
@@ -211,7 +212,7 @@
     </div>
 
     <script>
-        // --- PREMIUM AUDIO EFFECTS ENGINE (ZERO SAWTOOTH WAVES) ---
+        // --- PREMIUM AUDIO EFFECTS ENGINE ---
         class SynthAudioEngine {
             constructor() { this.ctx = null; this.ambience = null; }
             init() {
@@ -223,8 +224,8 @@
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                 osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.15);
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.15);
                 gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
                 osc.connect(gain); gain.connect(this.ctx.destination);
@@ -235,9 +236,9 @@
                 for(let k=0; k<3; k++) {
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                     osc.type = (k === 0) ? 'triangle' : 'sine';
-                    let baseFreq = 160 - (k * 40);
+                    let baseFreq = 200 - (k * 50);
                     osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(10, this.ctx.currentTime + 0.22);
+                    osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.22);
                     gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
                     osc.connect(gain); gain.connect(this.ctx.destination);
@@ -248,9 +249,9 @@
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                 osc.type = 'triangle'; 
-                box = this.ctx.currentTime;
-                osc.frequency.setValueAtTime(90, box);
-                osc.frequency.linearRampToValueAtTime(10, box + 0.45);
+                let box = this.ctx.currentTime;
+                osc.frequency.setValueAtTime(110, box);
+                osc.frequency.linearRampToValueAtTime(20, box + 0.45);
                 gain.gain.setValueAtTime(0.35, box);
                 gain.gain.exponentialRampToValueAtTime(0.001, box + 0.45);
                 osc.connect(gain); gain.connect(this.ctx.destination);
@@ -260,8 +261,8 @@
                 if (!this.ctx) return;
                 let osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
                 osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(75, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(20, this.ctx.currentTime + 0.18);
+                osc.frequency.setValueAtTime(80, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(30, this.ctx.currentTime + 0.18);
                 gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
                 osc.connect(gain); gain.connect(this.ctx.destination);
@@ -272,10 +273,10 @@
                     if (!this.ctx || !gameActive) return;
                     let osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), filter = this.ctx.createBiquadFilter();
                     osc.type = 'sine'; 
-                    osc.frequency.setValueAtTime(45 + Math.random() * 3, this.ctx.currentTime);
+                    osc.frequency.setValueAtTime(50 + Math.random() * 3, this.ctx.currentTime);
                     filter.type = 'lowpass'; 
-                    filter.frequency.setValueAtTime(80, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    filter.frequency.setValueAtTime(90, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
                     gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 1.4);
                     osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
                     osc.start(); osc.stop(this.ctx.currentTime + 1.5);
@@ -291,7 +292,7 @@
             launchEngineCircuit();
         }
 
-        // --- RAYCASTING SIMULATION ENGINES ---
+        // --- RAYCASTING ENGINE COMPONENT ---
         let canvas, ctx;
         let lastTime = performance.now();
         let gameActive = true;
@@ -316,7 +317,8 @@
             1,1,1,1,1,1,1,1,1,1,1,1,1,1
         ];
 
-        let player = { x: 2.5, y: 2.5, angle: 0, fov: Math.PI / 3, speed: 4.2, rotSpeed: 1.5 };
+        // FIXED CRITICAL SPAWN BUG: Moved coordinates from inside a wall to a wide-open hallway lane
+        let player = { x: 1.5, y: 1.5, angle: 0, fov: Math.PI / 3, speed: 4.5, rotSpeed: 1.6 };
         let currentWeapon = "PLASMA"; 
         let drones = [];
         let projectiles = [];
@@ -343,7 +345,7 @@
             window.addEventListener('resize', recomputeViewportResolution);
             setupHardwareInputBindings();
 
-            for(let i=0; i<4; i++) spawnMatrixDrone();
+            for(let i=0; i<5; i++) spawnMatrixDrone();
 
             requestAnimationFrame(engineFrameStep);
         }
@@ -359,10 +361,10 @@
             while(!placed) {
                 let tx = Math.floor(Math.random() * mapW);
                 let ty = Math.floor(Math.random() * mapH);
-                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 4)) {
+                if(map[ty * mapW + tx] === 0 && (Math.hypot(tx - player.x, ty - player.y) > 3)) {
                     drones.push({
                         x: tx + 0.5, y: ty + 0.5,
-                        alive: true, speed: 1.5,
+                        alive: true, speed: 1.6,
                         shootCooldown: 1.0 + Math.random() * 2,
                         bobSeed: Math.random() * 10
                     });
@@ -374,7 +376,7 @@
         function switchWeaponLoadout() {
             currentWeapon = currentWeapon === "PLASMA" ? "SHOTGUN" : "PLASMA";
             document.getElementById('stat-weapon').innerText = currentWeapon;
-            document.getElementById('stat-weapon').style.color = currentWeapon === "SHOTGUN" ? "#ffaa00" : "#00ffcc";
+            document.getElementById('stat-weapon').style.color = currentWeapon === "SHOTGUN" ? "#ff00ff" : "#00ffcc";
         }
 
         function setupHardwareInputBindings() {
@@ -512,7 +514,7 @@
                     audio.playExplode();
                     score++;
                     document.getElementById('stat-score').innerText = score;
-                    spawnExplosionSparks(target.x, target.y, '#ff3355');
+                    spawnExplosionSparks(target.x, target.y, '#00ffcc');
 
                     setTimeout(() => {
                         drones = drones.filter(e => e !== target);
@@ -548,7 +550,7 @@
             for(let i=0; i<16; i++) {
                 particles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * 2.2, vy: (Math.random() - 0.5) * 2.2,
+                    vx: (Math.random() - 0.5) * 2.5, vy: (Math.random() - 0.5) * 2.5,
                     life: 1.0, color: color
                 });
             }
@@ -584,7 +586,7 @@
                     let dx = player.x - d.x, dy = player.y - d.y;
                     let dist = Math.hypot(dx, dy);
                     
-                    if(dist > 2.2) {
+                    if(dist > 2.0) {
                         d.x += (dx / dist) * d.speed * dt;
                         d.y += (dy / dist) * d.speed * dt;
                     }
@@ -594,9 +596,9 @@
                         let projAngle = Math.atan2(dy, dx);
                         projectiles.push({
                             x: d.x, y: d.y,
-                            vx: Math.cos(projAngle) * 4.4, vy: Math.sin(projAngle) * 4.4
+                            vx: Math.cos(projAngle) * 4.6, vy: Math.sin(projAngle) * 4.6
                         });
-                        d.shootCooldown = 1.8 + Math.random() * 2.2;
+                        d.shootCooldown = 1.6 + Math.random() * 2.0;
                     }
                 });
 
@@ -629,11 +631,21 @@
         }
 
         function renderGraphicsCircuit() {
-            ctx.fillStyle = '#010103';
+            // Bright floor clean purple-tint baseline
+            ctx.fillStyle = '#110b24';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#0b0612';
+            // OVERHAUL VISUALS: Gorgeous sky gradient instead of eerie void blackness
+            let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
+            skyGrad.addColorStop(0, '#26063b');
+            skyGrad.addColorStop(0.6, '#0f041c');
+            skyGrad.addColorStop(1, '#ff007f');
+            ctx.fillStyle = skyGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+
+            // Draw a neat neon laser line across the split screen horizon
+            ctx.fillStyle = '#ff007f';
+            ctx.fillRect(0, (canvas.height / 2) - 1, canvas.width, 2);
 
             let sliceW = canvas.width / colsCount;
             let depthBuffer = [];
@@ -677,16 +689,23 @@
                 let beamWidth = 0.42; 
                 let intensity = 0;
                 if(angleDiff < beamWidth) {
-                    intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 11.5));
-                    intensity = Math.max(0, intensity);
+                    intensity = (1.0 - (angleDiff / beamWidth)) * (1.0 - (correctedDist / 12.0));
+                    intensity = Math.max(0.15, intensity); // Brightened ambient baseline lighting
+                } else {
+                    intensity = 0.15;
                 }
 
-                let r = Math.floor((sideHit ? 40 : 20) * intensity);
-                let g = Math.floor((sideHit ? 50 : 25) * intensity);
-                let b = Math.floor((sideHit ? 160 : 100) * intensity);
+                // OVERHAUL VISUALS: Electric Cyber Cyan & Magenta matrix wall hues instead of dingy grey shadows
+                let r = Math.floor((sideHit ? 0 : 200) * intensity);
+                let g = Math.floor((sideHit ? 230 : 0) * intensity);
+                let b = Math.floor((sideHit ? 255 : 180) * intensity);
 
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
                 ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), sliceW + 1, wallH);
+
+                // Adding a quick grid wireframe border layer on the columns for depth
+                ctx.fillStyle = `rgba(255, 255, 255, ${0.1 * intensity})`;
+                ctx.fillRect(i * sliceW, (canvas.height / 2) - (wallH / 2), 1, wallH);
             }
 
             let spriteQueue = [];
@@ -716,8 +735,8 @@
                 if (colIdx >= 0 && colIdx < colsCount && depthBuffer[colIdx] < dist) return;
 
                 let angleDiff = Math.abs((player.angle + viewAng) - player.angle);
-                let illumination = angleDiff < 0.42 ? (1.0 - (dist / 11.0)) : 0.08;
-                illumination = Math.max(0.04, illumination);
+                let illumination = angleDiff < 0.42 ? (1.0 - (dist / 11.0)) : 0.2;
+                illumination = Math.max(0.2, illumination);
 
                 ctx.save();
                 ctx.translate(projX, canvas.height / 2);
@@ -727,18 +746,29 @@
                     let d = sprite.obj;
                     let bob = Math.sin(performance.now() * 0.008 + d.bobSeed) * (projSize * 0.06);
                     if (d.alive) {
-                        ctx.fillStyle = '#ff1155';
-                        ctx.shadowBlur = projSize * 0.15; ctx.shadowColor = '#ff1155';
-                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.14, 0, Math.PI * 2); ctx.fill();
-                        ctx.fillStyle = '#1b1d26';
-                        ctx.fillRect(-projSize*0.22, bob - 2, projSize*0.44, 4);
+                        // RE-SKINNED DRONES: Removed dark depressing blocks completely. 
+                        // Drones are now bright neon energy orbs with glowing core stabilization rings.
+                        ctx.fillStyle = '#00ffcc';
+                        ctx.shadowBlur = projSize * 0.25; ctx.shadowColor = '#00ffcc';
+                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.13, 0, Math.PI * 2); ctx.fill();
+                        
+                        // Radiant central power matrix nucleus
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath(); ctx.arc(0, bob, projSize * 0.05, 0, Math.PI * 2); ctx.fill();
+                        
+                        // Cyber containment vector cross shield rings
+                        ctx.strokeStyle = '#ff00ff'; ctx.lineWidth = 2;
+                        ctx.strokeRect(-projSize * 0.18, bob - projSize * 0.18, projSize * 0.36, projSize * 0.36);
                     } else {
-                        ctx.fillStyle = '#ff6600'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.18, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#ff0055'; ctx.beginPath(); ctx.arc(0, projSize*0.1, projSize*0.18, 0, Math.PI*2); ctx.fill();
                     }
                 } else if (sprite.type === 'fireball') {
-                    ctx.fillStyle = '#ffcc00';
-                    ctx.shadowBlur = projSize * 0.35; ctx.shadowColor = '#ff3300';
+                    // Hyper glowing laser projectile orb meshes
+                    ctx.fillStyle = '#ff00ff';
+                    ctx.shadowBlur = projSize * 0.4; ctx.shadowColor = '#ff00ff';
                     ctx.beginPath(); ctx.arc(0, 0, projSize * 0.08, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath(); ctx.arc(0, 0, projSize * 0.03, 0, Math.PI * 2); ctx.fill();
                 }
 
                 ctx.restore();
@@ -760,11 +790,11 @@
             renderIntegratedTelemetryMinimap();
 
             if (health <= 0) {
-                ctx.fillStyle = 'rgba(100, 0, 0, 0.88)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#ffffff'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
-                ctx.fillText("VITAL MATRIX DESTROYED", canvas.width / 2, canvas.height / 2);
-                ctx.font = '500 1.1rem monospace';
-                ctx.fillText("Tap refresh page link parameters to restart workspace.", canvas.width / 2, canvas.height / 2 + 45);
+                ctx.fillStyle = 'rgba(15, 5, 30, 0.95)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00ffcc'; ctx.font = '900 2.2rem monospace'; ctx.textAlign = 'center';
+                ctx.fillText("MATRIX CORE TERMINATED", canvas.width / 2, canvas.height / 2);
+                ctx.font = '500 1.1rem monospace'; ctx.fillStyle = '#ffffff';
+                ctx.fillText("Tap workspace reload links to recompile frame systems.", canvas.width / 2, canvas.height / 2 + 45);
             }
         }
 
@@ -773,7 +803,7 @@
             ctx.translate(canvas.width / 2, canvas.height);
             
             let recoilY = muzzleFlash > 0 ? (currentWeapon === "SHOTGUN" ? 35 : 20) : 0;
-            ctx.fillStyle = '#14171d'; ctx.strokeStyle = currentWeapon === "SHOTGUN" ? '#ffaa00' : '#00ffcc';
+            ctx.fillStyle = '#0a0814'; ctx.strokeStyle = currentWeapon === "SHOTGUN" ? '#ff00ff' : '#00ffcc';
             ctx.lineWidth = 3;
 
             if (currentWeapon === "PLASMA") {
@@ -782,23 +812,22 @@
                 ctx.lineTo(18, -115 + recoilY); ctx.lineTo(35, recoilY);
                 ctx.closePath(); ctx.fill(); ctx.stroke();
                 
-                ctx.fillStyle = muzzleFlash > 0 ? '#ffffff' : '#00aaff';
+                ctx.fillStyle = muzzleFlash > 0 ? '#ffffff' : '#00ffcc';
                 ctx.fillRect(-5, -105 + recoilY, 10, 35);
             } else {
                 ctx.beginPath();
                 ctx.moveTo(-50, recoilY); ctx.lineTo(-30, -95 + recoilY);
                 ctx.lineTo(30, -95 + recoilY); ctx.lineTo(50, recoilY);
-                // SHOTGUN HUD CTX BUG FIX COMPLETED SECURELY HERE:
-                ctx.closePath(); ctx.fill(); ctx.stroke(); 
+                ctx.closePath(); ctx.fill(); ctx.stroke();
 
-                ctx.fillStyle = '#050507';
+                ctx.fillStyle = '#160d29';
                 ctx.fillRect(-14, -90 + recoilY, 10, 20);
                 ctx.fillRect(4, -90 + recoilY, 10, 20);
             }
 
             if (muzzleFlash > 0) {
                 ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 45;
-                ctx.shadowColor = currentWeapon === "SHOTGUN" ? '#ffaa00' : '#ff3333';
+                ctx.shadowColor = currentWeapon === "SHOTGUN" ? '#ff00ff' : '#00ffcc';
                 ctx.beginPath(); 
                 ctx.arc(0, currentWeapon === "SHOTGUN" ? -105 : -125, currentWeapon === "SHOTGUN" ? 42 : 28, 0, Math.PI * 2); 
                 ctx.fill();
@@ -812,27 +841,27 @@
             let offsetBoxX = canvas.width - (mapW * mapScale) - 25;
             let offsetBoxY = 85; 
 
-            ctx.fillStyle = 'rgba(5, 7, 15, 0.8)'; ctx.strokeStyle = '#ff1111'; ctx.lineWidth = 2;
+            ctx.fillStyle = 'rgba(10, 6, 20, 0.85)'; ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2;
             ctx.fillRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
             ctx.strokeRect(offsetBoxX - 5, offsetBoxY - 5, (mapW * mapScale) + 10, (mapH * mapScale) + 10);
 
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.4)';
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.25)';
             for(let ty=0; ty<mapH; ty++) {
                 for(let tx=0; tx<mapW; tx++) {
                     if (map[ty * mapW + tx] > 0) ctx.fillRect(offsetBoxX + (tx * mapScale), offsetBoxY + (ty * mapScale), mapScale - 0.5, mapScale - 0.5);
                 }
             }
 
-            ctx.fillStyle = '#ff0055';
+            ctx.fillStyle = '#ff00ff';
             drones.forEach(d => {
-                if(d.alive) { ctx.beginPath(); ctx.arc(offsetBoxX + (d.x * mapScale), offsetBoxY + (d.y * mapScale), 2.2, 0, Math.PI*2); ctx.fill(); }
+                if(d.alive) { ctx.beginPath(); ctx.arc(offsetBoxX + (d.x * mapScale), offsetBoxY + (d.y * mapScale), 2.5, 0, Math.PI*2); ctx.fill(); }
             });
 
             ctx.save();
             ctx.translate(offsetBoxX + (player.x * mapScale), offsetBoxY + (player.y * mapScale));
             ctx.rotate(player.angle);
 
-            ctx.strokeStyle = 'rgba(255, 170, 0, 0.35)'; ctx.lineWidth = 1.2;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 1.2;
             ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(25, -10); ctx.moveTo(0,0); ctx.lineTo(25, 10); ctx.stroke();
 
             ctx.fillStyle = '#00ffcc';
