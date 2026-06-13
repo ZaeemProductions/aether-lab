@@ -109,7 +109,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* --- TAB 4: MS PAINT NEON ENGINE STUUDIO DECK --- */
+        /* TAB 4: MS PAINT NEON DRAWING CORE STUDIO */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel {
@@ -118,7 +118,6 @@
         }
         #sketch-canvas { display: block; background: #ffffff; }
         
-        /* Direct Canvas Floating Size Cursor */
         #sketch-custom-cursor {
             position: absolute; border: 2px solid #000000; border-radius: 50%;
             pointer-events: none; display: none; z-index: 10; transform: translate(-50%, -50%);
@@ -194,9 +193,9 @@
                 <div class="telemetry-box">
                     <label style="color:#00ffcc; margin-bottom: 12px;">Vector HUD Core Diagnostics</label>
                     <div class="telemetry-node"><span>FX STREAM CONFIG:</span><span id="tele-status" style="color:#ff3366; font-weight:bold;">STANDBY</span></div>
-                    <div class="telemetry-node"><span>EXPRESSION MATRIX:</span><span id="tele-emotion" style="font-size: 1.4rem; font-weight:bold;">AWAITING FEED</span></div>
+                    <div class="telemetry-node"><span>EXPRESSION MATRIX:</span><span id="tele-emotion" style="font-size: 1.3rem; font-weight:bold;">AWAITING FEED</span></div>
                     <div class="telemetry-node"><span>TOPOLOGY FIELD:</span><span style="color:white; font-weight: bold;">468 GRAPH MATRIX VECTOR TRACKS</span></div>
-                    <div class="telemetry-node"><span>MOUTH DEPTH APEX:</span><span id="tele-mouth-open" style="color:white; font-weight: bold;">0.00</span></div>
+                    <div class="telemetry-node"><span>MOUTH DEPTH RATIO:</span><span id="tele-mouth-open" style="color:white; font-weight: bold;">0.00</span></div>
                     <div class="telemetry-node"><span>STREAM FPS RATE:</span><span id="tele-signal" style="color:#728196;">0.00 FPS</span></div>
                 </div>
             </div>
@@ -260,7 +259,8 @@
 
                     <label style="color: #00ffcc; margin-bottom: 8px;">3. Gel Ink Swatch Deck</label>
                     <div class="palette-bar">
-                        <div class="color-dot active" style="background:#020206;" onclick="setSketchColor('#020206', this)"></div> <div class="color-dot" style="background:#00ffcc;" onclick="setSketchColor('#00ffcc', this)"></div>
+                        <div class="color-dot active" style="background:#020206;" onclick="setSketchColor('#020206', this)"></div> 
+                        <div class="color-dot" style="background:#00ffcc;" onclick="setSketchColor('#00ffcc', this)"></div>
                         <div class="color-dot" style="background:#ff00ff;" onclick="setSketchColor('#ff00ff', this)"></div>
                         <div class="color-dot" style="background:#ffaa00;" onclick="setSketchColor('#ffaa00', this)"></div>
                         <div class="color-dot" style="background:#ff3366;" onclick="setSketchColor('#ff3366', this)"></div>
@@ -324,7 +324,7 @@
         }
 
         // =========================================================================
-        // --- LIVE HYPER-ACCURATE VECTOR CHASSIS FACE TOPOLOGY MESH ---
+        // --- 100% DISTANCE-INDEPENDENT RATIO FACE TOPOLOGY MESH ---
         // =========================================================================
         let camVideoStream = null;
         let mediaPipeCameraInstance = null;
@@ -332,7 +332,7 @@
         let scannerCtx = scannerCanvas.getContext('2d');
 
         function initializeBiometricCamera() {
-            document.getElementById('tele-status').innerText = "LOADING CORE SCHEMATICS...";
+            document.getElementById('tele-status').innerText = "LOADING CORRELATION MATRICES...";
             document.getElementById('tele-status').style.color = "#ffaa00";
 
             const faceMesh = new FaceMesh({
@@ -353,7 +353,7 @@
 
             navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
                 .then(stream => { camVideoStream = stream; document.getElementById('camera-placeholder').style.display = 'none'; mediaPipeCameraInstance.start(); })
-                .catch(err => { alert("ERROR: Video initialization anomaly detected."); document.getElementById('tele-status').innerText = "STANDBY"; });
+                .catch(err => { alert("ERROR: Video stream unallocated."); document.getElementById('tele-status').innerText = "STANDBY"; });
         }
 
         function stopBiometricCamera() {
@@ -361,7 +361,7 @@
             if (camVideoStream) { camVideoStream.getTracks().forEach(track => track.stop()); camVideoStream = null; }
             document.getElementById('camera-placeholder').style.display = 'block';
             document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
-            document.getElementById('tele-emotion').innerText = "AWAITING FEED"; document.getElementById('tele-emotion').style.color = "#ff00ff";
+            document.getElementById('tele-emotion').innerText = "AWAITING DATA"; document.getElementById('tele-emotion').style.color = "#ff00ff";
             scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
         }
 
@@ -377,13 +377,11 @@
 
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                 const facePoints = results.multiFaceLandmarks[0];
-                scannerCtx.save();
+                scannerCtx.save(); 
                 
-                // Draw Full Hyper-Accurate Vector Chassis Connections
-                scannerCtx.lineWidth = 0.8;
-                scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.35)";
-                
-                // Iterates through full index topologies to chart vector wireframes
+                // FIXED PIPELINE: Render high-density 3D topology wireframe meshes directly over face parameters
+                scannerCtx.lineWidth = 0.5;
+                scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.32)";
                 for (let i = 0; i < facePoints.length; i += 3) {
                     if(i + 1 < facePoints.length) {
                         scannerCtx.beginPath();
@@ -393,72 +391,71 @@
                     }
                 }
 
-                // Core facial landmark focal overlays
-                scannerCtx.lineWidth = 1.8;
-                
-                // Eyebrow Chassis Map
+                // High-visibility vector chassis maps overrides curtain drift completely
+                scannerCtx.lineWidth = 2.0;
+
+                // Brows
                 scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.beginPath();
                 const browIdx = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300];
                 browIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.stroke();
 
-                // Left Eye Contour
+                // Eyes
                 scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.beginPath();
                 const leftEyeIdx = [33, 160, 158, 133, 153, 144];
                 leftEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.closePath(); scannerCtx.stroke();
 
-                // Right Eye Contour
                 scannerCtx.beginPath();
                 const rightEyeIdx = [362, 385, 387, 263, 373, 380];
                 rightEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.closePath(); scannerCtx.stroke();
 
-                // Lip Boundaries
-                scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.beginPath();
+                // Lips
+                scannerCtx.strokeStyle = '#ffff00'; scannerCtx.beginPath();
                 const lipsIdx = [61, 37, 0, 267, 291, 314, 17, 84];
                 lipsIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.closePath(); scannerCtx.stroke();
 
-                // Nose Bridge
-                scannerCtx.strokeStyle = '#ff3366'; scannerCtx.beginPath();
+                // Nose
+                scannerCtx.strokeStyle = '#00ffff'; scannerCtx.beginPath();
                 const noseIdx = [168, 6, 197, 195, 5];
                 noseIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.stroke();
 
-                // --- COMPUTE EMOTIONAL VALUES FROM FACE GEOMETRIES ---
-                let upperLipY = facePoints[13].y * scannerCanvas.height;
-                let lowerLipY = facePoints[14].y * scannerCanvas.height;
-                let mouthOpenDistance = Math.abs(lowerLipY - upperLipY);
-                document.getElementById('tele-mouth-open').innerText = mouthOpenDistance.toFixed(1);
+                // --- PROPORTIONAL RATIO MATHEMATICAL ALGORITHMS ---
+                // Calculate dynamic structural baselines of the face boundaries
+                let faceWidth = Math.sqrt(Math.pow(facePoints[454].x - facePoints[234].x, 2) + Math.pow(facePoints[454].y - facePoints[234].y, 2));
+                let faceHeight = Math.sqrt(Math.pow(facePoints[152].x - facePoints[10].x, 2) + Math.pow(facePoints[152].y - facePoints[10].y, 2));
 
-                let mouthLeftX = facePoints[61].x * scannerCanvas.width;
-                let mouthRightX = facePoints[291].x * scannerCanvas.width;
-                let mouthWidth = Math.abs(mouthRightX - mouthLeftX);
+                let mouthOpenDistance = Math.sqrt(Math.pow(facePoints[14].x - facePoints[13].x, 2) + Math.pow(facePoints[14].y - facePoints[13].y, 2));
+                let mouthOpenRatio = mouthOpenDistance / faceHeight;
 
-                let leftBrowY = facePoints[70].y * scannerCanvas.height;
-                let leftEyeY = facePoints[159].y * scannerCanvas.height;
-                let browEyeDistance = Math.abs(leftEyeY - leftBrowY);
+                let mouthWidthDistance = Math.sqrt(Math.pow(facePoints[291].x - facePoints[61].x, 2) + Math.pow(facePoints[291].y - facePoints[61].y, 2));
+                let smileRatio = mouthWidthDistance / faceWidth;
+
+                let leftBrowY = facePoints[70].y; let leftEyeY = facePoints[159].y;
+                let browEyeRatio = Math.abs(leftEyeY - leftBrowY) / faceHeight;
+
+                document.getElementById('tele-mouth-open').innerText = mouthOpenRatio.toFixed(3);
 
                 let emotionDisplay = document.getElementById('tele-emotion');
-                let targetEmoji = "😐 NEUTRAL";
-                
-                if (mouthOpenDistance > 15) { targetEmoji = "😲 SHOCKED"; emotionDisplay.style.color = "#00ffff"; }
-                else if (mouthWidth > 60) { targetEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
-                else if (browEyeDistance < 18) { targetEmoji = "🎯 FOCUSED"; emotionDisplay.style.color = "#ff3366"; }
+                let outputEmoji = "😐 NEUTRAL";
+
+                if (mouthOpenRatio > 0.085) { outputEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
+                else if (smileRatio > 0.445) { outputEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
+                else if (browEyeRatio < 0.045) { outputEmoji = "🎯 FOCUSED"; emotionDisplay.style.color = "#ff3366"; }
                 else { emotionDisplay.style.color = "#ffffff"; }
                 
-                emotionDisplay.innerText = targetEmoji;
+                emotionDisplay.innerText = outputEmoji;
 
-                // Render floating tactical emoji overlay next to target face frame bounds
-                let anchorPoint = facePoints[263]; // Right eye outer border edge anchor
-                scannerCtx.fillStyle = '#ffffff';
-                scannerCtx.font = '24px Arial';
-                // Draws flipped emoji correctly
-                scannerCtx.fillText(targetEmoji.split(' ')[0], anchorPoint.x * scannerCanvas.width + 25, anchorPoint.y * scannerCanvas.height);
+                // Anchor the active emoji vector tracker directly next to your eye coordinate metrics
+                let emojiAnchorPoint = facePoints[263]; 
+                scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '26px ui-sans-serif';
+                scannerCtx.fillText(outputEmoji.split(' ')[0], emojiAnchorPoint.x * scannerCanvas.width + 30, emojiAnchorPoint.y * scannerCanvas.height);
                 scannerCtx.restore();
             } else {
-                document.getElementById('tele-emotion').innerText = "❌ UNRESOLVED"; document.getElementById('tele-emotion').style.color = "#728196";
+                document.getElementById('tele-emotion').innerText = "❌ LOST TARGET"; document.getElementById('tele-emotion').style.color = "#728196";
             }
             document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
         }
@@ -484,7 +481,7 @@
         }
 
         // =========================================================================
-        // --- MS PAINT STYLE NEON STUDIO SHEET ENGINE (WHITE BG PATTERNS) ---
+        // --- MS PAINT STYLE FLAT WHITE NEON ENGINE WORKSPACE ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
@@ -493,10 +490,9 @@
         let sketchDrawingActive = false;
         let brushStrokeThickness = 2.0;
         let brushStrokeColor = '#020206';
-        let activeShapeSelection = 'brush'; // Options: brush, line, rect, circle
+        let activeShapeSelection = 'brush'; 
         
-        let dragAnchorX = 0;
-        let dragAnchorY = 0;
+        let dragAnchorX = 0; let dragAnchorY = 0;
         let imageHistorySnapshot = null;
 
         function resizeSketchCanvas() {
@@ -506,10 +502,8 @@
                 tempCanvas.width = sketchCanvas.width; tempCanvas.height = sketchCanvas.height;
                 tempCanvas.getContext('2d').drawImage(sketchCanvas, 0, 0);
 
-                sketchCanvas.width = box.clientWidth;
-                sketchCanvas.height = 380;
+                sketchCanvas.width = box.clientWidth; sketchCanvas.height = 380;
                 
-                // STRICT REQUIREMENT: Initialized to solid flat white page
                 sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
                 sketchCtx.drawImage(tempCanvas, 0, 0);
                 updateManualBrushSize(brushStrokeThickness);
@@ -526,9 +520,7 @@
             brushStrokeThickness = weight;
             document.getElementById('sketch-brush-slider').value = weight;
             document.getElementById('lbl-brush-size').innerText = weight + "px";
-            cursorCircleIndicator.style.width = weight + "px";
-            cursorCircleIndicator.style.height = weight + "px";
-            
+            cursorCircleIndicator.style.width = weight + "px"; cursorCircleIndicator.style.height = weight + "px";
             document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
         }
@@ -536,8 +528,7 @@
         function updateManualBrushSize(value) {
             brushStrokeThickness = parseFloat(value);
             document.getElementById('lbl-brush-size').innerText = value + "px";
-            cursorCircleIndicator.style.width = value + "px";
-            cursorCircleIndicator.style.height = value + "px";
+            cursorCircleIndicator.style.width = value + "px"; cursorCircleIndicator.style.height = value + "px";
             document.querySelectorAll('.density-btn').forEach(b => b.classList.remove('active'));
         }
 
@@ -545,17 +536,14 @@
             brushStrokeColor = color;
             document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
             swatchElement.classList.add('active');
-            cursorCircleIndicator.style.borderColor = color;
+            cursorCircleIndicator.style.borderColor = (color === '#020206') ? '#000000' : color;
         }
 
         function clearSketchCanvas() {
-            sketchCtx.fillStyle = '#ffffff';
-            sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+            sketchCtx.fillStyle = '#ffffff'; sketchCtx.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
         }
 
-        function toggleCustomCursor(visibleFlag) {
-            cursorCircleIndicator.style.display = visibleFlag ? 'block' : 'none';
-        }
+        function toggleCustomCursor(visibleFlag) { cursorCircleIndicator.style.display = visibleFlag ? 'block' : 'none'; }
 
         function getSketchCoordinates(e) {
             let rect = sketchCanvas.getBoundingClientRect();
@@ -564,58 +552,41 @@
             return {
                 x: (clientX - rect.left) * (sketchCanvas.width / rect.width),
                 y: (clientY - rect.top) * (sketchCanvas.height / rect.height),
-                rawX: clientX - rect.left,
-                rawY: clientY - rect.top
+                rawX: clientX - rect.left, rawY: clientY - rect.top
             };
         }
 
-        // --- MOUSE & TOUCH SIMULATION HANDLERS ---
         function startDrawingStroke(e) {
             sketchDrawingActive = true;
             let coord = getSketchCoordinates(e);
-            dragAnchorX = coord.x;
-            dragAnchorY = coord.y;
-
-            // Cache canvas array snapshot state to run dynamic shape rubber-banding calculations
+            dragAnchorX = coord.x; dragAnchorY = coord.y;
             imageHistorySnapshot = sketchCtx.getImageData(0, 0, sketchCanvas.width, sketchCanvas.height);
 
             sketchCtx.beginPath();
-            sketchCtx.strokeStyle = brushStrokeColor;
-            sketchCtx.lineWidth = brushStrokeThickness;
+            sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness;
             sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
 
-            if (activeShapeSelection === 'brush') {
-                sketchCtx.moveTo(dragAnchorX, dragAnchorY);
-            }
+            if (activeShapeSelection === 'brush') { sketchCtx.moveTo(dragAnchorX, dragAnchorY); }
         }
 
         function drawStrokeMove(e) {
             let coord = getSketchCoordinates(e);
-            
-            // Move structural indicator cursor dot inside layout container boundaries smoothly
-            cursorCircleIndicator.style.left = coord.rawX + "px";
-            cursorCircleIndicator.style.top = coord.rawY + "px";
+            cursorCircleIndicator.style.left = coord.rawX + "px"; cursorCircleIndicator.style.top = coord.rawY + "px";
 
             if (!sketchDrawingActive) return;
 
             if (activeShapeSelection === 'brush') {
-                sketchCtx.lineTo(coord.x, coord.y);
-                sketchCtx.stroke();
+                sketchCtx.lineTo(coord.x, coord.y); sketchCtx.stroke();
             } else {
-                // MS PAINT METHOD: Restore last frame snapshot before stretching shape outline parameters
                 sketchCtx.putImageData(imageHistorySnapshot, 0, 0);
                 sketchCtx.beginPath();
-                sketchCtx.strokeStyle = brushStrokeColor;
-                sketchCtx.lineWidth = brushStrokeThickness;
+                sketchCtx.strokeStyle = brushStrokeColor; sketchCtx.lineWidth = brushStrokeThickness;
                 sketchCtx.lineCap = 'round'; sketchCtx.lineJoin = 'round';
 
                 if (activeShapeSelection === 'line') {
-                    sketchCtx.moveTo(dragAnchorX, dragAnchorY);
-                    sketchCtx.lineTo(coord.x, coord.y);
+                    sketchCtx.moveTo(dragAnchorX, dragAnchorY); sketchCtx.lineTo(coord.x, coord.y);
                 } else if (activeShapeSelection === 'rect') {
-                    let w = coord.x - dragAnchorX;
-                    let h = coord.y - dragAnchorY;
-                    sketchCtx.strokeRect(dragAnchorX, dragAnchorY, w, h);
+                    sketchCtx.strokeRect(dragAnchorX, dragAnchorY, coord.x - dragAnchorX, coord.y - dragAnchorY);
                 } else if (activeShapeSelection === 'circle') {
                     let r = Math.sqrt(Math.pow(coord.x - dragAnchorX, 2) + Math.pow(coord.y - dragAnchorY, 2));
                     sketchCtx.arc(dragAnchorX, dragAnchorY, r, 0, Math.PI * 2);
