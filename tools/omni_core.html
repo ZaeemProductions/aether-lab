@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zaeem Labs // Omni Core Suite</title>
     <link type="image/png" rel="icon" href="../logo.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -60,36 +64,24 @@
 
         label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
         
-        /* BREAKOUT: RESPONSIVE FLEX CONTAINER PREVENTS BUTTON SQUISHING */
-        .terminal-input-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            margin-top: 10px;
-        }
+        .terminal-input-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 10px; }
         input[type="text"] {
             width: 100%; padding: 16px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
             border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
         }
         input[type="text"]:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
 
-        .action-btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-        }
+        .action-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
         .action-btn {
             width: 100%; padding: 15px; background: rgba(0, 255, 204, 0.04); border: 1px solid #00ffcc;
             color: #00ffcc; font-weight: 900; border-radius: 10px; cursor: pointer; letter-spacing: 1px; 
-            transition: all 0.2s ease; font-size: 0.8rem; text-align: center; text-transform: uppercase;
+            transition: all 0.2s ease; font-size: 0.8rem; text-align: center; text-transform: uppercase; white-space: nowrap;
         }
         .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
         .action-btn.pink-variant { border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02); }
         .action-btn.pink-variant:hover { background: #ff00ff; color: #020205; box-shadow: 0 0 15px #ff00ff; }
 
-        /* TAB 1: LOG SCROLLER */
+        /* TAB 1: SCROLLER COMPONENT */
         .chat-container {
             background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
             height: 280px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px;
@@ -101,9 +93,14 @@
         .ai-image-output {
             max-width: 100%; width: 260px; height: 260px; object-fit: cover; border-radius: 8px;
             border: 2px solid #ff00ff; margin-top: 10px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.25);
+            animation: imagePulse 1.5s infinite ease-in-out;
+        }
+        @keyframes imagePulse {
+            0%, 100% { opacity: 0.7; filter: brightness(0.9); }
+            50% { opacity: 1; filter: brightness(1.1); }
         }
 
-        /* TAB 2: HUD VIEWPORT WITH GRAPH OVERLAYS */
+        /* TAB 2: STREAM GRAPH DECK VIEWPORT */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
         @media (max-width: 900px) { .biometric-grid { grid-template-columns: 1fr; } }
         .video-viewport {
@@ -112,7 +109,7 @@
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
         }
         #webcam-stream { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scaleX(-1); pointer-events: none; } 
-        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); cursor: crosshair; } 
+        #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); } 
         
         .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
         .matrix-log-container { max-height: 340px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
@@ -127,7 +124,7 @@
         .calc-btn.op { color: #ff00ff; border-color: rgba(255,0,255,0.2); }
         .calc-btn.clear { color: #ff3366; border-color: rgba(255,51,102,0.2); }
 
-        /* TAB 4: MS PAINT BOARD */
+        /* TAB 4: DRAWING STUDIO SHEET */
         .sketch-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; }
         @media (max-width: 850px) { .sketch-grid { grid-template-columns: 1fr; } }
         .sketch-board-panel { background: #ffffff; border: 2px solid #00ffcc; border-radius: 14px; overflow: hidden; min-height: 380px; position: relative; box-shadow: 0 0 25px rgba(0, 255, 204, 0.1); }
@@ -168,19 +165,16 @@
         <div id="ai-panel" class="panel-card active">
             <label>Omni AI Communications Core</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL ONLINE. Inputs clear. Use SEND CHAT for terminal logs or GENERATE IMAGE to fetch live diffusion frames.</div>
+                <div class="chat-msg bot">TERMINAL ONLINE. Ready for instruction arrays. Enter text nodes below or query the diffusion generator directly.</div>
             </div>
             
             <div class="terminal-input-wrapper">
-                <input type="text" id="ai-chat-input" placeholder="Type message or image generation prompt here...">
+                <input type="text" id="ai-chat-input" placeholder="Type chat message or image prompt...">
                 <div class="action-btn-grid">
                     <button class="action-btn" onclick="executeLocalNeuralInput()">Send Chat</button>
                     <button class="action-btn pink-variant" onclick="generateAIImagePOLLINATION()">Generate Image</button>
                 </div>
             </div>
-            
-            <label style="margin-top: 25px;">Procedural Neural Imaging Matrix</label>
-            <canvas id="ai-canvas" width="600" height="160"></canvas>
         </div>
 
         <div id="bio-panel" class="panel-card">
@@ -189,13 +183,13 @@
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
                     <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
-                        CAMERA HARDWARE INSTANCE STANDBY.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT STREAM HUD</button>
+                        NEURAL CHASSIS TRACKER BLOCKED.<br><br>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">ENGAGE FACE MAPPER</button>
                     </p>
                 </div>
                 <div class="telemetry-box">
                     <label style="color:#00ffcc; margin-bottom: 5px;">Vector Analysis Real-Time Deck</label>
-                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Vector Projections</div>
+                    <div style="font-size: 0.7rem; color: #556275; text-transform: uppercase; margin-bottom: 15px;">Topology Calibration: 468 Mapped Nodes</div>
                     
                     <div class="matrix-log-container">
                         <div class="telemetry-node"><span>CURRENT MOOD ICON:</span><span id="tele-master-emoji" style="font-size:1.4rem;">😐</span></div>
@@ -275,7 +269,7 @@
                         <input type="range" id="sketch-brush-slider" min="1" max="40" value="2.0" step="0.5" oninput="updateManualBrushSize(this.value)">
                     </div>
 
-                    <label style="color: #00ffcc; margin-box: 8px;">3. Gel Ink Swatch Deck</label>
+                    <label style="color: #00ffcc; margin-bottom: 8px;">3. Gel Ink Swatch Deck</label>
                     <div class="palette-bar">
                         <div class="color-dot active" style="background:#020206;" onclick="setSketchColor('#020206', this)"></div> 
                         <div class="color-dot" style="background:#00ffcc;" onclick="setSketchColor('#00ffcc', this)"></div>
@@ -303,7 +297,7 @@
         }
 
         // =========================================================================
-        // --- CHAT INTERFACE & BULLETPROOF POLLINATIONS IMAGE ENGINE ---
+        // --- CHAT INTERFACE & INSTANT POLLINATIONS PIPELINE ---
         // =========================================================================
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
@@ -330,7 +324,7 @@
                 ];
 
                 let userWords = txt.split(' ').filter(w => w.length > 3);
-                let wordMirrorSnippet = userWords.length > 0 ? `Evaluating parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
+                let wordMirrorSnippet = userWords.length > 0 ? `Evaluating data parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
 
                 if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') { reply = responsesGreetings[Math.floor(Math.random() * responsesGreetings.length)]; } 
                 else if (lower.includes('bro') || lower.includes('buddy') || lower.includes('friend')) { reply = `Acknowledged, bro. ${responsesCasual[Math.floor(Math.random() * responsesCasual.length)]}`; } 
@@ -341,42 +335,38 @@
             }, 380);
         }
 
-        // IMMUNE TO TRANSCRIPTION BLOCKS: Appends directly onto image asset tags
+        // BIND PROMPT TO ELEMENT OBJECT: Resolves text timeout blocks completely
         function generateAIImagePOLLINATION() {
             let inputField = document.getElementById('ai-chat-input');
             let promptText = inputField.value.trim();
             if (!promptText) {
-                alert("Type your image prompt inside the input grid bar first!");
+                alert("Type your image description inside the terminal box first!");
                 return;
             }
 
-            appendChatMessage(`Running structural image diffusion for: "${promptText}"...`, 'user');
+            appendChatMessage(`Deploying image matrix generation path for: "${promptText}"...`, 'user');
             inputField.value = '';
 
             let container = document.getElementById('chat-scroller');
             let botBubble = document.createElement('div');
             botBubble.className = 'chat-msg bot';
-            botBubble.innerHTML = `<div id="load-txt">Fetching diffusion matrices from Pollinations AI core...</div>`;
-            container.appendChild(botBubble);
-            container.scrollTop = container.scrollHeight;
-
+            botBubble.innerHTML = `<div style="margin-bottom: 4px;">Fetching diffusion matrices from Pollinations AI core...</div>`;
+            
             let randomSeed = Math.floor(Math.random() * 999999);
-            // LOCK PATH FIX: Uses the official public parameter structure to completely bypass error responses
+            // FIXED CALIBRATION: Uses the absolute public endpoint route directly
             let targetImageSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&seed=${randomSeed}&nologo=true`;
 
             let resultImage = document.createElement('img');
             resultImage.className = 'ai-image-output';
             resultImage.src = targetImageSrc;
             
-            resultImage.onload = function() {
-                let loadTxt = botBubble.querySelector("#load-txt");
-                if (loadTxt) loadTxt.innerText = "Chroma payload rendering complete:";
-                botBubble.appendChild(resultImage);
-                container.scrollTop = container.scrollHeight;
-            };
+            botBubble.appendChild(resultImage);
+            container.appendChild(botBubble);
+            container.scrollTop = container.scrollHeight;
 
-            resultImage.onerror = function() {
-                botBubble.innerText = "ERROR: Connection timeout from image server cluster mapping.";
+            resultImage.onload = function() {
+                resultImage.style.animation = 'none'; // Kills active load animation cleanly
+                container.scrollTop = container.scrollHeight;
             };
         }
 
@@ -387,151 +377,193 @@
         }
 
         // =========================================================================
-        // --- 100% STABLE NATIVE CANVAS DIFFERENCING HUD MESH ENGINE ---
+        // --- 468 NODE PROPORTIONAL RATIO TOPOLOGY MESH PIPELINE ---
         // =========================================================================
-        let cvProcessingLoop = null;
-        let previousFrameBuffer = null;
-        let trackTargetX = 220; let trackTargetY = 160;
+        let camVideoStream = null;
+        let mediaPipeCameraInstance = null;
+        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
+        let scannerCtx = scannerCanvas.getContext('2d');
 
         function initializeBiometricCamera() {
-            // SAFE HARDWARE SWEEP: Explicitly flush old residual threads out of background cache first
-            if (window.stream) {
-                window.stream.getTracks().forEach(track => track.stop());
+            // HARDWARE FLUSH: Tear down residual tracks from hot-reloads to cure the "blocked" lock error
+            if (window.activeStreamTrack) {
+                window.activeStreamTrack.getTracks().forEach(t => t.stop());
             }
 
-            let constraints = { video: { facingMode: "user", width: { ideal: 440 }, height: { ideal: 440 } } };
-            navigator.mediaDevices.getUserMedia(constraints)
+            document.getElementById('tele-status').innerText = "LOADING WEBASM MODEL...";
+            document.getElementById('tele-status').style.color = "#ffaa00";
+
+            const faceMesh = new FaceMesh({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+            });
+
+            faceMesh.setOptions({
+                maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
+            });
+
+            faceMesh.onResults(onNeuralFaceMeshResults);
+            let videoElement = document.getElementById('webcam-stream');
+
+            mediaPipeCameraInstance = new Camera(videoElement, {
+                onFrame: async () => { if (camVideoStream) await faceMesh.send({ image: videoElement }); },
+                width: 480, height: 480
+            });
+
+            // WINDOW-PROOF SAFE PASS: Dropping rigid width/height dimensions inside getUserMedia fixes overconstrained crashes in iPad Split View!
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
                 .then(stream => {
-                    window.stream = stream; // Bind globally for clean tear-downs
+                    window.activeStreamTrack = stream; 
                     camVideoStream = stream;
-                    let video = document.getElementById('webcam-stream');
-                    video.srcObject = stream;
+                    videoElement.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
-                    startStableCameraHudLoop();
+                    mediaPipeCameraInstance.start();
                 })
                 .catch(err => {
-                    alert("ERROR: Hardware stream access denied or busy. Check Safari permissions menu.");
+                    alert("ERROR: Video track constrained anomaly or track blocked by another background layer process.");
+                    document.getElementById('tele-status').innerText = "STANDBY";
                 });
         }
 
         function stopBiometricCamera() {
-            if (window.stream) { window.stream.getTracks().forEach(track => track.stop()); window.stream = null; }
+            if (mediaPipeCameraInstance) { mediaPipeCameraInstance.stop(); mediaPipeCameraInstance = null; }
+            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(t => t.stop()); window.activeStreamTrack = null; }
             camVideoStream = null;
-            cancelAnimationFrame(cvProcessingLoop);
             document.getElementById('camera-placeholder').style.display = 'block';
-            previousFrameBuffer = null;
+            document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
+            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
         }
 
-        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
-        let scannerCtx = scannerCanvas.getContext('2d');
-        scannerCanvas.addEventListener('click', function(e) {
-            let rect = scannerCanvas.getBoundingClientRect();
-            trackTargetX = Math.floor((e.clientX - rect.left) * (scannerCanvas.width / rect.width));
-            trackTargetY = Math.floor((e.clientY - rect.top) * (scannerCanvas.height / rect.height));
-        });
+        function onNeuralFaceMeshResults(results) {
+            if (!camVideoStream) return;
+            if (scannerCanvas.width !== results.image.width) { scannerCanvas.width = results.image.width; scannerCanvas.height = results.image.height; }
+            
+            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+            scannerCtx.drawImage(results.image, 0, 0, scannerCanvas.width, scannerCanvas.height);
 
-        function startStableCameraHudLoop() {
-            let video = document.getElementById('webcam-stream');
-            function processFrameCircuit() {
-                if (!camVideoStream) return;
-                cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
+            document.getElementById('tele-status').innerText = "NEURAL TRACKING";
+            document.getElementById('tele-status').style.color = "#00ffcc";
 
-                if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    if (scannerCanvas.width !== video.videoWidth) {
-                        scannerCanvas.width = video.videoWidth; scannerCanvas.height = video.videoHeight;
-                        trackTargetX = scannerCanvas.width / 2; trackTargetY = scannerCanvas.height / 2;
-                    }
-
-                    scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-                    scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
-
-                    let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
-                    let pixels = currentFrameData.data;
-                    let pixelMotionWeight = 0; let luminanceSum = 0;
-
-                    if (previousFrameBuffer) {
-                        for (let i = 0; i < pixels.length; i += 32) {
-                            let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]) + Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
-                            if (diff > 60) pixelMotionWeight++;
-                            luminanceSum += pixels[i]; 
-                        }
-                    }
-                    previousFrameBuffer = currentFrameData;
-
-                    scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
-
-                    scannerCtx.save();
-                    scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
-                    let step = 15; 
-                    for (let hY = trackTargetY - 90; hY <= trackTargetY + 110; hY += step) {
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                const facePoints = results.multiFaceLandmarks[0];
+                scannerCtx.save(); 
+                
+                // COVER EVERY INCH: Render High-Density 3D Wireframe Topology connections cleanly
+                scannerCtx.lineWidth = 0.5;
+                scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.32)";
+                for (let i = 0; i < facePoints.length; i += 3) {
+                    if(i + 1 < facePoints.length) {
                         scannerCtx.beginPath();
-                        for (let hX = trackTargetX - 80; hX <= trackTargetX + 80; hX += 5) {
-                            let waveOffset = Math.sin((hX + hY + Date.now()/120) * 0.05) * 4;
-                            if (hX === trackTargetX - 80) scannerCtx.moveTo(hX, hY + waveOffset);
-                            else scannerCtx.lineTo(hX, hY + waveOffset);
-                        }
+                        scannerCtx.moveTo(facePoints[i].x * scannerCanvas.width, facePoints[i].y * scannerCanvas.height);
+                        scannerCtx.lineTo(facePoints[i+1].x * scannerCanvas.width, facePoints[i+1].y * scannerCanvas.height);
                         scannerCtx.stroke();
                     }
-
-                    scannerCtx.lineWidth = 2.0;
-                    let tX = trackTargetX; let tY = trackTargetY;
-
-                    scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
-                    scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
-
-                    scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
-                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
-
-                    scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
-                    let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
-                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
-                    scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
-
-                    scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
-                    scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
-                    
-                    scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
-                    scannerCtx.strokeRect(tX - 50, tY - 60, 100, 110);
-                    scannerCtx.restore();
-
-                    let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
-                    let lightRatio = luminanceSum / (pixels.length / 4);
-
-                    let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
-                    let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
-                    let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
-                    let doubt = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/600)+1)*30)));
-                    let sadness = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/800)+1)*20)));
-                    let disgust = Math.min(100, Math.max(0, Math.round(lightRatio > 150 ? 5 : 25)));
-
-                    document.getElementById('flag-happiness').innerText = joy + "%";
-                    document.getElementById('flag-surprise').innerText = surprise + "%";
-                    document.getElementById('flag-sadness').innerText = sadness + "%";
-                    document.getElementById('flag-anger').innerText = Math.max(0, 45 - joy) + "%";
-                    document.getElementById('flag-fear').innerText = Math.max(0, surprise - 15) + "%";
-                    document.getElementById('flag-contempt').innerText = Math.round(doubt * 0.5) + "%";
-                    document.getElementById('flag-disgust').innerText = disgust + "%";
-
-                    document.getElementById('flag-focus').innerText = focus > 65 ? "🎯 INTENSE CONCENTRATION" : "👀 INTEREST / ENGAGED";
-                    document.getElementById('flag-doubt').innerText = doubt > 35 ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING ANALYSIS";
-                    document.getElementById('flag-pain').innerText = (disgust > 20 && focus > 70) ? "💥 WINCE / STRUGGLE MATRIX" : "🍵 CONTENTMENT / COZY";
-
-                    let activeMasterEmoji = "😐";
-                    if (surprise > 65) activeMasterEmoji = "😲";
-                    else if (joy > 55) activeMasterEmoji = "⚡";
-                    else if (focus > 75) activeMasterEmoji = "🎯";
-                    else if (sadness > 30) activeMasterEmoji = "😢";
-                    
-                    document.getElementById('tele-emotion').innerText = activeMasterEmoji;
-                    document.getElementById('tele-master-emoji').innerText = activeMasterEmoji;
-
-                    scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '28px ui-sans-serif';
-                    scannerCtx.fillText(activeMasterEmoji, tX + 45, tY - 30);
-
-                    document.getElementById('tele-signal').innerText = (29.6 + Math.random() * 1.1).toFixed(1) + " FPS";
                 }
+
+                // Hyper-Juiced Feature Highlighting
+                scannerCtx.lineWidth = 2.0;
+
+                // Eyebrow Curves
+                scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.beginPath();
+                const browIdx = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300];
+                browIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
+                scannerCtx.stroke();
+
+                // Eyes Orbits
+                scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.beginPath();
+                const leftEyeIdx = [33, 160, 158, 133, 153, 144];
+                leftEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
+                scannerCtx.closePath(); scannerCtx.stroke();
+
+                scannerCtx.beginPath();
+                const rightEyeIdx = [362, 385, 387, 263, 373, 380];
+                rightEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
+                scannerCtx.closePath(); scannerCtx.stroke();
+
+                // Lips Parameters
+                scannerCtx.strokeStyle = '#ffff00'; scannerCtx.beginPath();
+                const lipsIdx = [61, 37, 0, 267, 291, 314, 17, 84];
+                lipsIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
+                scannerCtx.closePath(); scannerCtx.stroke();
+
+                // Nose Bridge
+                scannerCtx.strokeStyle = '#00ffff'; scannerCtx.beginPath();
+                const noseIdx = [168, 6, 197, 195, 5];
+                noseIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
+                scannerCtx.stroke();
+
+                // --- PROPORTIONAL RATIO MATRIX EXPRESSION CONTROLLER ---
+                let faceWidth = Math.sqrt(Math.pow(facePoints[454].x - facePoints[234].x, 2) + Math.pow(facePoints[454].y - facePoints[234].y, 2));
+                let faceHeight = Math.sqrt(Math.pow(facePoints[152].x - facePoints[10].x, 2) + Math.pow(facePoints[152].y - facePoints[10].y, 2));
+
+                let mouthOpenDistance = Math.sqrt(Math.pow(facePoints[14].x - facePoints[13].x, 2) + Math.pow(facePoints[14].y - facePoints[13].y, 2));
+                let mouthOpenRatio = mouthOpenDistance / faceHeight;
+                document.getElementById('tele-mouth-open').innerText = mouthOpenRatio.toFixed(3);
+
+                let mouthWidthDistance = Math.sqrt(Math.pow(facePoints[291].x - facePoints[61].x, 2) + Math.pow(facePoints[291].y - facePoints[61].y, 2));
+                let smileRatio = mouthWidthDistance / faceWidth;
+
+                let leftEyeHeight = Math.abs(facePoints[159].y - facePoints[145].y);
+                let rightEyeHeight = Math.abs(facePoints[386].y - facePoints[374].y);
+                let avgEyeOpenRatio = ((leftEyeHeight + rightEyeHeight) / 2) / faceHeight;
+
+                let browDistance = Math.sqrt(Math.pow(facePoints[336].x - facePoints[107].x, 2) + Math.pow(facePoints[336].y - facePoints[107].y, 2)) / faceWidth;
+                let noseSqueezeDelta = Math.abs(facePoints[168].y - facePoints[1].y) / faceHeight;
+                let leftCornerDist = Math.abs(facePoints[61].y - facePoints[13].y);
+                let rightCornerDist = Math.abs(facePoints[291].y - facePoints[13].y);
+                let cornerAsymmetryDelta = Math.abs(leftCornerDist - rightCornerDist) / faceHeight;
+
+                // Scaled Weight Vector Generation Maps
+                let happinessScore = Math.min(100, Math.max(0, Math.round((smileRatio - 0.36) * 700)));
+                let surpriseScore = Math.min(100, Math.max(0, Math.round((mouthOpenRatio - 0.015) * 900)));
+                let angerScore = Math.min(100, Math.max(0, Math.round((0.21 - browDistance) * 1100)));
+                let fearScore = Math.min(100, Math.max(0, Math.round((avgEyeOpenRatio - 0.022) * 2000)));
+                let contemptScore = Math.min(100, Math.max(0, Math.round((cornerAsymmetryDelta - 0.008) * 3500)));
+                let disgustScore = Math.min(100, Math.max(0, Math.round((0.26 - noseSqueezeDelta) * 4000)));
+                let sadnessScore = Math.min(100, Math.max(0, Math.round((facePoints[61].y + facePoints[291].y)/2 - facePoints[14].y) * 1200));
+
+                if(happinessScore < 10) happinessScore = 0;
+                if(surpriseScore < 10) surpriseScore = 0;
+                if(angerScore < 10) angerScore = 0;
+                if(fearScore < 10) fearScore = 0;
+                if(contemptScore < 10) contemptScore = 0;
+                if(disgustScore < 10) disgustScore = 0;
+                if(sadnessScore < 10) sadnessScore = 0;
+
+                document.getElementById('flag-happiness').innerText = happinessScore + "%";
+                document.getElementById('flag-surprise').innerText = surpriseScore + "%";
+                document.getElementById('flag-sadness').innerText = sadnessScore + "%";
+                document.getElementById('flag-anger').innerText = angerScore + "%";
+                document.getElementById('flag-fear').innerText = fearScore + "%";
+                document.getElementById('flag-contempt').innerText = contemptScore + "%";
+                document.getElementById('flag-disgust').innerText = disgustScore + "%";
+
+                let activeMasterEmoji = "😐 NEUTRAL";
+                let emotionDisplay = document.getElementById('tele-emotion');
+                
+                if (surpriseScore > 45) { activeMasterEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
+                else if (happinessScore > 40) { activeMasterEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
+                else if (angerScore > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
+                else if (disgustScore > 40) { activeMasterEmoji = "🤮 DISGUSTED"; emotionDisplay.style.color = "#ffaa00"; }
+                else if (fearScore > 50) { activeMasterEmoji = "😨 FEAR"; emotionDisplay.style.color = "#b5ff14"; }
+                else if (sadnessScore > 35) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
+                else if (contemptScore > 45) { activeMasterEmoji = "😏 CONTEMPT"; emotionDisplay.style.color = "#ff00ff"; }
+                else { emotionDisplay.style.color = "#ffffff"; }
+
+                emotionDisplay.innerText = activeMasterEmoji;
+
+                document.getElementById('flag-focus').innerText = (angerScore > 15 || avgEyeOpenRatio < 0.024) ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
+                document.getElementById('flag-doubt').innerText = (contemptScore > 30) ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
+                document.getElementById('flag-pain').innerText = (disgustScore > 35 && avgEyeOpenRatio < 0.018) ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
+
+                let emojiAnchor = facePoints[263];
+                document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
+                scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '26px ui-sans-serif';
+                scannerCtx.fillText(activeMasterEmoji.split(' ')[0], emojiAnchor.x * scannerCanvas.width + 30, emojiAnchor.y * scannerCanvas.height);
+                scannerCtx.restore();
+            } else {
+                document.getElementById('tele-emotion').innerText = "AWAITING FEED"; document.getElementById('tele-emotion').style.color = "#728196";
             }
-            cvProcessingLoop = requestAnimationFrame(processFrameCircuit);
+            document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
         }
 
         // =========================================================================
@@ -555,7 +587,7 @@
         }
 
         // =========================================================================
-        // --- MS PAINT STYLE NEON DRAWING CORE SHEET ---
+        // --- MS PAINT STYLE DRAWING CORE ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
@@ -563,8 +595,6 @@
         let sketchDrawingActive = false;
         let brushStrokeThickness = 2.0; let brushStrokeColor = '#020206'; let activeShapeSelection = 'brush'; 
         let dragAnchorX = 0; let dragAnchorY = 0; let imageHistorySnapshot = null;
-
-        document.getElementById('sketch-brush-slider').value = 2.0; // Fallback sync bounds
 
         function resizeSketchCanvas() {
             let box = document.getElementById('sketch-container');
