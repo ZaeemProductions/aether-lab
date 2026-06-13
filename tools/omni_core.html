@@ -58,30 +58,27 @@
         }
         .panel-card.active { display: block; }
 
-        .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 0.8rem; color: #00ffcc; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; }
-        .input-row { display: flex; gap: 10px; }
-        input[type="text"], textarea {
-            flex: 1; padding: 15px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
+        .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        input[type="text"] {
+            flex: 1; min-width: 260px; padding: 15px; background: #010206; border: 1px solid rgba(0, 255, 204, 0.2);
             border-radius: 10px; color: #ffffff; font-size: 0.9rem; outline: none;
         }
-        input[type="text"]:focus, textarea:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
+        input[type="text"]:focus { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,0.15); }
 
-        .action-btn {
-            padding: 15px 25px; background: rgba(0, 255, 204, 0.05); border: 1px solid #00ffcc;
-            color: #00ffcc; font-weight: 900; border-radius: 10px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s ease;
-        }
-        .action-btn:hover { background: #00ffcc; color: #020205; box-shadow: 0 0 15px #00ffcc; }
-
-        /* TAB 1: NEURAL TERMINAL */
+        /* TAB 1: NEURAL TERMINAL & AI GENERATOR */
         .chat-container {
             background: #010205; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
-            height: 240px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
+            height: 300px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;
         }
-        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; line-height: 1.4; }
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; line-height: 1.4; word-break: break-word; }
         .chat-msg.user { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; align-self: flex-end; color: #00ffcc; }
         .chat-msg.bot { background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; align-self: flex-start; color: #ff00ff; }
-        #ai-canvas { background: #000; border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 10px; width: 100%; height: 160px; display: block; }
+        
+        .ai-image-output {
+            max-width: 100%; width: 280px; height: 280px; object-fit: cover; border-radius: 8px;
+            border: 2px solid #ff00ff; margin-top: 8px; display: block; box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
 
         /* TAB 2: HYPER-STABLE DEVICE OVERLAY VIEWPORT */
         .biometric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
@@ -95,7 +92,7 @@
         #scanner-overlay-canvas { width: 100%; height: 100%; display: block; transform: scaleX(-1); cursor: crosshair; } 
         
         .telemetry-box { background: rgba(13, 14, 28, 0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.04); }
-        .matrix-log-container { max-height: 320px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
+        .matrix-log-container { max-height: 340px; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
         .telemetry-node { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 8px; color: #728196; border-bottom: 1px dashed rgba(255,255,255,0.02); padding-bottom: 6px; align-items: center; }
 
         /* TAB 3: CALCULATOR */
@@ -146,16 +143,15 @@
         </div>
 
         <div id="ai-panel" class="panel-card active">
-            <label>AI Communications Matrix Interface</label>
+            <label>Omni AI Communications Core</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL MAINFRAME ONLINE. Initialized deep localized response channels. Ready for command strings or neural layout prompts.</div>
+                <div class="chat-msg bot">TERMINAL ONLINE. Ready for text inputs or live image generation. Type your prompt below and use the dedicated triggers.</div>
             </div>
-            <div class="input-row" style="margin-bottom: 25px;">
-                <input type="text" id="ai-chat-input" placeholder="Type message or ask terminal...">
-                <button class="action-btn" onclick="executeLocalNeuralInput()">TRANSMIT</button>
+            <div class="input-row">
+                <input type="text" id="ai-chat-input" placeholder="Type chat message or image prompt (e.g. 'cyberpunk car neon city')...">
+                <button class="action-btn" style="border-color: #00ffcc; color: #00ffcc;" onclick="executeLocalNeuralInput()">SEND CHAT</button>
+                <button class="action-btn" style="border-color: #ff00ff; color: #ff00ff; background: rgba(255,0,255,0.02);" onclick="generateAIImagePOLLUTION()">GENERATE IMAGE</button>
             </div>
-            <label>Procedural Neural Imaging Matrix</label>
-            <canvas id="ai-canvas" width="600" height="160"></canvas>
         </div>
 
         <div id="bio-panel" class="panel-card">
@@ -164,8 +160,8 @@
                     <video id="webcam-stream" autoplay playsinline></video>
                     <canvas id="scanner-overlay-canvas"></canvas>
                     <p id="camera-placeholder" style="color: #434d5c; font-weight: bold; position: absolute; text-align: center; padding: 20px;">
-                        CAMERA STREAM CHASSIS ACTIVE.<br><br>
-                        <button class="action-btn" onclick="initializeBiometricCamera()">LAUNCH OVERLAY HUD</button>
+                        CAMERA HARDWARE READOUT DISCONNECTED.<br><br>
+                        <button class="action-btn" onclick="initializeBiometricCamera()">BOOT OVERLAY HUD</button>
                     </p>
                 </div>
                 <div class="telemetry-box">
@@ -182,7 +178,7 @@
                         <div class="telemetry-node"><span>SURPRISE (JAW DROP RATIO):</span><span id="flag-surprise" style="color:white; font-weight:bold;">0%</span></div>
                         <div class="telemetry-node"><span>CONTEMPT (ASYMMETRY GAP):</span><span id="flag-contempt" style="color:white; font-weight:bold;">0%</span></div>
                         
-                        <div class="telemetry-node"><span>CONCENTRATION / INTEREST:</span><span id="flag-focus" style="color:#00ffcc; font-weight:bold;">0%</span></div>
+                        <div class="telemetry-node" style="margin-top: 10px;"><span>CONCENTRATION / INTEREST:</span><span id="flag-focus" style="color:#00ffcc; font-weight:bold;">0%</span></div>
                         <div class="telemetry-node"><span>CONFUSION / DOUBT:</span><span id="flag-doubt" style="color:#ffaa00; font-weight:bold;">0%</span></div>
                         <div class="telemetry-node"><span>PAIN / WINCE PROFILE:</span><span id="flag-pain" style="color:#ff3366; font-weight:bold;">0%</span></div>
                         
@@ -278,13 +274,15 @@
         }
 
         // =========================================================================
-        // --- CHAT SYSTEM LOGS ---
+        // --- CHAT SYSTEM LOGS & REAL POLLINATIONS AI IMAGE PIPELINE ---
         // =========================================================================
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
             let txt = inputField.value.trim(); if (!txt) return;
 
-            appendChatMessage(txt, 'user'); inputField.value = '';
+            appendChatMessage(txt, 'user');
+            inputField.value = '';
+
             setTimeout(() => {
                 let lower = txt.toLowerCase(); let reply = "";
                 const responsesGreetings = [
@@ -305,15 +303,55 @@
                 ];
 
                 let userWords = txt.split(' ').filter(w => w.length > 3);
-                let wordMirrorSnippet = userWords.length > 0 ? `Evaluating data parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
+                let wordMirrorSnippet = userWords.length > 0 ? `Evaluating parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
 
                 if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') { reply = responsesGreetings[Math.floor(Math.random() * responsesGreetings.length)]; } 
                 else if (lower.includes('bro') || lower.includes('buddy') || lower.includes('friend')) { reply = `Acknowledged, bro. ${responsesCasual[Math.floor(Math.random() * responsesCasual.length)]}`; } 
                 else if (lower.includes('status') || lower.includes('system') || lower.includes('work') || lower.includes('test')) { reply = responsesTech[Math.floor(Math.random() * responsesTech.length)]; } 
                 else { reply = wordMirrorSnippet + "Token string logged inside standalone browser memory cache layers. Systems stable."; }
 
-                appendChatMessage(reply, 'bot'); compileProceduralImageHash(txt);
+                appendChatMessage(reply, 'bot');
             }, 380);
+        }
+
+        // REAL AI IMAGE GENERATION TRIGGER (POLLINATIONS REST ENGINE)
+        function generateAIImagePOLLUTION() {
+            let inputField = document.getElementById('ai-chat-input');
+            let promptText = inputField.value.trim();
+            if (!promptText) {
+                alert("Please type an image description inside the text box first!");
+                return;
+            }
+
+            appendChatMessage(`Generating AI Image Grid for: "${promptText}"...`, 'user');
+            inputField.value = '';
+
+            // Inject loader block
+            let container = document.getElementById('chat-scroller');
+            let botBubble = document.createElement('div');
+            botBubble.className = 'chat-msg bot';
+            botBubble.innerHTML = `<div>Fetching raw diffusion frames from Pollinations backend...</div>`;
+            container.appendChild(botBubble);
+            container.scrollTop = container.scrollHeight;
+
+            // Generate clean target URL with random seed parameter to bypass browser caching loops
+            let randomSeed = Math.floor(Math.random() * 999999);
+            let targetImageSrc = `https://image.pollinations.ai/p/${encodeURIComponent(promptText)}?width=500&height=500&seed=${randomSeed}&enhance=true`;
+
+            // Create image element container natively
+            let resultImage = document.createElement('img');
+            resultImage.className = 'ai-image-output';
+            resultImage.src = targetImageSrc;
+            
+            resultImage.onload = function() {
+                botBubble.innerHTML = `<div>Chroma payload rendering complete:</div>`;
+                botBubble.appendChild(resultImage);
+                container.scrollTop = container.scrollHeight;
+            };
+
+            resultImage.onerror = function() {
+                botBubble.innerText = "CRITICAL: Image compilation anomaly detected from Pollinations server pipeline.";
+            };
         }
 
         function appendChatMessage(text, owner) {
@@ -322,33 +360,18 @@
             container.appendChild(bubble); container.scrollTop = container.scrollHeight;
         }
 
-        function compileProceduralImageHash(prompt) {
-            let canvas = document.getElementById('ai-canvas'); let ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            let hash = 0; for (let i = 0; i < prompt.length; i++) { hash = prompt.charCodeAt(i) + ((hash << 5) - hash); }
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 15; i++) {
-                let seed = Math.sin(hash + i) * 1000;
-                let rX = Math.abs(seed % canvas.width); let rY = Math.abs((seed * 2) % canvas.height);
-                let radius = Math.abs((seed * 3) % 45) + 5;
-                ctx.strokeStyle = i % 2 === 0 ? '#00ffcc' : '#ff00ff';
-                ctx.shadowBlur = 10; ctx.shadowColor = ctx.strokeStyle;
-                ctx.beginPath(); ctx.arc(rX, rY, radius, 0, Math.PI * 2); ctx.stroke();
-            }
-            ctx.shadowBlur = 0;
-        }
-
         // =========================================================================
-        // --- 100% STABLE HARDWARE ACCELERATED FRAME-DIFFERENCING HUD MESH ---
+        // --- 100% STABLE NATIVE CANVAS DIFFERENCING ENGINE (ZERO MEMORY CRASH) ---
         // =========================================================================
+        let camVideoStream = null;
         let cvProcessingLoop = null;
         let previousFrameBuffer = null;
         
-        // Manual coordinate target stabilizers
         let trackTargetX = 220;
         let trackTargetY = 160;
 
         function initializeBiometricCamera() {
+            // Revert back to direct browser camera track constraints without heavy external scripts crashing memory
             let constraints = { video: { facingMode: "user", width: { ideal: 440 }, height: { ideal: 440 } } };
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
@@ -362,7 +385,7 @@
                     
                     startStableCameraHudLoop();
                 })
-                .catch(err => { alert("ERROR: Video tracking stream access denied."); });
+                .catch(err => { alert("ERROR: Video tracking stream access denied or track blocked."); });
         }
 
         function stopBiometricCamera() {
@@ -373,7 +396,7 @@
             previousFrameBuffer = null;
         }
 
-        // Tap Anywhere to target coordinate box over face completely fixes background drifting
+        // Tap Anywhere selector completely fixes background moving bugs
         scannerCanvas.addEventListener('click', function(e) {
             let rect = scannerCanvas.getBoundingClientRect();
             trackTargetX = Math.floor((e.clientX - rect.left) * (scannerCanvas.width / rect.width));
@@ -406,23 +429,21 @@
                         for (let i = 0; i < pixels.length; i += 32) {
                             let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]) + Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
                             if (diff > 60) pixelMotionWeight++;
-                            luminanceSum += pixels[i]; // Sample screen ambient lighting
+                            luminanceSum += pixels[i]; 
                         }
                     }
                     previousFrameBuffer = currentFrameData;
 
-                    // Fade background slightly to pop neon wireframes textures
                     scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)";
                     scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
 
-                    // --- DRAW DENSE TOPOLOGY MESH MESH INCH-BY-INCH ---
+                    // --- DRAW DENSE WIREFRAME TOPOLOGY GRIDS ---
                     scannerCtx.save();
                     scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
-                    let step = 15; // Controls vector mesh spacing density
+                    let step = 15; 
                     for (let hY = trackTargetY - 90; hY <= trackTargetY + 110; hY += step) {
                         scannerCtx.beginPath();
                         for (let hX = trackTargetX - 80; hX <= trackTargetX + 80; hX += 5) {
-                            // High-speed trigonometry waves map a beautifully detailed 3D topology matrix over you
                             let waveOffset = Math.sin((hX + hY + Date.now()/120) * 0.05) * 4;
                             if (hX === trackTargetX - 80) scannerCtx.moveTo(hX, hY + waveOffset);
                             else scannerCtx.lineTo(hX, hY + waveOffset);
@@ -430,7 +451,7 @@
                         scannerCtx.stroke();
                     }
 
-                    // --- DRAW SLICK VECTOR HUD WIREFRAMES ---
+                    // --- RETICLE HUD BOUNDARIES FROM SCREENSHOT ---
                     scannerCtx.lineWidth = 2.0;
                     let tX = trackTargetX; let tY = trackTargetY;
 
@@ -440,9 +461,10 @@
 
                     // Brow Arches
                     scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
-                    scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
+                    scannerCtx.beginPath(); fontColor = '#ffaa00';
+                    scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
 
-                    // Lips Target
+                    // Lips Target Box Vector 
                     scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
                     let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
                     scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
@@ -451,17 +473,16 @@
                     // Nose Canopy
                     scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
                     scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
+                    
+                    // The Green Target Box from image_1.png
+                    scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
+                    scannerCtx.strokeRect(tX - 50, tY - 60, 100, 110);
                     scannerCtx.restore();
 
-                    // --- CALCULATE AND MAP ALL EXPRESSIONS AND 16 EMOTIONS ---
-                    document.getElementById('tele-status').innerText = "HUD CHASSIS ACTIVE";
-                    document.getElementById('tele-status').style.color = "#00ffcc";
-
-                    // Formulate true environmental values from math matrices loops
+                    // --- TELEMETRY SCORE EMOTION PARSERS ---
                     let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
                     let lightRatio = luminanceSum / (pixels.length / 4);
 
-                    // Dynamic proportional mapping variations values
                     let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
                     let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
                     let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
@@ -477,12 +498,10 @@
                     document.getElementById('flag-contempt').innerText = Math.round(doubt * 0.5) + "%";
                     document.getElementById('flag-disgust').innerText = disgust + "%";
 
-                    // Map 16 Social Metrics Variations Profiles Text Nodes
                     document.getElementById('flag-focus').innerText = focus > 65 ? "🎯 INTENSE CONCENTRATION" : "👀 INTEREST / ENGAGED";
                     document.getElementById('flag-doubt').innerText = doubt > 35 ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING ANALYSIS";
                     document.getElementById('flag-pain').innerText = (disgust > 20 && focus > 70) ? "💥 WINCE / STRUGGLE MATRIX" : "🍵 CONTENTMENT / COZY";
 
-                    // Determine overarching global emotion matching emoji strings
                     let activeMasterEmoji = "😐";
                     if (surprise > 65) activeMasterEmoji = "😲";
                     else if (joy > 55) activeMasterEmoji = "⚡";
@@ -492,7 +511,6 @@
                     document.getElementById('tele-emotion').innerText = activeMasterEmoji;
                     document.getElementById('tele-master-emoji').innerText = activeMasterEmoji;
 
-                    // Project matching emoji icon directly next to your tracking parameters bounds
                     scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '28px ui-sans-serif';
                     scannerCtx.fillText(activeMasterEmoji, tX + 45, tY - 30);
 
@@ -523,7 +541,7 @@
         }
 
         // =========================================================================
-        // --- MS PAINT STYLE NEON DRAWING CORE SHEET ---
+        // --- MS PAINT STYLE NEON DRAWING SHEET CORE ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
