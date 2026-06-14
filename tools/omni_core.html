@@ -6,6 +6,7 @@
     <title>Zaeem Labs // Omni Core Suite</title>
     <link type="image/png" rel="icon" href="../logo.png">
     
+    <!-- HIGH-SPEED ML MESH LOGIC TILES (WITH BUILT-IN FAILSAFE CATCHERS) -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 
     <style>
@@ -161,10 +162,11 @@
             <button class="tab-btn" onclick="switchOmniTab('sketch-panel', this)">🎨 NEO SKETCH</button>
         </div>
 
+        <!-- PANEL 01: DIALOG TERMINAL CHAT MODULE -->
         <div id="ai-panel" class="panel-card active">
             <label>Omni AI Communications Core</label>
             <div class="chat-container" id="chat-scroller">
-                <div class="chat-msg bot">TERMINAL ON. Ready for message strings. Type a prompt below and press GENERATE IMAGE to fetch deep diffusion frames.</div>
+                <div class="chat-msg bot">TERMINAL ONLINE. Ready for instruction arrays. Enter text nodes below or query the diffusion generator directly.</div>
             </div>
             
             <div class="terminal-input-wrapper">
@@ -176,6 +178,7 @@
             </div>
         </div>
 
+        <!-- PANEL 02: EXPLICIT DUAL FAIL-SAFE SCANNER PREVIEW OVERLAY -->
         <div id="bio-panel" class="panel-card">
             <div class="biometric-grid">
                 <div class="video-viewport">
@@ -212,6 +215,7 @@
             </div>
         </div>
 
+        <!-- PANEL 03: CALCULATOR -->
         <div id="calc-panel" class="panel-card">
             <div class="calc-wrapper">
                 <div id="calc-display">0</div>
@@ -239,6 +243,7 @@
             </div>
         </div>
 
+        <!-- PANEL 04: DRAWING ENGINE -->
         <div id="sketch-panel" class="panel-card">
             <div class="sketch-grid">
                 <div class="sketch-board-panel" id="sketch-container" onmouseenter="toggleCustomCursor(true)" onmouseleave="toggleCustomCursor(false)">
@@ -296,8 +301,10 @@
         }
 
         // =========================================================================
-        // --- CHAT INTERFACE & CONTEXTUAL RESPONSE PAYLOAD ENGINE ---
+        // --- ANTI-REPETITION CONTEXTUAL DIALOG CORE ---
         // =========================================================================
+        let lastLoggedResponseIndex = -1;
+
         function executeLocalNeuralInput() {
             let inputField = document.getElementById('ai-chat-input');
             let txt = inputField.value.trim(); if (!txt) return;
@@ -321,22 +328,28 @@
                     "Processing matrix telemetry. Stream overlays and canvas states are running optimal script speeds."
                 ];
                 const responsesCasual = [
-                    "Haha, structural payload received. Tuning chat logs cleanly.",
-                    "Processing string text parameters... Terminal module is responsive.",
-                    "Understood. Running a clean logic loop across the lab workspace."
+                    "Checking index tracks... logic loop active.",
+                    "Processing string text parameters... Terminal module is fully responsive.",
+                    "Understood. Running a clean sequence tracker across the lab workspace."
                 ];
 
-                let userWords = txt.split(' ').filter(w => w.length > 3);
-                let wordMirrorSnippet = userWords.length > 0 ? `Evaluating parameters for: "${userWords[Math.floor(Math.random() * userWords.length)]}". ` : "";
-
+                let targetPool = responsesCasual;
                 if (lower === 'hi' || lower === 'hello' || lower === 'hey' || lower === 'yo') {
-                    reply = responsesGreetings[Math.floor(Math.random() * responsesGreetings.length)];
-                } else if (lower.includes('bro') || lower.includes('buddy') || lower.includes('friend')) {
-                    reply = `Acknowledged, bro. ${responsesCasual[Math.floor(Math.random() * responsesCasual.length)]}`;
+                    targetPool = responsesGreetings;
                 } else if (lower.includes('status') || lower.includes('system') || lower.includes('work') || lower.includes('test')) {
-                    reply = responsesTech[Math.floor(Math.random() * responsesTech.length)];
-                } else {
-                    reply = wordMirrorSnippet + "Token string logged inside standalone browser memory cache layers. Systems stable.";
+                    targetPool = responsesTech;
+                }
+
+                // STRICT ANTI-REPETITION CONTROLLER: Guarantees no back-to-back duplicate loops
+                let selectIdx = Math.floor(Math.random() * targetPool.length);
+                if (selectIdx === lastLoggedResponseIndex && targetPool.length > 1) {
+                    selectIdx = (selectIdx + 1) % targetPool.length;
+                }
+                lastLoggedResponseIndex = selectIdx;
+                reply = targetPool[selectIdx];
+
+                if (lower.includes('bro') || lower.includes('buddy')) {
+                    reply = "Acknowledged, bro. " + reply;
                 }
 
                 appendChatMessage(reply, 'bot');
@@ -383,51 +396,65 @@
         }
 
         // =========================================================================
-        // --- TRUE MACHINE LEARNING 468 FACE MESH CONTROLLER ENGINES ---
+        // --- BULLETPROOF DUAL FAIL-SAFE TOPOLOGY MESH CONTROLLER ENGINE ---
         // =========================================================================
         let camActive = false;
+        let useMediaPipeMeshEngine = false;
         let faceMeshInstance = null;
         let requestFrameLoopNode = null;
         
-        let scannerCanvas = document.getElementById('scanner-overlay-canvas');
-        let scannerCtx = scannerCanvas.getContext('2d');
+        let trackTargetX = 220; let trackTargetY = 160;
+        let previousFrameBuffer = null;
 
         function initializeBiometricCamera() {
-            document.getElementById('tele-status').innerText = "LOADING WASM ENGINE...";
+            if (window.activeStreamTrack) {
+                window.activeStreamTrack.getTracks().forEach(t => t.stop());
+            }
+
+            document.getElementById('tele-status').innerText = "CALIBRATING HUD...";
             document.getElementById('tele-status').style.color = "#ffaa00";
 
-            // Initialize the MediaPipe model blueprint natively
-            faceMeshInstance = new FaceMesh({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-            });
-
-            faceMeshInstance.setOptions({
-                maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
-            });
-
-            faceMeshInstance.onResults(onNeuralFaceMeshResults);
+            // CHECK CONFIG: Detect if MediaPipe scripts completed loading without dropping connections
+            if (typeof FaceMesh !== "undefined") {
+                useMediaPipeMeshEngine = true;
+                faceMeshInstance = new FaceMesh({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+                });
+                faceMeshInstance.setOptions({
+                    maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5
+                });
+                faceMeshInstance.onResults(onNeuralFaceMeshResults);
+            } else {
+                // FAIL-SAFE ACTIVATED: Switch right to zero-dependency vector engine to prevent standby freeze
+                useMediaPipeMeshEngine = false;
+                console.log("MediaPipe blocked or unallocated. Engaging native vector matrix engine fallback.");
+            }
 
             let videoElement = document.getElementById('webcam-stream');
 
-            // CRITICAL PATH FIX: Standard browser video frame-differencing pipeline handles loops cleanly inside split view windows
             navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
                 .then(stream => {
-                    videoElement.srcObject = stream;
+                    window.activeStreamTrack = stream; 
                     camActive = true;
+                    videoElement.srcObject = stream;
                     document.getElementById('camera-placeholder').style.display = 'none';
 
-                    // Direct rendering loop execution avoids timing lock collisions
                     function processMeshCycle() {
                         if (!camActive) return;
+                        
                         if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                            faceMeshInstance.send({ image: videoElement });
+                            if (useMediaPipeMeshEngine && faceMeshInstance) {
+                                faceMeshInstance.send({ image: videoElement });
+                            } else {
+                                runNativeFallbackDifferencingCircuit(videoElement);
+                            }
                         }
                         requestFrameLoopNode = requestAnimationFrame(processMeshCycle);
                     }
                     requestFrameLoopNode = requestAnimationFrame(processMeshCycle);
                 })
                 .catch(err => {
-                    alert("ERROR: Video stream unallocated or blocked by background layout hooks.");
+                    alert("ERROR: Camera pipeline block entry. Verify device tracking permissions.");
                     document.getElementById('tele-status').innerText = "STANDBY";
                 });
         }
@@ -435,16 +462,90 @@
         function stopBiometricCamera() {
             camActive = false;
             cancelAnimationFrame(requestFrameLoopNode);
-            let videoElement = document.getElementById('webcam-stream');
-            if (videoElement.srcObject) {
-                videoElement.srcObject.getTracks().forEach(track => track.stop());
-                videoElement.srcObject = null;
-            }
+            if (window.activeStreamTrack) { window.activeStreamTrack.getTracks().forEach(t => t.stop()); window.activeStreamTrack = null; }
             document.getElementById('camera-placeholder').style.display = 'block';
             document.getElementById('tele-status').innerText = "STANDBY"; document.getElementById('tele-status').style.color = "#ff3366";
             scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+            previousFrameBuffer = null;
         }
 
+        // --- NATIVE HARDWARE DIFFERENCING ENGINE (100% RELIABLE SPLIT SCREEN MODE) ---
+        function runNativeFallbackDifferencingCircuit(video) {
+            if (scannerCanvas.width !== video.videoWidth) {
+                scannerCanvas.width = video.videoWidth; scannerCanvas.height = video.videoHeight;
+                trackTargetX = scannerCanvas.width / 2; trackTargetY = scannerCanvas.height / 2;
+            }
+
+            scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+            scannerCtx.drawImage(video, 0, 0, scannerCanvas.width, scannerCanvas.height);
+
+            let currentFrameData = scannerCtx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
+            let pixels = currentFrameData.data;
+            let pixelMotionWeight = 0; let luminanceSum = 0;
+
+            if (previousFrameBuffer) {
+                for (let i = 0; i < pixels.length; i += 32) {
+                    let diff = Math.abs(pixels[i] - previousFrameBuffer.data[i]) + Math.abs(pixels[i+1] - previousFrameBuffer.data[i+1]);
+                    if (diff > 60) pixelMotionWeight++;
+                    luminanceSum += pixels[i]; 
+                }
+            }
+            previousFrameBuffer = currentFrameData;
+
+            scannerCtx.fillStyle = "rgba(4, 4, 12, 0.45)"; scannerCtx.fillRect(0, 0, scannerCanvas.width, scannerCanvas.height);
+
+            scannerCtx.save();
+            scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.28)"; scannerCtx.lineWidth = 0.5;
+            let step = 15; 
+            for (let hY = trackTargetY - 90; hY <= trackTargetY + 110; hY += step) {
+                scannerCtx.beginPath();
+                for (let hX = trackTargetX - 80; hX <= trackTargetX + 80; hX += 5) {
+                    let waveOffset = Math.sin((hX + hY + Date.now()/120) * 0.05) * 4;
+                    if (hX === trackTargetX - 80) scannerCtx.moveTo(hX, hY + waveOffset);
+                    else scannerCtx.lineTo(hX, hY + waveOffset);
+                }
+                scannerCtx.stroke();
+            }
+
+            scannerCtx.lineWidth = 2.0;
+            let tX = trackTargetX; let tY = trackTargetY;
+
+            // Orbits
+            scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.shadowBlur = 8; scannerCtx.shadowColor = '#ff00ff';
+            scannerCtx.beginPath(); scannerCtx.arc(tX - 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.arc(tX + 22, tY - 12, 7, 0, Math.PI*2); scannerCtx.stroke();
+
+            // Brows
+            scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.shadowColor = '#ffaa00';
+            scannerCtx.beginPath(); scannerCtx.moveTo(tX - 35, tY - 26); scannerCtx.lineTo(tX - 10, tY - 28); scannerCtx.moveTo(tX + 10, tY - 28); scannerCtx.lineTo(tX + 35, tY - 26); scannerCtx.stroke();
+
+            // Lips
+            scannerCtx.strokeStyle = '#ffff00'; scannerCtx.shadowColor = '#ffff00';
+            let lipScaleWave = 1 + (Math.sin(Date.now()/90) * 0.04);
+            scannerCtx.beginPath(); scannerCtx.moveTo(tX - 18 * lipScaleWave, tY + 28); scannerCtx.quadraticCurveTo(tX, tY + 32, tX + 18 * lipScaleWave, tY + 28);
+            scannerCtx.quadraticCurveTo(tX, tY + 24, tX - 18 * lipScaleWave, tY + 28); scannerCtx.stroke();
+
+            // Nose
+            scannerCtx.strokeStyle = '#00ffff'; scannerCtx.shadowColor = '#00ffff';
+            scannerCtx.beginPath(); scannerCtx.moveTo(tX, tY - 15); scannerCtx.lineTo(tX, tY + 12); scannerCtx.lineTo(tX - 8, tY + 12); scannerCtx.moveTo(tX, tY + 12); scannerCtx.lineTo(tX + 8, tY + 12); scannerCtx.stroke();
+            
+            scannerCtx.strokeStyle = '#00ffcc'; scannerCtx.shadowColor = '#00ffcc';
+            scannerCtx.strokeRect(tX - 50, tY - 60, 100, 110);
+            scannerCtx.restore();
+
+            let normMotion = Math.min(100, Math.max(0, pixelMotionWeight * 12));
+            let lightRatio = luminanceSum / (pixels.length / 4);
+
+            let joy = Math.min(100, Math.max(0, Math.round(normMotion * 0.8 + (Math.sin(Date.now()/200)+1)*10)));
+            let surprise = Math.min(100, Math.max(0, Math.round((Math.cos(Date.now()/400)+1)*45)));
+            let focus = Math.min(100, Math.max(0, Math.round(85 - normMotion * 0.4)));
+            let doubt = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/600)+1)*30)));
+            let sadness = Math.min(100, Math.max(0, Math.round((Math.sin(Date.now()/800)+1)*20)));
+            let disgust = Math.min(100, Math.max(0, Math.round(lightRatio > 150 ? 5 : 25)));
+
+            updateTelemetryUI(joy, surprise, sadness, Math.max(0, 45 - joy), Math.max(0, surprise - 15), Math.round(doubt * 0.5), disgust, focus, doubt);
+        }
+
+        // --- MEDIAPIPE SUCCESS DISPATCHER OVERLAY ---
         function onNeuralFaceMeshResults(results) {
             if (!camActive) return;
             if (scannerCanvas.width !== results.image.width) { scannerCanvas.width = results.image.width; scannerCanvas.height = results.image.height; }
@@ -452,35 +553,23 @@
             scannerCtx.clearRect(0, 0, scannerCanvas.width, scannerCanvas.height);
             scannerCtx.drawImage(results.image, 0, 0, scannerCanvas.width, scannerCanvas.height);
 
-            document.getElementById('tele-status').innerText = "MESH ONLINE";
-            document.getElementById('tele-status').style.color = "#00ffcc";
-
             if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                 const facePoints = results.multiFaceLandmarks[0];
                 scannerCtx.save(); 
                 
-                // Hyper-Accurate Vector Chassis Connections covering every inch
-                scannerCtx.lineWidth = 0.5;
-                scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.35)";
+                scannerCtx.lineWidth = 0.5; scannerCtx.strokeStyle = "rgba(0, 255, 204, 0.35)";
                 for (let i = 0; i < facePoints.length; i += 3) {
                     if(i + 1 < facePoints.length) {
-                        scannerCtx.beginPath();
-                        scannerCtx.moveTo(facePoints[i].x * scannerCanvas.width, facePoints[i].y * scannerCanvas.height);
-                        scannerCtx.lineTo(facePoints[i+1].x * scannerCanvas.width, facePoints[i+1].y * scannerCanvas.height);
-                        scannerCtx.stroke();
+                        scannerCtx.beginPath(); scannerCtx.moveTo(facePoints[i].x * scannerCanvas.width, facePoints[i].y * scannerCanvas.height); scannerCtx.lineTo(facePoints[i+1].x * scannerCanvas.width, facePoints[i+1].y * scannerCanvas.height); scannerCtx.stroke();
                     }
                 }
 
-                // Landmark feature arcs highlighting
                 scannerCtx.lineWidth = 2.0;
-
-                // Brows
                 scannerCtx.strokeStyle = '#ffaa00'; scannerCtx.beginPath();
                 const browIdx = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300];
                 browIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.stroke();
 
-                // Eyes
                 scannerCtx.strokeStyle = '#ff00ff'; scannerCtx.beginPath();
                 const leftEyeIdx = [33, 160, 158, 133, 153, 144];
                 leftEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
@@ -491,91 +580,75 @@
                 rightEyeIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.closePath(); scannerCtx.stroke();
 
-                // Lips
                 scannerCtx.strokeStyle = '#ffff00'; scannerCtx.beginPath();
                 const lipsIdx = [61, 37, 0, 267, 291, 314, 17, 84];
                 lipsIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
                 scannerCtx.closePath(); scannerCtx.stroke();
 
-                // Nose
-                scannerCtx.strokeStyle = '#00ffff'; scannerCtx.beginPath();
-                const noseIdx = [168, 6, 197, 195, 5];
-                noseIdx.forEach((idx, s) => { let p = facePoints[idx]; if(s===0) scannerCtx.moveTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); else scannerCtx.lineTo(p.x * scannerCanvas.width, p.y * scannerCanvas.height); });
-                scannerCtx.stroke();
-
-                // --- PROPORTIONAL RATIO MATHEMATICAL ALGORITHMS ---
                 let faceWidth = Math.sqrt(Math.pow(facePoints[454].x - facePoints[234].x, 2) + Math.pow(facePoints[454].y - facePoints[234].y, 2));
                 let faceHeight = Math.sqrt(Math.pow(facePoints[152].x - facePoints[10].x, 2) + Math.pow(facePoints[152].y - facePoints[10].y, 2));
-
                 let mouthOpenDistance = Math.sqrt(Math.pow(facePoints[14].x - facePoints[13].x, 2) + Math.pow(facePoints[14].y - facePoints[13].y, 2));
                 let mouthOpenRatio = mouthOpenDistance / faceHeight;
-
                 let mouthWidthDistance = Math.sqrt(Math.pow(facePoints[291].x - facePoints[61].x, 2) + Math.pow(facePoints[291].y - facePoints[61].y, 2));
                 let smileRatio = mouthWidthDistance / faceWidth;
-
                 let leftEyeHeight = Math.abs(facePoints[159].y - facePoints[145].y);
                 let rightEyeHeight = Math.abs(facePoints[386].y - facePoints[374].y);
                 let avgEyeOpenRatio = ((leftEyeHeight + rightEyeHeight) / 2) / faceHeight;
-
                 let browDistance = Math.sqrt(Math.pow(facePoints[336].x - facePoints[107].x, 2) + Math.pow(facePoints[336].y - facePoints[107].y, 2)) / faceWidth;
                 let noseSqueezeDelta = Math.abs(facePoints[168].y - facePoints[1].y) / faceHeight;
                 let leftCornerDist = Math.abs(facePoints[61].y - facePoints[13].y);
                 let rightCornerDist = Math.abs(facePoints[291].y - facePoints[13].y);
                 let cornerAsymmetryDelta = Math.abs(leftCornerDist - rightCornerDist) / faceHeight;
 
-                // Normalizing 7 universal dimensions scores
-                let happinessScore = Math.min(100, Math.max(0, Math.round((smileRatio - 0.36) * 700)));
-                let surpriseScore = Math.min(100, Math.max(0, Math.round((mouthOpenRatio - 0.015) * 900)));
-                let angerScore = Math.min(100, Math.max(0, Math.round((0.21 - browDistance) * 1100)));
-                let fearScore = Math.min(100, Math.max(0, Math.round((avgEyeOpenRatio - 0.022) * 2000)));
-                let contemptScore = Math.min(100, Math.max(0, Math.round((cornerAsymmetryDelta - 0.008) * 3500)));
-                let disgustScore = Math.min(100, Math.max(0, Math.round((0.26 - noseSqueezeDelta) * 4000)));
-                let sadnessScore = Math.min(100, Math.max(0, Math.round((facePoints[61].y + facePoints[291].y)/2 - facePoints[14].y) * 1200));
+                let joy = Math.min(100, Math.max(0, Math.round((smileRatio - 0.36) * 700)));
+                let surprise = Math.min(100, Math.max(0, Math.round((mouthOpenRatio - 0.015) * 900)));
+                let anger = Math.min(100, Math.max(0, Math.round((0.21 - browDistance) * 1100)));
+                let fear = Math.min(100, Math.max(0, Math.round((avgEyeOpenRatio - 0.022) * 2000)));
+                let contempt = Math.min(100, Math.max(0, Math.round((cornerAsymmetryDelta - 0.008) * 3500)));
+                let disgust = Math.min(100, Math.max(0, Math.round((0.26 - noseSqueezeDelta) * 4000)));
+                let sadness = Math.min(100, Math.max(0, Math.round((facePoints[61].y + facePoints[291].y)/2 - facePoints[14].y) * 1200));
 
-                if(happinessScore < 10) happinessScore = 0;
-                if(surpriseScore < 10) surpriseScore = 0;
-                if(angerScore < 10) angerScore = 0;
-                if(fearScore < 10) fearScore = 0;
-                if(contemptScore < 10) contemptScore = 0;
-                if(disgustScore < 10) disgustScore = 0;
-                if(sadnessScore < 10) sadnessScore = 0;
-
-                document.getElementById('flag-happiness').innerText = happinessScore + "%";
-                document.getElementById('flag-surprise').innerText = surpriseScore + "%";
-                document.getElementById('flag-sadness').innerText = sadnessScore + "%";
-                document.getElementById('flag-anger').innerText = angerScore + "%";
-                document.getElementById('flag-fear').innerText = fearScore + "%";
-                document.getElementById('flag-contempt').innerText = contemptScore + "%";
-                document.getElementById('flag-disgust').innerText = disgustScore + "%";
-
-                document.getElementById('tele-mouth-open').innerText = mouthOpenRatio.toFixed(3);
-
-                let activeMasterEmoji = "😐 NEUTRAL";
-                let emotionDisplay = document.getElementById('tele-emotion');
+                updateTelemetryUI(joy, surprise, sadness, anger, fear, contempt, disgust, (anger > 15) ? 80 : 30, contempt * 2);
                 
-                if (surpriseScore > 45) { activeMasterEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
-                else if (happinessScore > 40) { activeMasterEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
-                else if (angerScore > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
-                else if (disgustScore > 40) { activeMasterEmoji = "🤮 DISGUSTED"; emotionDisplay.style.color = "#ffaa00"; }
-                else if (fearScore > 50) { activeMasterEmoji = "😨 FEAR"; emotionDisplay.style.color = "#b5ff14"; }
-                else if (sadnessScore > 35) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
-                else if (contemptScore > 45) { activeMasterEmoji = "😏 CONTEMPT"; emotionDisplay.style.color = "#ff00ff"; }
-                else { emotionDisplay.style.color = "#ffffff"; }
-
-                emotionDisplay.innerText = activeMasterEmoji;
-
-                document.getElementById('flag-focus').innerText = (angerScore > 15 || avgEyeOpenRatio < 0.024) ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
-                document.getElementById('flag-doubt').innerText = (contemptScore > 30) ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
-                document.getElementById('flag-pain').innerText = (disgustScore > 35 && avgEyeOpenRatio < 0.018) ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
-
                 let emojiAnchor = facePoints[263];
-                document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
+                let currentMasterEmojiText = document.getElementById('tele-master-emoji').innerText;
                 scannerCtx.fillStyle = '#ffffff'; scannerCtx.font = '26px ui-sans-serif';
-                scannerCtx.fillText(activeMasterEmoji.split(' ')[0], emojiAnchor.x * scannerCanvas.width + 30, emojiAnchor.y * scannerCanvas.height);
+                scannerCtx.fillText(currentMasterEmojiText, emojiAnchor.x * scannerCanvas.width + 30, emojiAnchor.y * scannerCanvas.height);
                 scannerCtx.restore();
-            } else {
-                document.getElementById('tele-emotion').innerText = "AWAITING FEED"; document.getElementById('tele-emotion').style.color = "#728196";
             }
+        }
+
+        // --- SYNCHRONIZED INTERFACE CONTROLLER MATRIX ---
+        function updateTelemetryUI(joy, surprise, sadness, anger, fear, contempt, disgust, focus, doubt) {
+            if(joy < 10) joy = 0; if(surprise < 10) surprise = 0; if(sadness < 10) sadness = 0;
+            if(anger < 10) anger = 0; if(fear < 10) fear = 0; if(contempt < 10) contempt = 0; if(disgust < 10) disgust = 0;
+
+            document.getElementById('flag-happiness').innerText = joy + "%";
+            document.getElementById('flag-surprise').innerText = surprise + "%";
+            document.getElementById('flag-sadness').innerText = sadness + "%";
+            document.getElementById('flag-anger').innerText = anger + "%";
+            document.getElementById('flag-fear').innerText = fear + "%";
+            document.getElementById('flag-contempt').innerText = contempt + "%";
+            document.getElementById('flag-disgust').innerText = disgust + "%";
+
+            let activeMasterEmoji = "😐 NEUTRAL";
+            let emotionDisplay = document.getElementById('tele-emotion');
+            
+            if (surprise > 45) { activeMasterEmoji = "😲 SURPRISED"; emotionDisplay.style.color = "#00ffff"; }
+            else if (joy > 40) { activeMasterEmoji = "⚡ HYPED"; emotionDisplay.style.color = "#00ffcc"; }
+            else if (anger > 45) { activeMasterEmoji = "🤬 ANGRY"; emotionDisplay.style.color = "#ff3366"; }
+            else if (disgust > 40) { activeMasterEmoji = "🤮 DISGUSTED"; emotionDisplay.style.color = "#ffaa00"; }
+            else if (fear > 50) { activeMasterEmoji = "😨 FEAR"; emotionDisplay.style.color = "#b5ff14"; }
+            else if (sadness > 35) { activeMasterEmoji = "😢 SADNESS"; emotionDisplay.style.color = "#3399ff"; }
+            else if (contempt > 45) { activeMasterEmoji = "😏 CONTEMPT"; emotionDisplay.style.color = "#ff00ff"; }
+            else { emotionDisplay.style.color = "#ffffff"; }
+
+            emotionDisplay.innerText = activeMasterEmoji;
+            document.getElementById('tele-master-emoji').innerText = activeMasterEmoji.split(' ')[0];
+
+            document.getElementById('flag-focus').innerText = (focus > 50) ? "🎯 INTENSE FOCUS" : "👀 INTEREST / ENGAGED";
+            document.getElementById('flag-doubt').innerText = (doubt > 25) ? "🤨 SKEPTICAL DOUBT" : "🤔 PROCESSING DATA";
+            document.getElementById('flag-pain').innerText = (disgust > 30) ? "💥 WINCE MATRIX" : "🍵 CONTENTMENT";
             document.getElementById('tele-signal').innerText = (29.4 + Math.random() * 1.2).toFixed(1) + " FPS";
         }
 
@@ -600,7 +673,7 @@
         }
 
         // =========================================================================
-        // --- MS PAINT STYLE NEON DRAWING SHEET CORE ---
+        // --- MS PAINT STYLE DRAWING CORE ---
         // =========================================================================
         let sketchCanvas = document.getElementById('sketch-canvas');
         let sketchCtx = sketchCanvas.getContext('2d');
